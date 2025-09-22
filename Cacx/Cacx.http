@@ -1,0 +1,6 @@
+@Cacx_HostAddress = http://localhost:5031
+
+GET {{Cacx_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

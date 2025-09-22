@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="CacxClient/CacxClient.csproj" />
+  <Project Path="CacxServer/CacxServer.csproj" />
+  <Project Path="CacxShared/CacxShared.csproj" />
+</Solution>
