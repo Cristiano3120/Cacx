@@ -1,4 +1,6 @@
-﻿namespace CacxShared;
+﻿using System.Runtime.CompilerServices;
+
+namespace CacxShared;
 
 public static class SharedHelper
 {
@@ -23,5 +25,19 @@ public static class SharedHelper
 
         projectBasePath = projectBasePath[..binIndex];
         return Path.Combine(projectBasePath, relativePath);
+    }
+
+    /// <summary>
+    /// Takes an all caps string and turns it into a normal string.
+    /// <para>
+    /// <c>Turns "GET" int "Get"</c>
+    /// </para>
+    /// </summary>
+    /// <param name="str"></param>
+    /// <returns></returns>
+    public static string FromUpperToNormal(this string str)
+    {
+        str = str.ToLower();
+        return str[0].ToString().ToUpper() + str[1..];
     }
 }

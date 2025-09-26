@@ -1,9 +1,11 @@
 ﻿using CacxClient.HTTPCommunication;
 using CacxShared;
+using CacxShared.Endpoints;
 using Cristiano3120.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using System.Runtime.InteropServices;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace CacxClient;
@@ -20,7 +22,7 @@ public partial class App : Application
     [return: MarshalAs(UnmanagedType.Bool)]
     private static partial bool AllocConsole();
 
-    protected override void OnStartup(StartupEventArgs e)
+    protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
         _ = AllocConsole();
@@ -38,6 +40,16 @@ public partial class App : Application
         _ = services.AddSingleton(logger);
         _ = services.AddSingleton<Http>();
         ServiceProvider = services.BuildServiceProvider();
+
+        await Task.Delay(1000);
+        //TODO: TEST MIT VALID PATH
+        _ = await ServiceProvider
+            .GetRequiredService<Http>()
+            .PostAsync<int, int>(12, Endpoints.GetAuthEndpoint("2test"), CallerInfos.Create());
+
+        //_ = await ServiceProvider
+        //   .GetRequiredService<Http>()
+        //   .GetAsync<bool>(Endpoints.GetAuthEndpoint(AuthEndpoint.Ping), CallerInfos.Create());
     }
 }
 
