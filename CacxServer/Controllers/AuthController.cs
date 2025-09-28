@@ -1,47 +1,27 @@
-﻿using CacxShared.ApiResources;
+﻿using CacxServer.Helper;
+using CacxShared.ApiResources;
 using CacxShared.Endpoints;
+using Cristiano3120.Logging;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 
 namespace CacxServer.Controllers;
 
 [ApiController]
 [Route($"{Endpoints.BaseEndpoint}/{Endpoints.BaseAuthEndpoint}")]
-public sealed class AuthController : ControllerBase
+public sealed class AuthController(LoggingHelper loggingHelper, Logger logger) : ControllerBase
 {
-    private JsonSerializerOptions _jsonSerializerOptions;
-    public AuthController(JsonSerializerOptions jsonSerializerOptions)
-    {
-        _jsonSerializerOptions = jsonSerializerOptions;
-    }
+    private readonly LoggingHelper _loggingHelper = loggingHelper;
+    private readonly Logger _logger = logger;
 
     [HttpGet($"{AuthEndpoint.Ping}")]
-    [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
     public ActionResult Ping()
     {
-        ApiResponse<bool> response = new(true, true);
-        AddInfosForLogging(typeof(bool), response);
+        ApiResponse<object> response = new() { IsSuccess = true };
+
+        _logger.LogDebug(LoggerParams.None, "Pong!");
+        _loggingHelper.AddInfosForLogging(HttpContext, typeof(object), response);
 
         return Ok(response);
-    }
-
-
-    [HttpPost($"test")]
-    [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
-    public ActionResult Test([FromBody] int zahl)
-    {
-        ApiResponse<int> response = new(true, 11);
-        AddInfosForLogging(typeof(bool), response);
-        return Ok(response); 
-
-    }
-
-    /// <summary>
-    /// Adds the return type to the HttpContext so it can be read later for logging purposes
-    /// </summary>
-    private void AddInfosForLogging<T>(Type type, ApiResponse<T> apiResponse)
-    { 
-        HttpContext.Items.Add("Type", type);
-        HttpContext.Items.Add("ApiResponseStr", JsonSerializer.Serialize(apiResponse, _jsonSerializerOptions));
     }
 }

@@ -1,4 +1,4 @@
-﻿using CacxShared;
+﻿using CacxShared.Helper;
 using Cristiano3120.Logging;
 using Microsoft.AspNetCore.Mvc.Filters;
 

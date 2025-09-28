@@ -7,7 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Cristiano3120.Logger" Version="1.0.5" />
+		<PackageReference Include="Cristiano3120.Logger" Version="1.0.6" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0-rc.1.25451.107" />
 	</ItemGroup>
 

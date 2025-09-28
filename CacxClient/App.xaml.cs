@@ -1,11 +1,10 @@
-﻿using CacxClient.HTTPCommunication;
-using CacxShared;
-using CacxShared.Endpoints;
+﻿using CacxClient.Communication.HTTPCommunication;
+using CacxClient.Helpers;
+using CacxClient.Windows;
+using CacxShared.Helper;
 using Cristiano3120.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using System.Runtime.InteropServices;
-using System.Text.Json;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace CacxClient;
@@ -35,21 +34,17 @@ public partial class App : Application
         };
         Logger logger = new(loggerSettings);
 
+        Http http = new(logger);
+
         ServiceCollection services = new();
 
         _ = services.AddSingleton(logger);
-        _ = services.AddSingleton<Http>();
+        _ = services.AddSingleton(http);
+
         ServiceProvider = services.BuildServiceProvider();
 
+        //Give the server some time to start cause I am starting both projects at the same time
         await Task.Delay(1000);
-        //TODO: TEST MIT VALID PATH
-        _ = await ServiceProvider
-            .GetRequiredService<Http>()
-            .PostAsync<int, int>(12, Endpoints.GetAuthEndpoint("2test"), CallerInfos.Create());
-
-        //_ = await ServiceProvider
-        //   .GetRequiredService<Http>()
-        //   .GetAsync<bool>(Endpoints.GetAuthEndpoint(AuthEndpoint.Ping), CallerInfos.Create());
     }
 }
 

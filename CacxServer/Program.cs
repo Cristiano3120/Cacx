@@ -1,5 +1,6 @@
-using CacxShared;
+using CacxServer.Helper;
 using CacxShared.ApiResources;
+using CacxShared.Helper;
 using Cristiano3120.Logging;
 using System.Net;
 using System.Text;
@@ -44,6 +45,8 @@ public static class Program
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         };
         _ = builder.Services.AddSingleton(jsonSerializerOptions);
+
+        _ = builder.Services.AddSingleton<LoggingHelper>();
 
         //Configure a logging when a request comes in and is done executing 
         _ = builder.Services.AddControllers(options => _ = options.Filters.Add<GlobalActionFilter>()).AddJsonOptions(options =>

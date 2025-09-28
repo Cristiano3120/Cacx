@@ -1,10 +1,11 @@
-﻿using CacxShared.ApiResources;
+﻿using CacxClient.Helpers;
+using CacxShared.ApiResources;
 using Cristiano3120.Logging;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 
-namespace CacxClient.HTTPCommunication;
+namespace CacxClient.Communication.HTTPCommunication;
 
 internal sealed class Http
 {
@@ -79,7 +80,7 @@ internal sealed class Http
         }
         catch (Exception ex)
         {
-            _logger.LogError(LoggerParams.None, ex, callerInfos);
+            _logger.LogError(LoggerParams.None, ex, callerInfos: callerInfos, calleInfos: CallerInfos.Create());
             return new ApiResponse<TOutput>();
         }
     }

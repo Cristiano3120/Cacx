@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace CacxShared;
+﻿namespace CacxShared.Helper;
 
 public static class SharedHelper
 {

@@ -1,8 +1,8 @@
-﻿using CacxShared;
+﻿using CacxShared.Helper;
 using System.IO;
 using System.Text.Json;
 
-namespace CacxClient;
+namespace CacxClient.Helpers;
 
 internal static class Helper
 {
