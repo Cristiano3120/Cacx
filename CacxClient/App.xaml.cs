@@ -1,6 +1,4 @@
 ﻿using CacxClient.Communication.HTTPCommunication;
-using CacxClient.Helpers;
-using CacxClient.Windows;
 using CacxShared.Helper;
 using Cristiano3120.Logging;
 using Microsoft.Extensions.DependencyInjection;

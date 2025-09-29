@@ -9,7 +9,15 @@
                   Title="Login"
                   Style="{StaticResource SmallWindowStyle}">
     <Grid>
-        <cc:TextBoxTextBlock Text="" Label="Email:" Width="200" Height="35" MaxTextLength="5"/>
-        <cc:TextBoxTextBlock Margin="0,200,0,0" Text="" Label="Password:" Width="200" Height="35"/>
+        <cc:TextBoxTextBlock Label="Email:" Width="200" Height="35" Margin="0, 0, 0, 100"/>
+        <cc:TextBoxTextBlock Label="Password:" Width="200" Height="35" Margin="0, 50, 0, 0"/>
+
+        <TextBlock FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 102, 0, 0">
+            <Hyperlink x:Name="CreateAccHyperlink">
+                No account? Create one here
+            </Hyperlink>
+        </TextBlock>
+
+        <Button x:Name="LoginBtn" Content="Login" Width="75" Height="30" Margin="0, 210, 0, 0"/>
     </Grid>
 </local:BaseWindow>

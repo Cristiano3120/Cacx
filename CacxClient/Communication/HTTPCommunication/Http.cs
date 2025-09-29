@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace CacxClient.Communication.HTTPCommunication;
 
-internal sealed class Http
+public sealed class Http
 {
     private readonly JsonSerializerOptions _jsonSerializerOptions = new()
     {

@@ -4,6 +4,7 @@
              xmlns:local="clr-namespace:CacxClient"
              StartupUri="Windows/LoginWindow.xaml">
     <Application.Resources>
+
         <!--#region Window Styles-->
         <Style TargetType="Window" x:Key="BaseWindowStyle">
             <Setter Property="Background" Value="#1f1e1f"/>
@@ -18,7 +19,7 @@
             <Setter Property="MaxWidth" Value="800"/>
         </Style>
         <!--#endregion-->
-        
+
         <!--#region TextBox Styles-->
 
         <Style TargetType="TextBox" x:Key="BaseTextBoxStyle">
@@ -50,7 +51,7 @@
         <Style TargetType="TextBox" BasedOn="{StaticResource BaseTextBoxStyle}"/>
 
         <!--#endregion-->
-        
+
         <!--#region TextBlock-->
         <Style TargetType="TextBlock" x:Key="BaseTextBlockStyle">
             <Setter Property="FontSize" Value="15"/>
@@ -92,5 +93,106 @@
         </Style>
 
         <!--#endregion-->
+
+        <!--#region Button Styles-->
+
+        <Style x:Key="BaseButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#2e2d2e"/>
+        </Style>
+
+        <Style TargetType="Button" BasedOn="{StaticResource BaseButtonStyle}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Border" 
+                                CornerRadius="8" 
+                                BorderBrush="#1a191a"
+                                BorderThickness="2"
+                                Background="{TemplateBinding Background}">
+
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True"/>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Cursor" Value="Hand"/>
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation To="#cccccc" Duration="0:0:0.3"
+                                                Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"/>
+                                            <ColorAnimation To="#cccccc" Duration="0:0:0.3" Storyboard.TargetName="Border" 
+                                                Storyboard.TargetProperty="(BorderBrush).(SolidColorBrush.Color)"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation To="#000000" Duration="0:0:0.2"
+                                                Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"/>
+                                            <ColorAnimation To="#1a191a" Duration="0:0:0.2" Storyboard.TargetName="Border" 
+                                                Storyboard.TargetProperty="(BorderBrush).(SolidColorBrush.Color)"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+
+                            <!--Click Animation-->
+                            <EventTrigger RoutedEvent="Button.Click">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="(Button.RenderTransform).(ScaleTransform.ScaleX)"
+                                            To="0.9" Duration="0:0:0.12" AutoReverse="True"/>
+                                        <DoubleAnimation Storyboard.TargetProperty="(Button.RenderTransform).(ScaleTransform.ScaleY)"
+                                            To="0.9" Duration="0:0:0.12" AutoReverse="True"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform x:Name="btnScale" ScaleX="1" ScaleY="1"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!--#endregion-->
+
+        <!--#region Hyperlink Styles-->
+
+        <Style TargetType="Hyperlink">
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Cursor" Value="Hand"/>
+                    <Trigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <ColorAnimation To="White" Duration="0:0:0.2"
+                                Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.EnterActions>
+                    <Trigger.ExitActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <ColorAnimation To="Black" Duration="0:0:0.2"
+                                Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.ExitActions>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!--#endregion-->
+
     </Application.Resources>
 </Application>
