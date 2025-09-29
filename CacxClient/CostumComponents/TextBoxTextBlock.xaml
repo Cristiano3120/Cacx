@@ -18,6 +18,7 @@
         <TextBox x:Name="InnerTextBox" Height="35" 
                  Width="{Binding Width, RelativeSource={RelativeSource AncestorType=UserControl}}" 
                  Style="{StaticResource BaseTextBoxStyle}" 
+                 MaxLength="{Binding MaxTextLength, RelativeSource={RelativeSource AncestorType=UserControl}}"
                  Text="{Binding Text, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
         <!-- Label -->

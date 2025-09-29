@@ -9,7 +9,7 @@
                   Title="Login"
                   Style="{StaticResource SmallWindowStyle}">
     <Grid>
-        <cc:TextBoxTextBlock Text="" Label="Email:" Width="200" Height="35"/>
+        <cc:TextBoxTextBlock Text="" Label="Email:" Width="200" Height="35" MaxTextLength="5"/>
         <cc:TextBoxTextBlock Margin="0,200,0,0" Text="" Label="Password:" Width="200" Height="35"/>
     </Grid>
 </local:BaseWindow>

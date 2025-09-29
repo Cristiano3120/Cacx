@@ -23,6 +23,21 @@ public partial class TextBoxTextBlock : UserControl
         DependencyProperty.Register("Text", typeof(string), typeof(TextBoxTextBlock),
             new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
+    /// <summary>
+    /// Identifies the MaxTextLength dependency property, which specifies the maximum number of characters allowed in
+    /// the text of a TextBoxTextBlock control.
+    /// </summary>
+    /// <remarks>This dependency property can be used in styles, data binding, and animations to control the
+    /// maximum text length. The default value is 100.</remarks>
+    public static readonly DependencyProperty MaxTextLengthProperty =
+        DependencyProperty.Register("MaxLength", typeof(int), typeof(TextBoxTextBlock), new PropertyMetadata(100));
+
+    public int MaxTextLength
+    {
+        get => (int)GetValue(MaxTextLengthProperty);
+        set => SetValue(MaxTextLengthProperty, value);
+    }
+
     public string Label
     {
         get => (string)GetValue(LabelProperty);
