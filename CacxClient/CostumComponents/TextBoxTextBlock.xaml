@@ -44,7 +44,7 @@
                                         <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(TranslateTransform.Y)"
                                                          To="-23" Duration="{StaticResource DurationValue}"/>
                                         <ColorAnimation Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)"
-                                                        To="White" Duration="{StaticResource DurationValue}"/>
+                                                        To="White" Duration="0:0:0.25"/>
                                     </Storyboard>
                                 </BeginStoryboard>
                             </DataTrigger.EnterActions>

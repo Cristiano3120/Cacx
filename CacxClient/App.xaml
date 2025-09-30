@@ -5,6 +5,30 @@
              StartupUri="Windows/LoginWindow.xaml">
     <Application.Resources>
 
+        <!--#region StoryBoard Animations-->
+
+        <Storyboard x:Key="BounceAnimation">
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                To="0.9" Duration="0:0:0.12" AutoReverse="True"/>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                To="0.9" Duration="0:0:0.12" AutoReverse="True"/>
+        </Storyboard>
+
+        <Storyboard x:Key="HoverBorderBrushAnimation">
+            <Storyboard>
+                <ColorAnimation To="#cccccc" Duration="0:0:0.3" Storyboard.TargetName="Border" 
+                    Storyboard.TargetProperty="(BorderBrush).(SolidColorBrush.Color)"/>
+            </Storyboard>
+        </Storyboard>
+
+        <Storyboard x:Key="UnHoverBorderBrushAnimation">
+            <Storyboard>
+                <ColorAnimation To="#1a191a" Duration="0:0:0.2" Storyboard.TargetName="Border" 
+                    Storyboard.TargetProperty="(BorderBrush).(SolidColorBrush.Color)"/>
+            </Storyboard>
+        </Storyboard>
+        <!--#endregion-->
+
         <!--#region Window Styles-->
         <Style TargetType="Window" x:Key="BaseWindowStyle">
             <Setter Property="Background" Value="#1f1e1f"/>
@@ -40,7 +64,27 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsFocused" Value="True">
-                                <Setter TargetName="Border" Property="BorderBrush" Value="#cccccc"/>
+                                
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation To="#cccccc" Duration="0:0:0.3"
+                                                Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"/>
+                                            <ColorAnimation To="#cccccc" Duration="0:0:0.5" Storyboard.TargetName="Border" 
+                                                Storyboard.TargetProperty="(BorderBrush).(SolidColorBrush.Color)"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation To="#000000" Duration="0:0:0.2"
+                                                Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"/>
+                                            <ColorAnimation To="#1a191a" Duration="0:0:0.2" Storyboard.TargetName="Border" 
+                                                Storyboard.TargetProperty="(BorderBrush).(SolidColorBrush.Color)"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -77,9 +121,9 @@
                     <BeginStoryboard>
                         <Storyboard>
                             <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(TranslateTransform.Y)"
-                                             To="-200" Duration="0:0:0.2"/>
+                                To="-200" Duration="0:0:0.2"/>
                             <DoubleAnimation Storyboard.TargetProperty="FontSize"
-                                             To="12" Duration="0:0:0.2"/>
+                                To="12" Duration="0:0:0.2"/>
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
@@ -88,9 +132,9 @@
                     <BeginStoryboard>
                         <Storyboard>
                             <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(TranslateTransform.Y)"
-                             To="0" Duration="0:0:0.2"/>
+                                To="0" Duration="0:0:0.2"/>
                             <DoubleAnimation Storyboard.TargetProperty="FontSize"
-                             To="16" Duration="0:0:0.2"/>
+                                To="16" Duration="0:0:0.2"/>
                         </Storyboard>
                     </BeginStoryboard>
                 </EventTrigger>
@@ -100,17 +144,6 @@
         <!--#endregion-->
 
         <!--#region Button Styles-->
-
-        <!--#region StoryBoard Animations-->
-
-        <Storyboard x:Key="BounceAnimation">
-            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
-             To="0.9" Duration="0:0:0.12" AutoReverse="True"/>
-            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
-             To="0.9" Duration="0:0:0.12" AutoReverse="True"/>
-        </Storyboard>
-
-        <!--#endregion-->
 
         <Style x:Key="BaseButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#2e2d2e"/>
@@ -220,20 +253,10 @@
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Cursor" Value="Hand"/>
                                 <Trigger.EnterActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <ColorAnimation To="#cccccc" Duration="0:0:0.3" Storyboard.TargetName="Border" 
-                                                Storyboard.TargetProperty="(BorderBrush).(SolidColorBrush.Color)"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
+                                    <BeginStoryboard Storyboard="{StaticResource HoverBorderBrushAnimation}"/>
                                 </Trigger.EnterActions>
                                 <Trigger.ExitActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <ColorAnimation To="#1a191a" Duration="0:0:0.2" Storyboard.TargetName="Border" 
-                                                Storyboard.TargetProperty="(BorderBrush).(SolidColorBrush.Color)"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
+                                    <BeginStoryboard Storyboard="{StaticResource UnHoverBorderBrushAnimation}"/>
                                 </Trigger.ExitActions>
                             </Trigger>
 
