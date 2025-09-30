@@ -1,6 +1,7 @@
 ﻿using CacxShared.Helper;
 using DnsClient;
 using System.IO;
+using System.Net.Mail;
 using System.Text.Json;
 
 namespace CacxClient.Helpers;
@@ -13,7 +14,28 @@ internal static class Helper
         return JsonDocument.Parse(File.ReadAllText(Filepath)).RootElement;
     }
 
-    public static async Task<bool> DomainHasMxRecordAsync(string email)
+    public static async Task<bool> IsEmailValidAsync(string email)
+    {
+#if !DEBUG
+        if (string.IsNullOrWhiteSpace(email))
+            return false;
+
+        try
+        {
+            MailAddress addr = new(email);
+            return addr.Address == email && await DomainHasMxRecordAsync(email);
+        }
+        catch
+        {
+            return false;
+        }
+#else
+        // In debug mode, skip email validation to facilitate testing with placeholder emails.
+        return true;
+#endif
+    }
+
+    private static async Task<bool> DomainHasMxRecordAsync(string email)
     {
         try
         {

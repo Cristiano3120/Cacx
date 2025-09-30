@@ -1,4 +1,5 @@
 ﻿using CacxClient.Communication.HTTPCommunication;
+using CacxClient.Helpers;
 using Cristiano3120.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
@@ -21,6 +22,7 @@ public partial class LoginWindow : BaseWindow
         _http = App.ServiceProvider.GetRequiredService<Http>();
 
         _logger.LogDebug(LoggerParams.None, "LoginWindow initialized");
+        GuiHelper.SwitchWindow<CreateAccWindow>();
     }
 
     public void LoginBtn_Click(object sender, RoutedEventArgs args)
