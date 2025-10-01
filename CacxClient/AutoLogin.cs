@@ -20,7 +20,7 @@ internal static class AutoLogin
         //Format login data
         string jsonString = JsonSerializer.Serialize(loginData);
         byte[] plaintext = Encoding.UTF8.GetBytes(jsonString);
-
+        
         //Encrypt login data
         byte[] entropy = RandomNumberGenerator.GetBytes(32);
         byte[] ciphertext = ProtectedData.Protect(plaintext, entropy, DataProtectionScope.CurrentUser);

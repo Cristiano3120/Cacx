@@ -21,7 +21,7 @@ public sealed class Http
     public Http(Logger logger)
     {
         logger.LogDebug(LoggerParams.None, "Initialized HttpClient");
-
+        
         _logger = logger;
         _httpClient = new HttpClient()
         {

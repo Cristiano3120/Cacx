@@ -1,0 +1,128 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="BaseButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="#2e2d2e"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Border" 
+            CornerRadius="8" 
+            BorderBrush="#1a191a"
+            BorderThickness="2"
+            Background="{TemplateBinding Background}">
+
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Button" BasedOn="{StaticResource BaseButtonStyle}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Border" 
+                    CornerRadius="8" 
+                    BorderBrush="#1a191a"
+                    BorderThickness="2"
+                    Background="{TemplateBinding Background}">
+
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True"/>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Cursor" Value="Hand"/>
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation To="#cccccc" Duration="0:0:0.3"
+                                        Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"/>
+                                        <ColorAnimation To="#cccccc" Duration="0:0:0.3" Storyboard.TargetName="Border" 
+                                        Storyboard.TargetProperty="(BorderBrush).(SolidColorBrush.Color)"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation To="#000000" Duration="0:0:0.2"
+                                        Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"/>
+                                        <ColorAnimation To="#1a191a" Duration="0:0:0.2" Storyboard.TargetName="Border" 
+                                        Storyboard.TargetProperty="(BorderBrush).(SolidColorBrush.Color)"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+
+                        <!--Click/Bounce Animation-->
+                        <EventTrigger RoutedEvent="Button.Click">
+                            <BeginStoryboard Storyboard="{StaticResource BounceAnimation}" HandoffBehavior="Compose"/>
+                        </EventTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <!--Set the origin to x: 0.5 and y: 0.5 aka. the middle of the button-->
+        <Setter Property="RenderTransformOrigin" Value="0.5, 0.5"/>
+        <Setter Property="RenderTransform">
+            <Setter.Value>
+                <ScaleTransform x:Name="btnScale" ScaleX="1" ScaleY="1"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="IconBtnStyle" TargetType="Button" BasedOn="{StaticResource BaseButtonStyle}">
+        <!--Give the internal TextBlock a specific style-->
+        <Setter Property="ContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <TextBlock Style="{StaticResource IconTextBlockStyle}" Text="{Binding}"/>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <!--Set the origin to x: 0.5 and y: 0.5 aka. the middle of the button-->
+        <Setter Property="RenderTransformOrigin" Value="0.5, 0.5"/>
+        <Setter Property="RenderTransform">
+            <Setter.Value>
+                <ScaleTransform x:Name="btnScale" ScaleX="1" ScaleY="1"/>
+            </Setter.Value>
+        </Setter>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Border"
+                CornerRadius="8"
+                BorderBrush="#1a191a"
+                BorderThickness="2"
+                Background="{TemplateBinding Background}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <!-- Hover Brush -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Cursor" Value="Hand"/>
+                            <Trigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource HoverBorderBrushAnimation}"/>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard Storyboard="{StaticResource UnHoverBorderBrushAnimation}"/>
+                            </Trigger.ExitActions>
+                        </Trigger>
+
+                        <!-- Click-Animation -->
+                        <EventTrigger RoutedEvent="Button.Click">
+                            <BeginStoryboard Storyboard="{StaticResource BounceAnimation}" HandoffBehavior="Compose"/>
+                        </EventTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

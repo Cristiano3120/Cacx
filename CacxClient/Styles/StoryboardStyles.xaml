@@ -1,0 +1,24 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Storyboard x:Key="BounceAnimation">
+        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+        To="0.9" Duration="0:0:0.12" AutoReverse="True"/>
+        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+        To="0.9" Duration="0:0:0.12" AutoReverse="True"/>
+    </Storyboard>
+
+    <Storyboard x:Key="HoverBorderBrushAnimation">
+        <Storyboard>
+            <ColorAnimation To="#cccccc" Duration="0:0:0.3" Storyboard.TargetName="Border" 
+            Storyboard.TargetProperty="(BorderBrush).(SolidColorBrush.Color)"/>
+        </Storyboard>
+    </Storyboard>
+
+    <Storyboard x:Key="UnHoverBorderBrushAnimation">
+        <Storyboard>
+            <ColorAnimation To="#1a191a" Duration="0:0:0.2" Storyboard.TargetName="Border" 
+            Storyboard.TargetProperty="(BorderBrush).(SolidColorBrush.Color)"/>
+        </Storyboard>
+    </Storyboard>
+</ResourceDictionary>

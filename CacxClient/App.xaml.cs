@@ -1,4 +1,5 @@
 ﻿using CacxClient.Communication.HTTPCommunication;
+using CacxClient.Windows;
 using CacxShared.Helper;
 using Cristiano3120.Logging;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,7 +43,12 @@ public partial class App : Application
         ServiceProvider = services.BuildServiceProvider();
 
         //Give the server some time to start cause I am starting both projects at the same time
+        LoginWindow loginWindow = new();
+        loginWindow.Show();
+        Current.MainWindow = loginWindow;
+
         await Task.Delay(1000);
+        //TODO: GitHub Issue #9
     }
 }
 
