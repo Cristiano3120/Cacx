@@ -42,11 +42,11 @@ public partial class App : Application
 
         ServiceProvider = services.BuildServiceProvider();
 
-        //Give the server some time to start cause I am starting both projects at the same time
         LoginWindow loginWindow = new();
         loginWindow.Show();
         Current.MainWindow = loginWindow;
 
+        //Give the server some time to start cause I am starting both projects at the same time
         await Task.Delay(1000);
         //TODO: GitHub Issue #9
     }

@@ -25,9 +25,9 @@
                 <BeginStoryboard>
                     <Storyboard>
                         <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(TranslateTransform.Y)"
-                        To="-200" Duration="0:0:0.2"/>
-                        <DoubleAnimation Storyboard.TargetProperty="FontSize"
-                        To="12" Duration="0:0:0.2"/>
+                            To="-200" Duration="0:0:0.2"/>
+                        <DoubleAnimation Storyboard.TargetProperty="FontSize" 
+                            To="12" Duration="0:0:0.2"/>
                     </Storyboard>
                 </BeginStoryboard>
             </EventTrigger>
@@ -36,9 +36,9 @@
                 <BeginStoryboard>
                     <Storyboard>
                         <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(TranslateTransform.Y)"
-                        To="0" Duration="0:0:0.2"/>
+                            To="0" Duration="0:0:0.2"/>
                         <DoubleAnimation Storyboard.TargetProperty="FontSize"
-                        To="16" Duration="0:0:0.2"/>
+                            To="16" Duration="0:0:0.2"/>
                     </Storyboard>
                 </BeginStoryboard>
             </EventTrigger>

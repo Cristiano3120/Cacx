@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using CacxClient.PasswordGeneratorResources;
+using System.Windows;
 
 namespace CacxClient.Windows;
 
@@ -13,5 +14,10 @@ public partial class CreateAccWindow : BaseWindow
         GeneratePwBtn.Click += GeneratePwBtn_Click;
     }
 
-    private void GeneratePwBtn_Click(object sender, RoutedEventArgs e) => throw new NotImplementedException();
+    private void GeneratePwBtn_Click(object sender, RoutedEventArgs e)
+    {
+        string password = PasswordTextBox.Text = PasswordGenerator.GeneratePassword();
+        Clipboard.SetText(password); //TODO: GitHub Issue #10
+        PasswordTextBox.Text = password;
+    }
 }

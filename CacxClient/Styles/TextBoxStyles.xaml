@@ -11,10 +11,11 @@
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
                     <Border x:Name="Border"
-                    CornerRadius="8"
-                    BorderBrush="#1a191a"
-                    BorderThickness="2"
-                    Background="{TemplateBinding Background}">
+                        CornerRadius="8"
+                        BorderBrush="#1a191a"
+                        BorderThickness="2"
+                        Background="{TemplateBinding Background}">
+                        
                         <ScrollViewer x:Name="PART_ContentHost"/>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -24,9 +25,9 @@
                                 <BeginStoryboard>
                                     <Storyboard>
                                         <ColorAnimation To="#cccccc" Duration="0:0:0.3"
-                                        Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"/>
+                                            Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"/>
                                         <ColorAnimation To="#cccccc" Duration="0:0:0.5" Storyboard.TargetName="Border" 
-                                        Storyboard.TargetProperty="(BorderBrush).(SolidColorBrush.Color)"/>
+                                            Storyboard.TargetProperty="(BorderBrush).(SolidColorBrush.Color)"/>
                                     </Storyboard>
                                 </BeginStoryboard>
                             </Trigger.EnterActions>
@@ -34,9 +35,9 @@
                                 <BeginStoryboard>
                                     <Storyboard>
                                         <ColorAnimation To="#000000" Duration="0:0:0.2"
-                                        Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"/>
+                                            Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"/>
                                         <ColorAnimation To="#1a191a" Duration="0:0:0.2" Storyboard.TargetName="Border" 
-                                        Storyboard.TargetProperty="(BorderBrush).(SolidColorBrush.Color)"/>
+                                            Storyboard.TargetProperty="(BorderBrush).(SolidColorBrush.Color)"/>
                                     </Storyboard>
                                 </BeginStoryboard>
                             </Trigger.ExitActions>

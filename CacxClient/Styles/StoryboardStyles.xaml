@@ -21,4 +21,18 @@
             Storyboard.TargetProperty="(BorderBrush).(SolidColorBrush.Color)"/>
         </Storyboard>
     </Storyboard>
+
+    <Storyboard x:Key="HoverGlowAnimation">
+        <ColorAnimation To="#cccccc" Duration="0:0:0.3"
+            Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"/>
+        <ColorAnimation To="#cccccc" Duration="0:0:0.3" Storyboard.TargetName="Border" 
+        Storyboard.TargetProperty="(BorderBrush).(SolidColorBrush.Color)"/>
+    </Storyboard>
+
+    <Storyboard x:Key="UnHoverGlowAnimation">
+        <ColorAnimation To="#000000" Duration="0:0:0.2"
+            Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"/>
+        <ColorAnimation To="#1a191a" Duration="0:0:0.2" Storyboard.TargetName="Border" 
+            Storyboard.TargetProperty="(BorderBrush).(SolidColorBrush.Color)"/>
+    </Storyboard>
 </ResourceDictionary>

@@ -7,10 +7,10 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="Border" 
-            CornerRadius="8" 
-            BorderBrush="#1a191a"
-            BorderThickness="2"
-            Background="{TemplateBinding Background}">
+                        CornerRadius="8" 
+                        BorderBrush="#1a191a"
+                        BorderThickness="2"
+                        Background="{TemplateBinding Background}">
 
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True"/>
                     </Border>
@@ -24,10 +24,10 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="Border" 
-                    CornerRadius="8" 
-                    BorderBrush="#1a191a"
-                    BorderThickness="2"
-                    Background="{TemplateBinding Background}">
+                        CornerRadius="8" 
+                        BorderBrush="#1a191a"
+                        BorderThickness="2"
+                        Background="{TemplateBinding Background}">
 
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True"/>
                     </Border>
@@ -36,24 +36,10 @@
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Cursor" Value="Hand"/>
                             <Trigger.EnterActions>
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <ColorAnimation To="#cccccc" Duration="0:0:0.3"
-                                        Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"/>
-                                        <ColorAnimation To="#cccccc" Duration="0:0:0.3" Storyboard.TargetName="Border" 
-                                        Storyboard.TargetProperty="(BorderBrush).(SolidColorBrush.Color)"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
+                                <BeginStoryboard Storyboard="{StaticResource HoverGlowAnimation}"/>
                             </Trigger.EnterActions>
                             <Trigger.ExitActions>
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <ColorAnimation To="#000000" Duration="0:0:0.2"
-                                        Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"/>
-                                        <ColorAnimation To="#1a191a" Duration="0:0:0.2" Storyboard.TargetName="Border" 
-                                        Storyboard.TargetProperty="(BorderBrush).(SolidColorBrush.Color)"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
+                                <BeginStoryboard Storyboard="{StaticResource UnHoverGlowAnimation}"/>
                             </Trigger.ExitActions>
                         </Trigger>
 
@@ -97,10 +83,10 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="Border"
-                CornerRadius="8"
-                BorderBrush="#1a191a"
-                BorderThickness="2"
-                Background="{TemplateBinding Background}">
+                        CornerRadius="8"
+                        BorderBrush="#1a191a"
+                        BorderThickness="2"
+                        Background="{TemplateBinding Background}">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
 
