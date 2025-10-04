@@ -1,19 +1,33 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+    <!--Colors-->
+    <SolidColorBrush x:Key="TextBox_Background" Color="#2e2d2e"/>
+    <SolidColorBrush x:Key="TextBox_Foreground" Color="Black"/>
+    <SolidColorBrush x:Key="TextBox_BorderBrush" Color="#1a191a"/>
+
+    <!--Values-->
+    <sys:Double x:Key="TextBox_FontSize">15</sys:Double>
+    <Thickness x:Key="TextBox_Padding" Left="0" Top="5" Right="0" Bottom="0"/>
+    <FontWeight x:Key="TextBox_FontWeight">SemiBold</FontWeight>
+    <CornerRadius x:Key="TextBox_CornerRadius">8</CornerRadius>
+    <Thickness x:Key="TextBox_BorderThickness" Left="2" Top="2" Right="2" Bottom="2"/>
+
+    <!--=================================================================================================-->
     <Style TargetType="TextBox" x:Key="BaseTextBoxStyle">
-        <Setter Property="Background" Value="#2e2d2e"/>
-        <Setter Property="FontSize" Value="15"/>
-        <Setter Property="Padding" Value="0, 5, 0, 0"/>
-        <Setter Property="Foreground" Value="#000000"/>
-        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Background" Value="{StaticResource TextBox_Background}"/>
+        <Setter Property="FontSize" Value="{StaticResource TextBox_FontSize}"/>
+        <Setter Property="Padding" Value="{StaticResource TextBox_Padding}"/>
+        <Setter Property="Foreground" Value="{StaticResource TextBox_Foreground}"/>
+        <Setter Property="FontWeight" Value="{StaticResource TextBox_FontWeight}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
                     <Border x:Name="Border"
-                        CornerRadius="8"
-                        BorderBrush="#1a191a"
-                        BorderThickness="2"
+                        CornerRadius="{StaticResource TextBox_CornerRadius}"
+                        BorderBrush="{StaticResource TextBox_BorderBrush}"
+                        BorderThickness="{StaticResource TextBox_BorderThickness}"
                         Background="{TemplateBinding Background}">
                         
                         <ScrollViewer x:Name="PART_ContentHost"/>

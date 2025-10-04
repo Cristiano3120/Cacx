@@ -1,15 +1,24 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+    <!--Colors-->
+    <SolidColorBrush x:Key="Button_BackgroundBrush" Color="#2e2d2e"/>
+    <SolidColorBrush x:Key="Button_BorderBrush" Color="#1a191a"/>
+
+    <!--BorderProperties-->
+    <Thickness x:Key="Button_BorderThickness" Left="2" Top="2" Right="2" Bottom="2"/>
+    <CornerRadius x:Key="Button_CornerRadius" TopLeft="8" TopRight="8" BottomRight="8" BottomLeft="8"/>
+
+    <!--================================================================================================-->
     <Style x:Key="BaseButtonStyle" TargetType="Button">
-        <Setter Property="Background" Value="#2e2d2e"/>
+        <Setter Property="Background" Value="{StaticResource Button_BackgroundBrush}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="Border" 
-                        CornerRadius="8" 
-                        BorderBrush="#1a191a"
-                        BorderThickness="2"
+                        CornerRadius="{StaticResource Button_CornerRadius}" 
+                        BorderBrush="{StaticResource Button_BorderBrush}"
+                        BorderThickness="{StaticResource Button_BorderThickness}"
                         Background="{TemplateBinding Background}">
 
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True"/>
@@ -24,9 +33,9 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="Border" 
-                        CornerRadius="8" 
-                        BorderBrush="#1a191a"
-                        BorderThickness="2"
+                        CornerRadius="{StaticResource Button_CornerRadius}" 
+                        BorderBrush="{StaticResource Button_BorderBrush}"
+                        BorderThickness="{StaticResource Button_BorderThickness}"
                         Background="{TemplateBinding Background}">
 
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True"/>
@@ -83,10 +92,11 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="Border"
-                        CornerRadius="8"
-                        BorderBrush="#1a191a"
-                        BorderThickness="2"
+                        CornerRadius="{StaticResource Button_CornerRadius}"
+                        BorderBrush="{StaticResource Button_BorderBrush}"
+                        BorderThickness="{StaticResource Button_BorderThickness}"
                         Background="{TemplateBinding Background}">
+                        
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
 

@@ -1,26 +1,37 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+    <!--Brushes-->
+    <SolidColorBrush x:Key="Hyperlink_ForegroundBrush" Color="Black"/>
+    <Color x:Key="Hyperlink_HoverColor">White</Color>
+    <Color x:Key="Hyperlink_UnHoverColor">Black</Color>
+
+    <!--Font properties-->
+    <sys:Double x:Key="Hyperlink_FontSize">13</sys:Double>
+    <FontWeight x:Key="Hyperlink_FontWeight">SemiBold</FontWeight>
+    
+    <!--=====================================================================-->
     <Style TargetType="Hyperlink">
-        <Setter Property="Foreground" Value="Black"/>
-        <Setter Property="FontSize" Value="13"/>
-        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{StaticResource Hyperlink_ForegroundBrush}"/>
+        <Setter Property="FontSize" Value="{StaticResource Hyperlink_FontSize}"/>
+        <Setter Property="FontWeight" Value="{StaticResource Hyperlink_FontWeight}"/>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Cursor" Value="Hand"/>
                 <Trigger.EnterActions>
                     <BeginStoryboard>
                         <Storyboard>
-                            <ColorAnimation To="White" Duration="0:0:0.2"
-                        Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"/>
+                            <ColorAnimation To="{StaticResource Hyperlink_HoverColor}" Duration="0:0:0.2"
+                                Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"/>
                         </Storyboard>
                     </BeginStoryboard>
                 </Trigger.EnterActions>
                 <Trigger.ExitActions>
                     <BeginStoryboard>
                         <Storyboard>
-                            <ColorAnimation To="Black" Duration="0:0:0.2"
-                        Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"/>
+                            <ColorAnimation To="{StaticResource Hyperlink_UnHoverColor}" Duration="0:0:0.2"
+                                Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"/>
                         </Storyboard>
                     </BeginStoryboard>
                 </Trigger.ExitActions>

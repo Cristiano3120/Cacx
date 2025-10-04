@@ -1,6 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+    <Duration x:Key="TextBlock_Anim_Duration">0:0:0.2</Duration>
+
     <Style TargetType="TextBlock" x:Key="BaseTextBlockStyle">
         <Setter Property="FontSize" Value="15"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
@@ -25,9 +27,9 @@
                 <BeginStoryboard>
                     <Storyboard>
                         <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(TranslateTransform.Y)"
-                            To="-200" Duration="0:0:0.2"/>
+                            To="-200" Duration="{StaticResource TextBlock_Anim_Duration}"/>
                         <DoubleAnimation Storyboard.TargetProperty="FontSize" 
-                            To="12" Duration="0:0:0.2"/>
+                            To="12" Duration="{StaticResource TextBlock_Anim_Duration}"/>
                     </Storyboard>
                 </BeginStoryboard>
             </EventTrigger>
@@ -36,9 +38,9 @@
                 <BeginStoryboard>
                     <Storyboard>
                         <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(TranslateTransform.Y)"
-                            To="0" Duration="0:0:0.2"/>
+                            To="0" Duration="{StaticResource TextBlock_Anim_Duration}"/>
                         <DoubleAnimation Storyboard.TargetProperty="FontSize"
-                            To="16" Duration="0:0:0.2"/>
+                            To="16" Duration="{StaticResource TextBlock_Anim_Duration}"/>
                     </Storyboard>
                 </BeginStoryboard>
             </EventTrigger>
