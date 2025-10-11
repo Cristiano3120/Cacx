@@ -8,11 +8,25 @@
         mc:Ignorable="d"
         Title="CreateAccWindow" Style="{StaticResource SmallWindowStyle}">
     <Grid>
+        <TextBlock Foreground="{StaticResource DefaultErrorBrush}" Visibility="Hidden"
+                   TextAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Center"
+                   Margin="0, 100, 0, 0" Name="ErrorTextBlock" Text="This is a test!"/>
+
         <cc:TextBoxTextBlock x:Name="EmailTextBox" Label="Email:" Width="200" Height="35" Margin="0, 0, 0, 100"/>
         <cc:TextBoxTextBlock x:Name="PasswordTextBox" Label="Password:" Width="200" Height="35" Margin="0, 50, 0, 0"/>
+        
         <Button x:Name="GeneratePwBtn" Style="{StaticResource IconBtnStyle}" Width="35" Height="35" Content="🎲" Margin="250, 50, 0, 0"/>
-        <ComboBox Style="{DynamicResource ComboBoxSytle}" x:Name="MonthBox" Margin="0, 160, 120, 0" Height="25" Width="50"/>
-        <ComboBox Style="{DynamicResource ComboBoxSytle}" x:Name="DayBox" Margin="0, 160, 15, 0" Height="25" Width="50"/>
+        
+        <ComboBox Style="{DynamicResource ComboBoxSytle}" x:Name="DayBox" Margin="0, 160, 120, 0" Height="25" Width="50"/>
+        <ComboBox Style="{DynamicResource ComboBoxSytle}" x:Name="MonthBox" Margin="0, 160, 15, 0" Height="25" Width="50"/>
         <ComboBox Style="{DynamicResource ComboBoxSytle}" x:Name="YearBox" Margin="100, 160, 0, 0" Height="25" Width="60"/>
+
+        <Button x:Name="GoBackBtn" Background="Transparent" FontSize="27"
+                   Content="🡨" Width="35" Height="35" Margin="10, 10, 0, 0" 
+                   VerticalAlignment="Top" HorizontalAlignment="Left"
+                   Style="{StaticResource TransparentBtnStyle}"/>
+
+        <Button x:Name="ContinueBtn" Content="Continue"
+                Width="80" Height="30" Margin="0, 260, 0, 0"/>
     </Grid>
 </local:BaseWindow>

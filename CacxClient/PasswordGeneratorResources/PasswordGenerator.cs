@@ -25,7 +25,7 @@ internal static class PasswordGenerator
     public static string GeneratePassword()
     {
         //Fits perfectly into the textbox without scrolling
-        const byte PasswordLength = 22;
+        const byte PasswordLength = 21;
 
         using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
         {

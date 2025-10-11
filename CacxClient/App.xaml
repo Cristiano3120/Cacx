@@ -5,6 +5,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/GlobalXaml/Colors.xaml"/>
                 <ResourceDictionary Source="/Styles/StoryboardStyles.xaml"/>
                 <ResourceDictionary Source="/Styles/TextBlockStyles.xaml"/>
                 <ResourceDictionary Source="/Styles/ButtonStyles.xaml"/>

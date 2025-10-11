@@ -32,6 +32,7 @@
         <Setter Property="MinHeight" Value="0"/>
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
+        <Setter Property="VerticalScrollBarVisibility" Value="Hidden"/>
         <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -190,7 +191,7 @@
             <Popup x:Name="PART_Popup" AllowsTransparency="true" Grid.ColumnSpan="2" IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource Mode=TemplatedParent}}" Placement="Bottom" PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}">
                 <theme:SystemDropShadowChrome x:Name="shadow" Color="Transparent" MinWidth="{Binding ActualWidth, ElementName=templateRoot}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
                     <Border x:Name="dropDownBorder" Background="{StaticResource ComboBox_Background_Brush}" BorderBrush="{StaticResource ComboBox_Border_Brush}" BorderThickness="{StaticResource ComboBox_BorderThickness}" CornerRadius="{StaticResource ComboBox_CornerRadius}">
-                        <ScrollViewer x:Name="DropDownScrollViewer" Background="Transparent">
+                        <ScrollViewer x:Name="DropDownScrollViewer" VerticalScrollBarVisibility="Hidden" Background="Transparent">
                             <Grid x:Name="grid" RenderOptions.ClearTypeHint="Enabled" Background="Transparent">
                                 <Canvas x:Name="canvas" HorizontalAlignment="Left" Height="0" VerticalAlignment="Top" Width="0">
                                     <Rectangle x:Name="opaqueRect" Fill="{Binding Background, ElementName=dropDownBorder}" Height="{Binding ActualHeight, ElementName=dropDownBorder}" Width="{Binding ActualWidth, ElementName=dropDownBorder}"/>
@@ -254,7 +255,7 @@
             MinWidth="{Binding ActualWidth, ElementName=templateRoot}"
             MaxHeight="{TemplateBinding MaxDropDownHeight}">
                     <ScrollViewer x:Name="DropDownScrollViewer"
-                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Hidden"
                       HorizontalScrollBarVisibility="Disabled"
                       CanContentScroll="True"
                       Background="Transparent">
@@ -275,7 +276,7 @@
         <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"/>
         <Setter Property="BorderThickness" Value="{StaticResource ComboBox_BorderThickness}"/>
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
-        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden"/>
         <Setter Property="Padding" Value="6,3,5,3"/>
         <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
         <Setter Property="ScrollViewer.PanningMode" Value="Both"/>
