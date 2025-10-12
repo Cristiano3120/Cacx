@@ -14,6 +14,7 @@
                 <ResourceDictionary Source="/Styles/WindowStyles.xaml"/>
                 <ResourceDictionary Source="/Styles/ComboBoxStyles.xaml"/>
                 <ResourceDictionary Source="/Styles/ComboBoxItemStyle.xaml"/>
+                <ResourceDictionary Source="/Styles/EllipseStylesxaml.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

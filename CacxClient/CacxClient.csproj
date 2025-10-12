@@ -10,11 +10,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Page Remove="Application\App.xaml" />
+    <Page Remove="ApplicationResources\App.xaml" />
   </ItemGroup>
 
   <ItemGroup>
-    <ApplicationDefinition Include="Application\App.xaml" />
+    <ApplicationDefinition Include="ApplicationResources\App.xaml" />
   </ItemGroup>
 
   <ItemGroup>

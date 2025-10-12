@@ -2,54 +2,47 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:System="clr-namespace:System;assembly=mscorlib"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CacxClient.CostumComponents"
              mc:Ignorable="d" 
              d:DesignHeight="50" d:DesignWidth="200">
 
     <UserControl.Resources>
-        <!--Anim time-->
         <Duration x:Key="DurationValue">0:0:0.2</Duration>
     </UserControl.Resources>
 
     <Grid>
-        <!-- TextBox -->
-        <TextBox x:Name="InnerTextBox" Height="35" 
-                 Width="{Binding Width, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+        <!-- TextBox mit dynamischer Höhe -->
+        <TextBox x:Name="InnerTextBox"
+                 Width="{Binding Width, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                 Height="{Binding Height, RelativeSource={RelativeSource AncestorType=UserControl}}"
                  Style="{StaticResource BaseTextBoxStyle}" 
                  MaxLength="{Binding MaxTextLength, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                 Text="{Binding Text, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                 Text="{Binding Text, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-        <!-- Label -->
+        <!-- Label immer -18 über der TextBox -->
         <TextBlock Text="{Binding Label, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                   VerticalAlignment="Top">
+                   Margin="3,0,0,0"
+                   VerticalAlignment="Top"
+                   RenderTransformOrigin="0,0">
+            <TextBlock.RenderTransform>
+                <TranslateTransform Y="-18"/>
+            </TextBlock.RenderTransform>
+
             <TextBlock.Style>
                 <Style TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
-                    <Setter Property="Margin" Value="3, 0, 0, 0"/>
-                    <!--Offset for stylistic reasons-->
-                    <Setter Property="RenderTransform">
-                        <Setter.Value>
-                            <TranslateTransform Y="-18"/>
-                            <!--StartPos. Little offset to the top-->
-                        </Setter.Value>
-                    </Setter>
-
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding IsKeyboardFocusWithin, ElementName=InnerTextBox}" Value="True">
-                            <!--Begin moving the TextBlock upwards and changing some of it´s properties-->
                             <DataTrigger.EnterActions>
                                 <BeginStoryboard>
                                     <Storyboard>
                                         <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(TranslateTransform.Y)"
                                                          To="-23" Duration="{StaticResource DurationValue}"/>
                                         <ColorAnimation Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)"
-                                                        To="White" Duration="0:0:0.25"/>
+                                                        To="White" Duration="{StaticResource DurationValue}"/>
                                     </Storyboard>
                                 </BeginStoryboard>
                             </DataTrigger.EnterActions>
-                            
-                            <!--Undo the changes-->
                             <DataTrigger.ExitActions>
                                 <BeginStoryboard>
                                     <Storyboard>

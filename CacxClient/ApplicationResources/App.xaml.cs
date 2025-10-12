@@ -55,5 +55,8 @@ public partial class App : Application
     {
         _serviceProvider = services.BuildServiceProvider();
     }
+
+    public static Logger GetLogger() => _serviceProvider.GetRequiredService<Logger>();
+    public static Http GetHttp() => _serviceProvider.GetRequiredService<Http>();
 }
 

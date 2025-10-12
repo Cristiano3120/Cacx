@@ -1,4 +1,5 @@
 ﻿using Cristiano3120.Logging;
+using CacxShared.SharedDTOs;
 
 namespace CacxClient.Windows;
 /// <summary>
@@ -9,7 +10,7 @@ public partial class CreateAccPart2Window : BaseWindow
     public CreateAccPart2Window() 
         => InitializeComponent();
 
-    public CreateAccPart2Window(string email, string password, DateOnly birthday)
+    public CreateAccPart2Window(User user)
     {
         logger.LogDebug(LoggerParams.None, $"{nameof(CreateAccPart2Window)} initialized");
         InitializeComponent();

@@ -1,9 +1,11 @@
 ﻿using CacxClient.ExtensionMethods;
 using CacxClient.Helpers;
 using CacxClient.PasswordGeneratorResources;
+using CacxShared.SharedDTOs;
 using Cristiano3120.Logging;
 using System.ComponentModel;
 using System.Globalization;
+using System.Security.RightsManagement;
 using System.Windows;
 using System.Windows.Media;
 
@@ -12,15 +14,15 @@ namespace CacxClient.Windows;
 /// <summary>
 /// Interaction logic for CreateAccWindow.xaml
 /// </summary>
-public partial class CreateAccWindow : BaseWindow
+public partial class CreateAccWindowPart2 : BaseWindow
 {
     private CancellationTokenSource? _animationCts;
     private readonly Color _animatedErrorColor;
     private readonly Brush _defaultErrorBrush;
 
-    public CreateAccWindow()
+    public CreateAccWindowPart2()
     {
-        logger.LogDebug(LoggerParams.None, $"{nameof(CreateAccWindow)} initialized.");
+        logger.LogDebug(LoggerParams.None, $"{nameof(CreateAccWindowPart2)} initialized.");
 
         InitializeComponent();
         InitBirthdayBoxes();
@@ -71,7 +73,14 @@ public partial class CreateAccWindow : BaseWindow
             return;
         }
 
-        GuiHelper.SwitchWindow(new CreateAccPart2Window(email, password, birthday));
+        User user = new()
+        {
+            Email = email,
+            Password = password,
+            Birthday = birthday
+        };
+
+        GuiHelper.SwitchWindow(new CreateAccPart2Window(user));
     }
 
     private void GeneratePwBtn_Click(object sender, RoutedEventArgs e)

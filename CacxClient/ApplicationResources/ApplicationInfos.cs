@@ -1,4 +1,4 @@
-﻿namespace CacxClient.Application;
+﻿namespace CacxClient.ApplicationResources;
 
 internal static class ApplicationInfos
 {
