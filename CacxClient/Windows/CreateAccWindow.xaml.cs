@@ -1,6 +1,7 @@
 ﻿using CacxClient.ExtensionMethods;
 using CacxClient.Helpers;
 using CacxClient.PasswordGeneratorResources;
+using Cristiano3120.Logging;
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
@@ -19,10 +20,12 @@ public partial class CreateAccWindow : BaseWindow
 
     public CreateAccWindow()
     {
+        logger.LogDebug(LoggerParams.None, $"{nameof(CreateAccWindow)} initialized.");
+
         InitializeComponent();
         InitBirthdayBoxes();
 
-        GeneratePwBtn.Click += GeneratePwBtn_ClickAsync;
+        GeneratePwBtn.Click += GeneratePwBtn_Click;
         ContinueBtn.Click += ContinueBtn_ClickAsync;
         GoBackBtn.Click += GoBackBtn_Click;
 
@@ -44,14 +47,17 @@ public partial class CreateAccWindow : BaseWindow
         string email = EmailTextBox.Text;
         if (!await Helper.IsEmailValidAsync(email))
         {
-            ErrorTextBlock.TriggerDisplayAnimation(_defaultErrorBrush, _animatedErrorColor, "Invalid email",  ref _animationCts);
+            const string ErrorMsg = "Invalid email";
+            ErrorTextBlock.TriggerDisplayAnimation(_defaultErrorBrush, _animatedErrorColor, ErrorMsg,  ref _animationCts);
             return;
         }
 
         string password = PasswordTextBox.Text;
-        if (string.IsNullOrEmpty(password) || password.Length < 8)
+        const byte MinPasswordLength = 8;
+        if (string.IsNullOrEmpty(password) || password.Length < MinPasswordLength)
         {
-            ErrorTextBlock.TriggerDisplayAnimation(_defaultErrorBrush, _animatedErrorColor, "Password length has to be greater than 7",  ref _animationCts);
+            string ErrorMsg = $"Password length has to be greater than {MinPasswordLength -1}";
+            ErrorTextBlock.TriggerDisplayAnimation(_defaultErrorBrush, _animatedErrorColor, ErrorMsg,  ref _animationCts);
             return;
         }
 
@@ -60,14 +66,15 @@ public partial class CreateAccWindow : BaseWindow
              YearBox.SelectedItem is not int year ||
             !DateOnly.TryParse($"{year}-{month}-{day}", CultureInfo.InvariantCulture, out DateOnly birthday))
         {
-            ErrorTextBlock.TriggerDisplayAnimation(_defaultErrorBrush, _animatedErrorColor, "Invalid birthday",  ref _animationCts);
+            const string ErrorMsg = "Invalid birthday";
+            ErrorTextBlock.TriggerDisplayAnimation(_defaultErrorBrush, _animatedErrorColor, ErrorMsg,  ref _animationCts);
             return;
         }
 
         GuiHelper.SwitchWindow(new CreateAccPart2Window(email, password, birthday));
     }
 
-    private async void GeneratePwBtn_ClickAsync(object sender, RoutedEventArgs e)
+    private void GeneratePwBtn_Click(object sender, RoutedEventArgs e)
     {
         string password = PasswordTextBox.Text = PasswordGenerator.GeneratePassword();
         Clipboard.SetText(password);
@@ -75,7 +82,8 @@ public partial class CreateAccWindow : BaseWindow
         SolidColorBrush startingBrush = new(Color.FromRgb(204, 204, 204));
         Color animatedColor = Color.FromRgb(102, 102, 102);
 
-        ErrorTextBlock.TriggerDisplayAnimation(startingBrush, animatedColor, "Copied to the clipboard!",  ref _animationCts);
+        const string Msg = "Copied to the clipboard!";
+        ErrorTextBlock.TriggerDisplayAnimation(startingBrush, animatedColor, Msg,  ref _animationCts);
 
         PasswordTextBox.Text = password;
     }

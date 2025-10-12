@@ -14,7 +14,7 @@ namespace CacxClient;
 /// </summary>
 public partial class App : Application
 {
-    public static ServiceProvider ServiceProvider { get; private set; } = default!;
+    private static ServiceProvider _serviceProvider = default!;
 
     [LibraryImport("kernel32")]
     [return: MarshalAs(UnmanagedType.Bool)]
@@ -40,7 +40,8 @@ public partial class App : Application
         _ = services.AddSingleton(logger);
         _ = services.AddSingleton(http);
 
-        ServiceProvider = services.BuildServiceProvider();
+        // Fix for S2696: Move static field assignment to a static method
+        InitializeServiceProvider(services);
 
         LoginWindow loginWindow = new();
         loginWindow.Show();
@@ -48,7 +49,11 @@ public partial class App : Application
 
         //Give the server some time to start cause I am starting both projects at the same time
         await Task.Delay(1000);
-        //TODO: GitHub Issue #9
+    }
+
+    private static void InitializeServiceProvider(ServiceCollection services)
+    {
+        _serviceProvider = services.BuildServiceProvider();
     }
 }
 

@@ -1,7 +1,6 @@
 ﻿using CacxClient.Communication.HTTPCommunication;
 using CacxClient.Helpers;
 using Cristiano3120.Logging;
-using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 
 namespace CacxClient.Windows;
@@ -11,22 +10,20 @@ namespace CacxClient.Windows;
 /// </summary>
 public partial class LoginWindow : BaseWindow
 {
-    private readonly Logger _logger;
     private readonly Http _http;
     public LoginWindow()
     {
+        logger.LogDebug(LoggerParams.None, $"{nameof(LoginWindow)} initialized");
+        _http = App.GetHttp();
+
         InitializeComponent();
         LoginBtn.Click += LoginBtn_Click;
 
-        _logger = App.ServiceProvider.GetRequiredService<Logger>();
-        _http = App.ServiceProvider.GetRequiredService<Http>();
-
-        _logger.LogDebug(LoggerParams.None, "LoginWindow initialized");
         GuiHelper.SwitchWindow<CreateAccWindow>();
     }
 
     public void LoginBtn_Click(object sender, RoutedEventArgs args)
     {
-        
+        throw new NotImplementedException($"NOT IMPLEMENTED {nameof(LoginWindow)} L.28");
     }
 }

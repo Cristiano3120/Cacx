@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using CacxClient.Windows;
+using System.Windows;
 
 namespace CacxClient.Helpers;
 
@@ -12,7 +13,7 @@ internal static class GuiHelper
     /// If the <see cref="Window"/> needs a special constructor that needs to be called
     /// instantiate a <see cref="Window"/> of that type beforehand and just pass it as an param
     /// </param>
-    public static void SwitchWindow<TNewWindow>(TNewWindow? newWindow = null) where TNewWindow : Window, new()
+    public static void SwitchWindow<TNewWindow>(TNewWindow? newWindow = null) where TNewWindow : BaseWindow, new()
     {
         //The delay before closing the old window in ms
         const int SwitchDelayMs = 150;
