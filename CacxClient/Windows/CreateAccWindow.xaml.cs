@@ -5,7 +5,6 @@ using CacxShared.SharedDTOs;
 using Cristiano3120.Logging;
 using System.ComponentModel;
 using System.Globalization;
-using System.Security.RightsManagement;
 using System.Windows;
 using System.Windows.Media;
 
@@ -14,15 +13,15 @@ namespace CacxClient.Windows;
 /// <summary>
 /// Interaction logic for CreateAccWindow.xaml
 /// </summary>
-public partial class CreateAccWindowPart2 : BaseWindow
+public partial class CreateAccWindow : BaseWindow
 {
     private CancellationTokenSource? _animationCts;
     private readonly Color _animatedErrorColor;
     private readonly Brush _defaultErrorBrush;
 
-    public CreateAccWindowPart2()
+    public CreateAccWindow()
     {
-        logger.LogDebug(LoggerParams.None, $"{nameof(CreateAccWindowPart2)} initialized.");
+        logger.LogDebug(LoggerParams.None, $"{nameof(CreateAccWindow)} initialized.");
 
         InitializeComponent();
         InitBirthdayBoxes();

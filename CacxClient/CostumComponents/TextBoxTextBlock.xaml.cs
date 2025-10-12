@@ -32,6 +32,15 @@ public partial class TextBoxTextBlock : UserControl
     public static readonly DependencyProperty MaxTextLengthProperty =
         DependencyProperty.Register("MaxLength", typeof(int), typeof(TextBoxTextBlock), new PropertyMetadata(100));
 
+    public static readonly DependencyProperty LabelYPositionProperty =
+        DependencyProperty.Register("LabelYPosition", typeof(double), typeof(TextBoxTextBlock), new PropertyMetadata(-18.0));
+
+    public double LabelYPosition
+    {
+        get => (double)GetValue(LabelYPositionProperty);
+        set => SetValue(LabelYPositionProperty, value);
+    }
+
     public int MaxTextLength
     {
         get => (int)GetValue(MaxTextLengthProperty);

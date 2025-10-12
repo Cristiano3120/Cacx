@@ -19,7 +19,7 @@ public partial class LoginWindow : BaseWindow
         InitializeComponent();
         LoginBtn.Click += LoginBtn_Click;
 
-        GuiHelper.SwitchWindow<CreateAccWindowPart2>();
+        GuiHelper.SwitchWindow<CreateAccPart2Window>();
     }
 
     public void LoginBtn_Click(object sender, RoutedEventArgs args)

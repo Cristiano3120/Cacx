@@ -12,7 +12,6 @@
     </UserControl.Resources>
 
     <Grid>
-        <!-- TextBox mit dynamischer Höhe -->
         <TextBox x:Name="InnerTextBox"
                  Width="{Binding Width, RelativeSource={RelativeSource AncestorType=UserControl}}"
                  Height="{Binding Height, RelativeSource={RelativeSource AncestorType=UserControl}}"
@@ -20,13 +19,12 @@
                  MaxLength="{Binding MaxTextLength, RelativeSource={RelativeSource AncestorType=UserControl}}"
                  Text="{Binding Text, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-        <!-- Label immer -18 über der TextBox -->
         <TextBlock Text="{Binding Label, RelativeSource={RelativeSource AncestorType=UserControl}}"
                    Margin="3,0,0,0"
                    VerticalAlignment="Top"
                    RenderTransformOrigin="0,0">
             <TextBlock.RenderTransform>
-                <TranslateTransform Y="-18"/>
+                <TranslateTransform Y="{Binding LabelYPosition, RelativeSource={RelativeSource AncestorType=UserControl}}"/> <!---18-->
             </TextBlock.RenderTransform>
 
             <TextBlock.Style>
@@ -37,7 +35,7 @@
                                 <BeginStoryboard>
                                     <Storyboard>
                                         <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(TranslateTransform.Y)"
-                                                         To="-23" Duration="{StaticResource DurationValue}"/>
+                                                         By="-5" Duration="{StaticResource DurationValue}"/>
                                         <ColorAnimation Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)"
                                                         To="White" Duration="{StaticResource DurationValue}"/>
                                     </Storyboard>
@@ -47,7 +45,7 @@
                                 <BeginStoryboard>
                                     <Storyboard>
                                         <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(TranslateTransform.Y)"
-                                                         To="-18" Duration="{StaticResource DurationValue}"/>
+                                                         By="5" Duration="{StaticResource DurationValue}"/>
                                         <ColorAnimation Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)"
                                                         To="Black" Duration="{StaticResource DurationValue}"/>
                                     </Storyboard>
