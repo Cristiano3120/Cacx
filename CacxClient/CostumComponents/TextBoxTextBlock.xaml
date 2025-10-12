@@ -17,7 +17,9 @@
                  Height="{Binding Height, RelativeSource={RelativeSource AncestorType=UserControl}}"
                  Style="{StaticResource BaseTextBoxStyle}" 
                  MaxLength="{Binding MaxTextLength, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                 Text="{Binding Text, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                 Text="{Binding Text, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                 AcceptsReturn="{Binding AcceptsReturn, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                 TextWrapping="{Binding TextWrapping, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
 
         <TextBlock Text="{Binding Label, RelativeSource={RelativeSource AncestorType=UserControl}}"
                    Margin="3,0,0,0"

@@ -23,17 +23,29 @@ public partial class TextBoxTextBlock : UserControl
         DependencyProperty.Register("Text", typeof(string), typeof(TextBoxTextBlock),
             new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
-    /// <summary>
-    /// Identifies the MaxTextLength dependency property, which specifies the maximum number of characters allowed in
-    /// the text of a TextBoxTextBlock control.
-    /// </summary>
-    /// <remarks>This dependency property can be used in styles, data binding, and animations to control the
-    /// maximum text length. The default value is 100.</remarks>
     public static readonly DependencyProperty MaxTextLengthProperty =
         DependencyProperty.Register("MaxLength", typeof(int), typeof(TextBoxTextBlock), new PropertyMetadata(100));
 
     public static readonly DependencyProperty LabelYPositionProperty =
         DependencyProperty.Register("LabelYPosition", typeof(double), typeof(TextBoxTextBlock), new PropertyMetadata(-18.0));
+
+    public static readonly DependencyProperty AcceptsReturnProperty =
+        DependencyProperty.Register("AcceptsReturn", typeof(bool), typeof(TextBoxTextBlock), new PropertyMetadata(false));
+
+    public static readonly DependencyProperty TextWrappingProperty =
+        DependencyProperty.Register("TextWrapping", typeof(TextWrapping), typeof(TextBoxTextBlock), new PropertyMetadata(TextWrapping.NoWrap));
+
+    public TextWrapping TextWrapping
+    {
+        get => (TextWrapping)GetValue(TextWrappingProperty);
+        set => SetValue(TextWrappingProperty, value);
+    }
+
+    public bool AcceptsReturn
+    {
+        get => (bool)GetValue(AcceptsReturnProperty);
+        set => SetValue(AcceptsReturnProperty, value);
+    }
 
     public double LabelYPosition
     {
