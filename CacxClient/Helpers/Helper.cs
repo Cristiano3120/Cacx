@@ -31,6 +31,7 @@ internal static class Helper
         }
 #else
         // In debug mode, skip email validation to facilitate testing with placeholder emails.
+        await Task.Delay(0); // Placeholder to keep the method async
         return true;
 #endif
     }

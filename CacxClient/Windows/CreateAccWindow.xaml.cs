@@ -1,6 +1,7 @@
 ﻿using CacxClient.ExtensionMethods;
 using CacxClient.Helpers;
 using CacxClient.PasswordGeneratorResources;
+using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
@@ -12,6 +13,7 @@ namespace CacxClient.Windows;
 /// </summary>
 public partial class CreateAccWindow : BaseWindow
 {
+    private CancellationTokenSource? _animationCts;
     private readonly Color _animatedErrorColor;
     private readonly Brush _defaultErrorBrush;
 
@@ -19,12 +21,19 @@ public partial class CreateAccWindow : BaseWindow
     {
         InitializeComponent();
         InitBirthdayBoxes();
+
         GeneratePwBtn.Click += GeneratePwBtn_ClickAsync;
         ContinueBtn.Click += ContinueBtn_ClickAsync;
         GoBackBtn.Click += GoBackBtn_Click;
 
         _animatedErrorColor = App.Current.Resources["ErrorColor"] as Color? ?? Color.FromRgb(234, 23, 31);
         _defaultErrorBrush = App.Current.Resources["DefaultErrorBrush"] as Brush ?? Brushes.LightGray;
+    }
+
+    protected override void OnClosing(CancelEventArgs e)
+    {
+        _animationCts?.Dispose();
+        base.OnClosing(e);
     }
 
     private void GoBackBtn_Click(object sender, RoutedEventArgs args)
@@ -35,14 +44,14 @@ public partial class CreateAccWindow : BaseWindow
         string email = EmailTextBox.Text;
         if (!await Helper.IsEmailValidAsync(email))
         {
-            await ErrorTextBlock.TriggerDisplayAnimationAsync(_defaultErrorBrush, _animatedErrorColor, "Invalid email");
+            ErrorTextBlock.TriggerDisplayAnimation(_defaultErrorBrush, _animatedErrorColor, "Invalid email",  ref _animationCts);
             return;
         }
 
         string password = PasswordTextBox.Text;
         if (string.IsNullOrEmpty(password) || password.Length < 8)
         {
-            await ErrorTextBlock.TriggerDisplayAnimationAsync(_defaultErrorBrush, _animatedErrorColor, "Password length has to be greater than 7");
+            ErrorTextBlock.TriggerDisplayAnimation(_defaultErrorBrush, _animatedErrorColor, "Password length has to be greater than 7",  ref _animationCts);
             return;
         }
 
@@ -51,7 +60,7 @@ public partial class CreateAccWindow : BaseWindow
              YearBox.SelectedItem is not int year ||
             !DateOnly.TryParse($"{year}-{month}-{day}", CultureInfo.InvariantCulture, out DateOnly birthday))
         {
-            await ErrorTextBlock.TriggerDisplayAnimationAsync(_defaultErrorBrush, _animatedErrorColor, "Invalid birthday");
+            ErrorTextBlock.TriggerDisplayAnimation(_defaultErrorBrush, _animatedErrorColor, "Invalid birthday",  ref _animationCts);
             return;
         }
 
@@ -65,7 +74,8 @@ public partial class CreateAccWindow : BaseWindow
 
         SolidColorBrush startingBrush = new(Color.FromRgb(204, 204, 204));
         Color animatedColor = Color.FromRgb(102, 102, 102);
-        await ErrorTextBlock.TriggerDisplayAnimationAsync(startingBrush, animatedColor, "Copied to the clipboard!");
+
+        ErrorTextBlock.TriggerDisplayAnimation(startingBrush, animatedColor, "Copied to the clipboard!",  ref _animationCts);
 
         PasswordTextBox.Text = password;
     }
@@ -83,7 +93,7 @@ public partial class CreateAccWindow : BaseWindow
         }
 
         int currentYear = DateTime.Now.Year;
-        for (int i = currentYear; i >= 1900; i--)
+        for (int i = currentYear; i >= 1930; i--)
         {
             _ = YearBox.Items.Add(i);
         }
