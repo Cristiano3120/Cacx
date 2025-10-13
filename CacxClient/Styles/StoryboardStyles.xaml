@@ -35,4 +35,14 @@
         <ColorAnimation To="#1a191a" Duration="0:0:0.2" Storyboard.TargetName="Border" 
             Storyboard.TargetProperty="(BorderBrush).(SolidColorBrush.Color)"/>
     </Storyboard>
+
+    <Storyboard x:Key="HoverGlowAnimationEllipse">
+        <ColorAnimation To="#cccccc" Duration="0:0:0.3"
+        Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)"/>
+    </Storyboard>
+
+    <Storyboard x:Key="UnHoverGlowAnimationEllipse">
+        <ColorAnimation To="#000000" Duration="0:0:0.2"
+        Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)"/>
+    </Storyboard>
 </ResourceDictionary>

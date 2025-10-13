@@ -8,15 +8,24 @@
         mc:Ignorable="d"
         Title="CreateAccPart2Window" Height="450" Width="800" Style="{StaticResource SmallWindowStyle}">
     <Grid>
+        <Button x:Name="GoBackBtn" Background="Transparent" FontSize="27"
+           Content="🡨" Width="35" Height="35" Margin="10, 10, 0, 0" 
+           VerticalAlignment="Top" HorizontalAlignment="Left"
+           Style="{StaticResource TransparentBtnStyle}"/>
+        
+        <TextBlock Foreground="{StaticResource DefaultErrorBrush}" Visibility="Hidden"
+           TextAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Center"
+           Margin="0, 40, 0, 0" Name="InfoTextBlock" Text="This is a test!"/>
+        
         <Ellipse x:Name="ProfilePictureEllipse" Width="70" Height="70" Margin="0, 0, 150, 250"/>
-        <cc:TextBoxTextBlock x:Name="UsernameBox" Width="140" Height="35" Label="Username" Margin="80, 0, 0, 220"/>
+        <cc:TextBoxTextBlock x:Name="UsernameBox" MaxTextLength="15" Width="140" Height="35" Label="Username" Margin="80, 0, 0, 220"/>
         
         <cc:TextBoxTextBlock x:Name="FirstNameBox" Width="220" Height="35" Margin="10, 0, 0, 95" Label="First Name"/>
         <cc:TextBoxTextBlock x:Name="LastNameBox" Width="220" Height="35"  Margin="10, 25, 0, 0" Label="Last Name"/>
 
-        <cc:TextBoxTextBlock x:Name="BiographyBox" Width="220" Height="70" MaxTextLength="60" 
-            LabelYPosition="-20" Margin="10, 185, 0, 0" Label="Biography" TextWrapping="Wrap" AcceptsReturn="True"/>
+        <cc:TextBoxTextBlock x:Name="BiographyBox" Width="220" Height="80" MaxTextLength="100" 
+            LabelYPosition="-20" Margin="10, 190, 0, 0" Label="Biography" TextWrapping="Wrap" AcceptsReturn="True"/>
 
-        <Button Height="35" Width="70" Content="Sign up" VerticalAlignment="Bottom" Margin="0, 0, 0, 30"/>
+        <Button x:Name="SignUpBtn" Height="35" Width="70" Content="Sign up" VerticalAlignment="Bottom" Margin="0, 0, 0, 20"/>
     </Grid>
 </local:BaseWindow>

@@ -1,13 +1,14 @@
-﻿namespace CacxShared.SharedDTOs;
+﻿namespace CacxServer.UserDataDatabaseResources;
 
-public sealed record User
+public sealed record DbUser
 {
     public ulong Id { get; init; }
     public string Username { get; init; } = default!;
-    public string Email { get; init; } = default!;
-    public string Password { get; init; } = default!;
-    public string FirstName { get; init; } = default!;
-    public string LastName { get; init; } = default!;
+    public byte[] Email { get; init; } = default!;
+    public byte[] EmailHash { get; init; } = default!;
+    public byte[] PasswordHash { get; init; } = default!;
+    public byte[] FirstName { get; init; } = default!;
+    public byte[] LastName { get; init; } = default!;
     public string ProfilePictureUrl { get; init; } = default!;
     public DateOnly Birthday { get; init; }
     public DateTime CreatedAt { get; init; }

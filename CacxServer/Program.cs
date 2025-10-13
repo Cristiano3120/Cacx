@@ -1,7 +1,11 @@
 using CacxServer.Helper;
+using CacxServer.Services;
+using CacxServer.UserDataDatabaseResources;
 using CacxShared.ApiResources;
 using CacxShared.Helper;
 using Cristiano3120.Logging;
+using DotNetEnv;
+using Microsoft.EntityFrameworkCore;
 using System.Net;
 using System.Text;
 using System.Text.Json;
@@ -10,8 +14,10 @@ namespace CacxServer;
 
 public static class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
+        _ = Env.Load(); 
+
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
@@ -32,6 +38,8 @@ public static class Program
         Logger logger = new(loggerSettings);
         _ = builder.Services.AddSingleton(logger);
 
+        _ = builder.Services.AddSingleton<AuthService>();
+
         //Get the Url depending on the environment
         string url = (builder.Configuration.GetValue<bool>(key: "Testing")
             ? builder.Configuration.GetValue<string>("TestUrl")
@@ -48,12 +56,29 @@ public static class Program
 
         _ = builder.Services.AddSingleton<LoggingHelper>();
 
+        string postgreConnStr = builder.Configuration["UserDataDbConnString"] 
+            ?? throw new NotImplementedException("Conn str missing");
+        _ = builder.Services.AddDbContext<UserDataDbContext>((optionsBuilder) =>
+        {
+            _ = optionsBuilder.UseNpgsql(postgreConnStr);
+        });
+
+        UserDataDatabase userDataDatabase = new(logger, postgreConnStr);
+        _ = builder.Services.AddSingleton(userDataDatabase);
+
         //Configure a logging when a request comes in and is done executing 
         _ = builder.Services.AddControllers(options => _ = options.Filters.Add<GlobalActionFilter>()).AddJsonOptions(options =>
         {
             options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             options.JsonSerializerOptions.WriteIndented = true;
         });
+
+        _ = builder.Services.AddHostedService<UnverifiedUserCleanupService>();
+
+        //Warmups
+        await userDataDatabase.WarmupAsync();
+        await SharedCryptographyHelper.WarmupAsync();
+        CryptographyHelper.Warmup();
 
         WebApplication app = builder.Build();
 
@@ -91,6 +116,6 @@ public static class Program
             }
         });
 
-        app.Run(url);
+        await app.RunAsync(url);
     }
 }

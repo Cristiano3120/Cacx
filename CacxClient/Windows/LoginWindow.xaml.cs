@@ -1,5 +1,6 @@
 ﻿using CacxClient.Communication.HTTPCommunication;
 using CacxClient.Helpers;
+using CacxShared.SharedDTOs;
 using Cristiano3120.Logging;
 using System.Windows;
 
@@ -19,11 +20,18 @@ public partial class LoginWindow : BaseWindow
         InitializeComponent();
         LoginBtn.Click += LoginBtn_Click;
 
-        GuiHelper.SwitchWindow<CreateAccPart2Window>();
+        //User user = new()
+        //{
+        //    Email = "Email",
+        //    Password = "Password",
+        //    Birthday = DateOnly.FromDateTime(DateTime.Now),
+        //};
+
+        GuiHelper.SwitchWindow(new CreateAccWindow());
     }
 
     public void LoginBtn_Click(object sender, RoutedEventArgs args)
     {
-        throw new NotImplementedException($"NOT IMPLEMENTED {nameof(LoginWindow)} L.28");
+        throw new NotImplementedException($"NOT IMPLEMENTED {nameof(LoginWindow)}");
     }
 }

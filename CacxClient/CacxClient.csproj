@@ -21,6 +21,7 @@
     <PackageReference Include="Cristiano3120.Logger" Version="1.0.6" />
     <PackageReference Include="DnsClient" Version="1.8.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
   </ItemGroup>
 
   <ItemGroup>

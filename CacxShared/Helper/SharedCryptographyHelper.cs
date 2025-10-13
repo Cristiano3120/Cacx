@@ -1,13 +1,45 @@
-﻿using System.Security.Cryptography;
+﻿using System.Diagnostics;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace CacxShared.Helper;
 
-public static class CryptographyHelper
+public static class SharedCryptographyHelper
 {
-    private static readonly HashAlgorithmName _hashAlgorithmName = HashAlgorithmName.SHA3_384;
-    private const int Iterations = 100_000;
+    private static readonly HashAlgorithmName _hashAlgorithmName = HashAlgorithmName.SHA384;
+    private const int Iterations = 50_000;
     private const int OutputSize = 48;
     private const int SaltLength = 20;
+
+    public static async Task WarmupAsync()
+    {
+        Console.WriteLine("Starting SharedCryptographyHelper warmup");
+
+        const int Runs = 3;
+        Stopwatch stopwatchTotal = Stopwatch.StartNew();
+        double totalElapsedMs = 0;
+
+        for (int i = 0; i < Runs; i++)
+        {
+            Stopwatch stopwatch = Stopwatch.StartNew();
+
+            byte[] testBytes = Encoding.UTF8.GetBytes("TestBytes!!!");
+            _ = Hash(testBytes);
+            _ = Verify(testBytes, testBytes);
+
+            stopwatch.Stop();
+            totalElapsedMs += stopwatch.Elapsed.TotalMilliseconds;
+        }
+
+        stopwatchTotal.Stop();
+
+        double avgTimeMs = totalElapsedMs / Runs;
+
+        Console.WriteLine($"Cryptography warmup finished. Total time: {stopwatchTotal.Elapsed.TotalMilliseconds:F3}ms");
+        Console.WriteLine($"Average time per run: {avgTimeMs:F3}ms");
+
+        await Task.Delay(200);
+    }
 
     public static byte[] Hash(byte[] bytesToHash)
     {
