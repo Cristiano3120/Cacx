@@ -1,4 +1,5 @@
 ﻿using CacxClient.Helpers;
+using CacxShared;
 using CacxShared.ApiResources;
 using Cristiano3120.Logging;
 using System.Net.Http;
@@ -88,10 +89,20 @@ public sealed class Http
     private async Task<HttpResponseMessage> SendDataViaHttpAsync<TInput>(HttpRequestType httpRequestType
         , TInput input, string endpoint)
     {
-        string jsonContent = JsonSerializer.Serialize(input, _jsonSerializerOptions);
-        StringContent content = new(jsonContent, Encoding.UTF8, "application/json");
         CallerInfos callerInfos = CallerInfos.Create();
-        _logger.LogHttpPayload<TInput>(LoggerParams.None, PayloadType.Sent, httpRequestType, jsonContent);
+        HttpContent content;
+
+        if (input is IMultipartFormData multipartFormData)
+        {
+            content = multipartFormData.ToMultipartContent();
+            _logger.LogInformation(LoggerParams.None, $"[{httpRequestType}] Sending multipart/form-data to {endpoint}");
+        }
+        else
+        {
+            string jsonContent = JsonSerializer.Serialize(input, _jsonSerializerOptions);
+            content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+            _logger.LogHttpPayload<TInput>(LoggerParams.None, PayloadType.Sent, httpRequestType, jsonContent);
+        }
 
         return httpRequestType switch
         {

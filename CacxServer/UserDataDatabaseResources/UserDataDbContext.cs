@@ -25,12 +25,6 @@ public class UserDataDbContext : DbContext
         _ = modelBuilder.Entity<DbUser>()
             .HasIndex(u => u.Username)
             .IsUnique();
-
-        _ = modelBuilder.Entity<DbUser>()
-            .HasIndex(u => u.CreatedAt);
-
-        _ = modelBuilder.Entity<DbUser>()
-            .HasIndex(u => u.Verified);
     }
 }
 

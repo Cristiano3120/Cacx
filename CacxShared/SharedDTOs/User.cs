@@ -8,9 +8,8 @@ public sealed record User
     public string Password { get; init; } = default!;
     public string FirstName { get; init; } = default!;
     public string LastName { get; init; } = default!;
-    public string ProfilePictureUrl { get; init; } = default!;
+    public string? ProfilePictureUrl { get; init; }
+    public byte[] ProfilePictureBytes { get; init; } = [];
     public DateOnly Birthday { get; init; }
-    public DateTime CreatedAt { get; init; }
     public string Biography { get; init; } = string.Empty;
-    public bool Verified { get; init; } = false;
 }

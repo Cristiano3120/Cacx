@@ -8,6 +8,10 @@
         mc:Ignorable="d"
         Title="VerificationWindow" Height="450" Width="800" Style="{StaticResource ResourceKey=SmallWindowStyle}">
     <Grid>
+        <TextBlock Foreground="{StaticResource DefaultErrorBrush}" Visibility="Hidden"
+           TextAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Center"
+           Margin="0, 100, 0, 0" Name="InfoTextBlock" Text="This is a test!"/>
+        
         <Button x:Name="GoBackBtn" Background="Transparent" FontSize="27"
             Content="🡨" Width="35" Height="35" Margin="10, 10, 0, 0" 
             VerticalAlignment="Top" HorizontalAlignment="Left"

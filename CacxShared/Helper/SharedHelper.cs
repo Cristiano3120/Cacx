@@ -11,18 +11,19 @@ public static class SharedHelper
     /// <param name="relativePath">The relative path from the project root directory to combine with the base path. Cannot be null or empty.</param>
     /// <returns>A string containing the absolute path corresponding to the specified relative path from the project root.</returns>
     /// <exception cref="Exception">Thrown if the project base path cannot be determined from the current application context.</exception>
-    public static string GetDynamicPath(string relativePath)
+    public static string GetDynamicPath(Project project, string relativePath)
     {
         string projectBasePath = AppContext.BaseDirectory;
-        int binIndex = projectBasePath.IndexOf($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}", StringComparison.Ordinal);
+        int binIndex = projectBasePath.IndexOf($"{Path.DirectorySeparatorChar}Cacx{Path.DirectorySeparatorChar}", StringComparison.Ordinal);
 
         if (binIndex == -1)
         {
             throw new InvalidOperationException("Could not determine project base path!");
         }
 
+        binIndex += 6; //Offset Cacx// TODO: Rework
         projectBasePath = projectBasePath[..binIndex];
-        return Path.Combine(projectBasePath, relativePath);
+        return Path.Combine(projectBasePath, $"{project}", relativePath);
     }
 
     /// <summary>

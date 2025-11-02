@@ -1,8 +1,13 @@
 ﻿using CacxClient.Communication.HTTPCommunication;
+using CacxClient.ExtensionMethods;
 using CacxClient.Helpers;
+using CacxShared.ApiResources;
 using CacxShared.Endpoints;
 using CacxShared.SharedDTOs;
 using Cristiano3120.Logging;
+using System.IO;
+using System.Windows;
+using System.Windows.Media;
 
 namespace CacxClient.Windows;
 /// <summary>
@@ -10,25 +15,114 @@ namespace CacxClient.Windows;
 /// </summary>
 public partial class VerificationWindow : BaseWindow
 {
+    private CancellationTokenSource? _animationCts;
+    private readonly string _profilePicturePath;
+    private readonly Color _animatedErrorColor;
+    private readonly Brush _defaultErrorBrush;
     private readonly User _user;
-    public VerificationWindow(User user, byte[] profilePictureBytes)
+    private readonly Http _http;
+
+    //TODO: profilePictureBytes müssen an home übergeben werden und an die Image database übergeben werden
+    //Oder maybe erst an Image database übergeben und die url holen
+    public VerificationWindow(User user, string profilePicturePath)
     {
         InitializeComponent();
 
-        _ = SendVerificationEmailAsync();
+        _http = App.GetHttp();
+        _user = user;
+
+        _animatedErrorColor = App.Current.Resources["ErrorColor"] as Color? ?? Color.FromRgb(234, 23, 31);
+        _defaultErrorBrush = App.Current.Resources["DefaultErrorBrush"] as Brush ?? Brushes.LightGray;
+
+        _ = RequestVerificationEmailAsync(user);
 
         GoBackBtn.Click += GoBackBtn_Click;
-        VerifyBtn.Click += VerifyBtn_Click;
-
-        _user = user;
+        VerifyBtn.Click += VerifyBtn_ClickAsync;
+        _profilePicturePath = profilePicturePath;
     }
 
-    private void VerifyBtn_Click(object sender, System.Windows.RoutedEventArgs e)
+    private async void VerifyBtn_ClickAsync(object sender, RoutedEventArgs e)
     {
+        string verificationCodeStr = CodeTextBox.Text;
+        string errorMsg;
 
+        if (string.IsNullOrEmpty(verificationCodeStr) || !int.TryParse(verificationCodeStr, out int verificationCode))
+        {
+            errorMsg = "The code you entered is invalid!";
+            InfoTextBlock.TriggerDisplayAnimation(_defaultErrorBrush, _animatedErrorColor, errorMsg, ref _animationCts);
+
+            return;
+        }
+
+        ApiResponse<bool> response =  await VerifyAsync(verificationCode);
+
+        if (!response.IsSuccess)
+        {
+            errorMsg = "Something went wrong :( Try Again!";
+            InfoTextBlock.TriggerDisplayAnimation(_defaultErrorBrush, _animatedErrorColor, errorMsg, ref _animationCts);
+
+            return;
+        }
+
+        if (!response.Data)
+        {
+            errorMsg = "The code you entered is either wrong or invalid!";
+            InfoTextBlock.TriggerDisplayAnimation(_defaultErrorBrush, _animatedErrorColor, errorMsg, ref _animationCts);
+
+            return;
+        }
+
+        User? createdUser = await CreateUserAsync();
+        
+        if (createdUser is null)
+        {
+            errorMsg = "Something went wrong :( Try Again!";
+            InfoTextBlock.TriggerDisplayAnimation(_defaultErrorBrush, _animatedErrorColor, errorMsg, ref _animationCts);
+            
+            return;
+        }
+
+        if (!string.IsNullOrEmpty(_profilePicturePath))
+        {
+            await UploadProfilePictureAsync(createdUser);
+        }
+
+        HomeWindow homeWindow = new(createdUser);
+        GuiHelper.SwitchWindow(homeWindow);
     }
 
-    private void GoBackBtn_Click(object sender, System.Windows.RoutedEventArgs e)
+    private async Task<ApiResponse<bool>> VerifyAsync(int verificationCode)
+    {
+        string verifyEndpoint = Endpoints.GetAuthEndpoint(AuthEndpoint.Verify);
+        CallerInfos callerInfos = CallerInfos.Create();
+
+        return await _http.PostAsync<VerificationRequestData, bool>(new(_user.Username, verificationCode), verifyEndpoint, callerInfos);
+    }
+
+    private async Task UploadProfilePictureAsync(User createdUser)
+    {
+        string uploadEndpoint = Endpoints.GetAuthEndpoint(AuthEndpoint.UploadProfilePicture);
+        int indexOfLastPathSeperator = _profilePicturePath.LastIndexOf(Path.PathSeparator);
+        ProfilePictureUploadRequest request = new()
+        {
+            FileStream = File.OpenRead(_profilePicturePath),
+            FileName = $"{_profilePicturePath[++indexOfLastPathSeperator..]}",
+            UserId = createdUser.Id,
+        };
+
+        _ = await _http.PostAsync<ProfilePictureUploadRequest, object>(request, uploadEndpoint, CallerInfos.Create());
+    }
+
+    private async Task<User?> CreateUserAsync()
+    {
+        CallerInfos callerInfos = CallerInfos.Create();
+        string endpoint = Endpoints.GetAuthEndpoint(AuthEndpoint.CreateAcc);
+
+        ApiResponse<User> apiResponse = await _http.PostAsync<User, User>(_user, endpoint, callerInfos);
+        return apiResponse.Data;
+    }
+
+    private void GoBackBtn_Click(object sender, RoutedEventArgs e)
     {
         CreateAccPart2Window createAccPart2Window = new(_user);
         createAccPart2Window.SetUserData(_user);
@@ -36,16 +130,15 @@ public partial class VerificationWindow : BaseWindow
         GuiHelper.SwitchWindow(createAccPart2Window);
     }
 
-    private async Task SendVerificationEmailAsync()
+    private async Task RequestVerificationEmailAsync(User user)
     {
-        Http http = App.GetHttp();
-        string endpoint = Endpoints.GetAuthEndpoint(AuthEndpoint.TwoFactorAuth);
+        string endpoint = Endpoints.GetAuthEndpoint(AuthEndpoint.StartTwoFactorAuth);
         UniqueUserData uniqueUserData = new()
         {
-            Email = _user.Email,
-            Username = _user.Username,
+            Email = user.Email,
+            Username = user.Username,
         };
 
-        _ = await http.PostAsync<UniqueUserData, object>(uniqueUserData, endpoint, CallerInfos.Create());
+        _ = await _http.PostAsync<UniqueUserData, object>(uniqueUserData, endpoint, CallerInfos.Create());
     }
 }

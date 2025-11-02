@@ -1,8 +1,11 @@
 ﻿using CacxClient.Communication.HTTPCommunication;
 using CacxClient.Windows;
+using CacxShared.Endpoints;
 using CacxShared.Helper;
+using CacxShared.SharedDTOs;
 using Cristiano3120.Logging;
 using Microsoft.Extensions.DependencyInjection;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Windows;
 
@@ -29,7 +32,7 @@ public partial class App : Application
         {
             LogLevel = LogLevel.Debug,
             MaxAmmountOfLoggingFiles = 3,
-            PathToLogDirectory = SharedHelper.GetDynamicPath("Logs")
+            PathToLogDirectory = SharedHelper.GetDynamicPath(CacxShared.Project.CacxClient, "Logs")
         };
         Logger logger = new(loggerSettings);
 
@@ -46,9 +49,6 @@ public partial class App : Application
         LoginWindow loginWindow = new();
         loginWindow.Show();
         Current.MainWindow = loginWindow;
-
-        //Give the server some time to start cause I am starting both projects at the same time
-        await Task.Delay(1000);
     }
 
     private static void InitializeServiceProvider(ServiceCollection services)

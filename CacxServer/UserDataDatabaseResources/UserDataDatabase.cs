@@ -1,24 +1,17 @@
-﻿using CacxServer.Helper;
-using CacxShared.Helper;
+﻿using CacxShared.Helper;
 using CacxShared.SharedDTOs;
 using Cristiano3120.Logging;
 using Npgsql;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
 namespace CacxServer.UserDataDatabaseResources;
 
-public class UserDataDatabase
+public class UserDataDatabase(Logger logger, string connStr, IServiceScopeFactory scopeFactory)
 {
-    private readonly string _connectionString;
-    private readonly Logger _logger;
-
-    public UserDataDatabase(Logger logger, string connStr)
-    {
-        _connectionString = connStr;
-        _logger = logger;
-    }
+    private readonly IServiceScopeFactory _serviceScopeFactory = scopeFactory;
+    private readonly string _connectionString = connStr;
+    private readonly Logger _logger = logger;
 
     public async Task WarmupAsync()
     {
@@ -130,6 +123,32 @@ public class UserDataDatabase
             {
                 RequestSuccessful = false,
                 ReturnedValue = (emailFound: true, usernameFound: true)
+            };
+        }
+    }
+
+    public async Task<DatabaseResult<object>> AddUserToDbAsync(User user)
+    {
+        try
+        {
+            using IServiceScope scope = _serviceScopeFactory.CreateScope();
+            
+            _ = await scope.ServiceProvider.GetRequiredService<UserDataDbContext>().Users.AddAsync(new DbUser(user));
+            _ = await scope.ServiceProvider.GetRequiredService<UserDataDbContext>().SaveChangesAsync();
+
+            _logger.LogInformation(LoggerParams.None, $"Added {user.Username} to the db!");
+
+            return new DatabaseResult<object>()
+            {
+                RequestSuccessful = true
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(LoggerParams.None, ex, CallerInfos.Create());
+            return new DatabaseResult<object>()
+            {
+                RequestSuccessful = false
             };
         }
     }

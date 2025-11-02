@@ -22,7 +22,7 @@ public partial class CreateAccPart2Window : BaseWindow
     private CancellationTokenSource? _animationCts;
     private readonly Color _animatedErrorColor;
     private readonly Brush _defaultErrorBrush;
-    private byte[] _profilePictureBytes;
+    private string? _profilePicturePath;
     private readonly User _user;
 
     public CreateAccPart2Window(User user)
@@ -32,7 +32,7 @@ public partial class CreateAccPart2Window : BaseWindow
 
         _animatedErrorColor = App.Current.Resources["ErrorColor"] as Color? ?? Color.FromRgb(234, 23, 31);
         _defaultErrorBrush = App.Current.Resources["DefaultErrorBrush"] as Brush ?? Brushes.LightGray;
-        _profilePictureBytes = [];
+
         _user = user;
 
         GoBackBtn.Click += GoBackBtn_Click;
@@ -66,15 +66,13 @@ public partial class CreateAccPart2Window : BaseWindow
 
         if (openFileDialog.ShowDialog() == true)
         {
-            string selectedFilePath = openFileDialog.FileName;
-
             try
             {
-                _profilePictureBytes = File.ReadAllBytes(selectedFilePath);
+                _profilePicturePath = openFileDialog.FileName;
 
                 ImageBrush imageBrush = new()
                 {
-                    ImageSource = new BitmapImage(new Uri(selectedFilePath)),
+                    ImageSource = new BitmapImage(new Uri(_profilePicturePath)),
                     Stretch = Stretch.UniformToFill
                 };
 
@@ -109,7 +107,7 @@ public partial class CreateAccPart2Window : BaseWindow
             return;
         }
 
-        GuiHelper.SwitchWindow(new VerificationWindow(validatedUser, _profilePictureBytes));
+        GuiHelper.SwitchWindow(new VerificationWindow(validatedUser, _profilePicturePath));
     }
 
     private async Task<User?> ValidateInputAsync()
@@ -130,7 +128,7 @@ public partial class CreateAccPart2Window : BaseWindow
             Username = username,
             FirstName = firstName,
             LastName = lastName,
-            Biography = BiographyBox.Text
+            Biography = BiographyBox.Text,
         };
     }
 

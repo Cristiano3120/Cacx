@@ -10,7 +10,7 @@ internal static class Helper
 {
     public static JsonElement GetConfig()
     {
-        string Filepath = SharedHelper.GetDynamicPath("appSettings.json");
+        string Filepath = SharedHelper.GetDynamicPath(CacxShared.Project.CacxClient, "appSettings.json");
         return JsonDocument.Parse(File.ReadAllText(Filepath)).RootElement;
     }
 
