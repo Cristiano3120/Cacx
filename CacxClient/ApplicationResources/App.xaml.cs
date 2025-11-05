@@ -3,6 +3,7 @@ using CacxClient.Windows;
 using CacxShared.Endpoints;
 using CacxShared.Helper;
 using CacxShared.SharedDTOs;
+using CacxShared.SharedMinioResources;
 using Cristiano3120.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net;
@@ -49,6 +50,9 @@ public partial class App : Application
         LoginWindow loginWindow = new();
         loginWindow.Show();
         Current.MainWindow = loginWindow;
+
+        await Task.Delay(1000);
+        var t = await http.GetBytesAsync(Endpoints.GetCdnEndpoint(Bucket.User, resourcePath: "12/profilePicture.png"), CallerInfos.Create());
     }
 
     private static void InitializeServiceProvider(ServiceCollection services)

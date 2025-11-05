@@ -44,9 +44,7 @@ public static class Program
         _ = builder.Services.AddSingleton<AuthService>();
 
         //Get the Url depending on the environment
-        string url = (builder.Configuration.GetValue<bool>(key: "Testing")
-            ? builder.Configuration.GetValue<string>("TestUrl")
-            : builder.Configuration.GetValue<string>("Url"))
+        string url = builder.Configuration.GetValue<string>(key: "URL") 
             ?? throw new InvalidOperationException("The appSettings.json file is broken");
 
         ushort workerId = builder.Configuration.GetValue<ushort>(key: "workerId");
@@ -119,14 +117,14 @@ public static class Program
         _ = app.MapControllers();
 
         //Warmups
-        using (IServiceScope scope = app.Services.CreateScope())
-        {
-            UserDataDatabase db = scope.ServiceProvider.GetRequiredService<UserDataDatabase>();
-            await db.WarmupAsync();
-        }
+        //using (IServiceScope scope = app.Services.CreateScope())
+        //{
+        //    UserDataDatabase db = scope.ServiceProvider.GetRequiredService<UserDataDatabase>();
+        //    await db.WarmupAsync();
+        //}
 
-        await SharedCryptographyHelper.WarmupAsync();
-        CryptographyHelper.Warmup();
+        //await SharedCryptographyHelper.WarmupAsync();
+        //CryptographyHelper.Warmup();
 
         //Handle errors!
         _ = app.Use(async (context, next) =>

@@ -1,4 +1,5 @@
 ﻿using CacxShared.SharedDTOs;
+using CacxShared.SharedMinioResources;
 using Cristiano3120.Logging;
 using Minio;
 using Minio.DataModel.Args;
@@ -22,7 +23,7 @@ public sealed class ObjectStorageManager
     {
         try
         {
-            foreach (string bucket in Buckets.All)
+            foreach (string bucket in BucketExtensions.GetAllBucketNames())
             {
                 if (!await _minioClient.BucketExistsAsync(new BucketExistsArgs().WithBucket(bucket)))
                 {
@@ -46,12 +47,12 @@ public sealed class ObjectStorageManager
             await using Stream stream = uploadRequest.File.OpenReadStream();
 
             PutObjectArgs putObjectArgs = new PutObjectArgs()
-                .WithBucket(Buckets.Users)
+                .WithBucket(Bucket.User.ToBucketName())
                 .WithObject(objectName)
                 .WithStreamData(stream)
                 .WithObjectSize(stream.Length)
                 .WithContentType(uploadRequest.File.ContentType);
-
+            
             _ = await _minioClient.PutObjectAsync(putObjectArgs);
             return true;
         }

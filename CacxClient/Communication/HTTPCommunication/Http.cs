@@ -46,6 +46,24 @@ public sealed class Http
     public async Task<ApiResponse<TOutput>> PutAsync<TInput, TOutput>(TInput input, string endpoint, CallerInfos callerInfos)
         => await HandleRequestAsync<TInput, TOutput>(HttpRequestType.Put, input, endpoint, callerInfos);
 
+    public async Task<byte[]> GetBytesAsync(string endpoint, CallerInfos callerInfos)
+    {
+        _logger.LogInformation(LoggerParams.None, $"[GET]: {endpoint}");
+        
+        try
+        {
+            byte[] bytes = await _httpClient.GetByteArrayAsync(endpoint);
+            _logger.LogInformation(LoggerParams.None, $"[GET]: Received {bytes.Length} bytes");
+
+            return bytes;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(LoggerParams.None, ex, callerInfos: callerInfos, calleInfos: CallerInfos.Create());
+            return [];
+        }
+    }
+
     private async Task<ApiResponse<TOutput>> HandleRequestAsync<TInput, TOutput>(HttpRequestType httpRequestType
         , TInput? input, string endpoint, CallerInfos callerInfos)
     {

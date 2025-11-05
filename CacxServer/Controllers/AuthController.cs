@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CacxServer.Controllers;
 
 [ApiController]
-[Route($"{Endpoints.BaseEndpoint}/{Endpoints.BaseAuthEndpoint}")]
+[Route($"{Endpoints.BaseAuthEndpoint}")]
 public sealed class AuthController(AuthService authService
     , ObjectStorageManager storageManager
     , LoggingHelper loggingHelper
@@ -31,7 +31,7 @@ public sealed class AuthController(AuthService authService
         return Ok(response);
     }
 
-
+    //http://localhost:8080/cdn/user/12/profilePicture.png DAS KLAPPT! TODO: BEIM CLIENT IMPLMENTIEREN
     [HttpPost($"{AuthEndpoint.StartTwoFactorAuth}")]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
     public async Task<ActionResult> StartTwoFactorAuthAsync([FromBody] UniqueUserData uniqueUserData)
