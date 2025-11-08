@@ -7,28 +7,34 @@ using CacxShared.SharedDTOs;
 using System.Windows;
 using System.Windows.Media;
 using CacxShared.Endpoints;
+using System.Windows.Controls;
 
 namespace CacxClient.Windows;
 
 /// <summary>
 /// Interaction logic for Login.xaml
 /// </summary>
-public partial class LoginWindow : BaseWindow
+public partial class LoginWindow : UserControl
 {
     private CancellationTokenSource? _animationCts;
     private readonly Color _animatedErrorColor;
     private readonly Brush _defaultErrorBrush;
+    private readonly Logger _logger;
+    private readonly Http _http;
 
     public LoginWindow()
     {
         _animatedErrorColor = App.Current.Resources["ErrorColor"] as Color? ?? Color.FromRgb(234, 23, 31);
         _defaultErrorBrush = App.Current.Resources["DefaultErrorBrush"] as Brush ?? Brushes.LightGray;
-        logger.LogDebug(LoggerParams.None, $"{nameof(LoginWindow)} initialized");
+        _logger = App.GetLogger();
+        _http = App.GetHttp();
 
         InitializeComponent();
 
         LoginBtn.Click += LoginBtn_ClickAsync;
         CreateAccHyperlink.Click += AccCreationHyperlink_Click;
+
+        _logger.LogDebug(LoggerParams.None, $"{nameof(LoginWindow)} initialized");
     }
 
     public void AccCreationHyperlink_Click(object sender, RoutedEventArgs args)
@@ -49,7 +55,7 @@ public partial class LoginWindow : BaseWindow
 
         string endpoint = Endpoints.GetAuthEndpoint(AuthEndpoint.Login);
         CallerInfos callerInfos = CallerInfos.Create();
-        ApiResponse<User> response = await http.PostAsync<LoginRequest, User>(loginRequest, endpoint, callerInfos);
+        ApiResponse<User> response = await _http.PostAsync<LoginRequest, User>(loginRequest, endpoint, callerInfos);
         
         if (response.Data is null)
         {

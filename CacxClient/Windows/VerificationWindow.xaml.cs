@@ -7,24 +7,30 @@ using CacxShared.SharedDTOs;
 using Cristiano3120.Logging;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace CacxClient.Windows;
 /// <summary>
 /// Interaction logic for VerificationWindow.xaml
 /// </summary>
-public partial class VerificationWindow : BaseWindow
+public partial class VerificationWindow : UserControl
 {
     private CancellationTokenSource? _animationCts;
     private readonly string _profilePicturePath;
     private readonly Color _animatedErrorColor;
     private readonly Brush _defaultErrorBrush;
+    private readonly Logger _logger;
     private readonly User _user;
+    private readonly Http _http;
 
     public VerificationWindow(User user, string profilePicturePath)
     {
         InitializeComponent();
 
+        _logger = App.GetLogger();
+        _http = App.GetHttp();
+        
         _user = user;
         _animatedErrorColor = App.Current.Resources["ErrorColor"] as Color? ?? Color.FromRgb(234, 23, 31);
         _defaultErrorBrush = App.Current.Resources["DefaultErrorBrush"] as Brush ?? Brushes.LightGray;
@@ -34,6 +40,8 @@ public partial class VerificationWindow : BaseWindow
         GoBackBtn.Click += GoBackBtn_Click;
         VerifyBtn.Click += VerifyBtn_ClickAsync;
         _profilePicturePath = profilePicturePath;
+
+        _logger.LogDebug(LoggerParams.None, $"{nameof(VerificationWindow)} initialized");
     }
 
     private async void VerifyBtn_ClickAsync(object sender, RoutedEventArgs e)
@@ -94,7 +102,7 @@ public partial class VerificationWindow : BaseWindow
         string verifyEndpoint = Endpoints.GetAuthEndpoint(AuthEndpoint.Verify);
         CallerInfos callerInfos = CallerInfos.Create();
 
-        return await http.PostAsync<VerificationRequestData, bool>(new(_user.Username, verificationCode), verifyEndpoint, callerInfos);
+        return await _http.PostAsync<VerificationRequestData, bool>(new(_user.Username, verificationCode), verifyEndpoint, callerInfos);
     }
 
     private async Task<(string url, FileStream fileStream)> UploadProfilePictureAsync(User createdUser)
@@ -110,7 +118,7 @@ public partial class VerificationWindow : BaseWindow
             UserId = createdUser.Id,
         };
 
-        _ = http.PostAsync<ProfilePictureUploadRequest, object>(request, uploadEndpoint, CallerInfos.Create());
+        _ = _http.PostAsync<ProfilePictureUploadRequest, object>(request, uploadEndpoint, CallerInfos.Create());
         return ($"{createdUser.Id}/profilePicture{GetFileType(_profilePicturePath)}", fileStream);
     }
 
@@ -125,7 +133,7 @@ public partial class VerificationWindow : BaseWindow
         CallerInfos callerInfos = CallerInfos.Create();
         string endpoint = Endpoints.GetAuthEndpoint(AuthEndpoint.CreateAcc);
 
-        ApiResponse<User> apiResponse = await http.PostAsync<User, User>(_user, endpoint, callerInfos);
+        ApiResponse<User> apiResponse = await _http.PostAsync<User, User>(_user, endpoint, callerInfos);
         return apiResponse.Data;
     }
 
@@ -146,6 +154,6 @@ public partial class VerificationWindow : BaseWindow
             Username = user.Username,
         };
 
-        _ = await http.PostAsync<UniqueUserData, object>(uniqueUserData, endpoint, CallerInfos.Create());
+        _ = await _http.PostAsync<UniqueUserData, object>(uniqueUserData, endpoint, CallerInfos.Create());
     }
 }

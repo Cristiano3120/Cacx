@@ -8,6 +8,7 @@ using Cristiano3120.Logging;
 using Microsoft.Win32;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -16,18 +17,21 @@ namespace CacxClient.Windows;
 /// <summary>
 /// Interaction logic for CreateAccPart2Window.xaml
 /// </summary>
-public partial class CreateAccPart2Window : BaseWindow
+public partial class CreateAccPart2Window : UserControl
 {
+    
     private CancellationTokenSource? _animationCts;
     private readonly Color _animatedErrorColor;
     private readonly Brush _defaultErrorBrush;
     private string? _profilePicturePath;
+    private readonly Logger _logger;
     private readonly User _user;
 
     public CreateAccPart2Window(User user)
     {
-        logger.LogDebug(LoggerParams.None, $"{nameof(CreateAccPart2Window)} initialized");
         InitializeComponent();
+      
+        _logger = App.GetLogger();
 
         _animatedErrorColor = App.Current.Resources["ErrorColor"] as Color? ?? Color.FromRgb(234, 23, 31);
         _defaultErrorBrush = App.Current.Resources["DefaultErrorBrush"] as Brush ?? Brushes.LightGray;
@@ -38,13 +42,14 @@ public partial class CreateAccPart2Window : BaseWindow
         SignUpBtn.Click += SignUpBtn_ClickAsync;
 
         ProfilePictureEllipse_Init();
+        _logger.LogDebug(LoggerParams.None, $"{nameof(CreateAccPart2Window)} initialized");
     }
 
-    protected override void OnClosing(CancelEventArgs e)
-    {
-        base.OnClosed(e);
-        _animationCts?.Dispose();
-    }
+    //protected override void OnClosing(CancelEventArgs e)
+    //{
+    //    base.OnClosed(e);
+    //    _animationCts?.Dispose();
+    //}
 
     private void ProfilePictureEllipse_Init()
     {
@@ -54,7 +59,7 @@ public partial class CreateAccPart2Window : BaseWindow
 
     private void ProfilePictureEllipse_Click(object sender, MouseButtonEventArgs args)
     {
-        logger.LogDebug(LoggerParams.None, "Opening the file explorer");
+        _logger.LogDebug(LoggerParams.None, "Opening the file explorer");
         OpenFileDialog openFileDialog = new()
         {
             Filter = "Image files (*.png;*.jpeg;*.jpg)|*.png;*.jpeg;*.jpg|All files (*.*)|*.*",
@@ -80,7 +85,7 @@ public partial class CreateAccPart2Window : BaseWindow
             catch (Exception)
             {
                 const string ErrorMsg = "Failed to load the selected image file";
-                logger.LogError(LoggerParams.None, ErrorMsg);
+                _logger.LogError(LoggerParams.None, ErrorMsg);
                 InfoTextBlock.TriggerDisplayAnimation(_defaultErrorBrush, _animatedErrorColor, ErrorMsg, ref _animationCts);
             }
         }
@@ -88,7 +93,7 @@ public partial class CreateAccPart2Window : BaseWindow
 
     private void GoBackBtn_Click(object sender, RoutedEventArgs args)
     {
-        logger.LogDebug(LoggerParams.None, "Going back to the previous window");
+        _logger.LogDebug(LoggerParams.None, "Going back to the previous window");
 
         CreateAccWindow _createAccWindow = new();
         _createAccWindow.SetDataFromPart2(_user, false);
@@ -98,7 +103,7 @@ public partial class CreateAccPart2Window : BaseWindow
 
     private async void SignUpBtn_ClickAsync(object sender, RoutedEventArgs args)
     {
-        logger.LogDebug(LoggerParams.None, "Sign up button clicked");
+        _logger.LogDebug(LoggerParams.None, "Sign up button clicked");
 
         User? validatedUser = await ValidateInputAsync();
         if (validatedUser is null)

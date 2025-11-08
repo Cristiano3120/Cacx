@@ -1,5 +1,6 @@
 ﻿using CacxClient.Windows;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace CacxClient.Helpers;
 
@@ -12,7 +13,7 @@ internal static class GuiHelper
     /// previously active window will be hidden or closed as appropriate. This method is typically used in navigation
     /// scenarios where only one window should be visible at a time.</remarks>
     /// <param name="windowToShow">The window to display. Must not be null.</param>
-    public static void SwitchWindow<TNewWindow>(TNewWindow windowToShow) where TNewWindow : BaseWindow
+    public static void SwitchWindow<TNewWindow>(TNewWindow windowToShow) where TNewWindow : UserControl
         => Internal_SwitchWindow(windowToShow);
 
     /// <summary>
@@ -23,56 +24,14 @@ internal static class GuiHelper
     /// If the <see cref="Window"/> needs a special constructor that needs to be called
     /// instantiate a <see cref="Window"/> of that type beforehand and just pass it as an param
     /// </param>
-    public static void SwitchWindow<TNewWindow>() where TNewWindow : BaseWindow, new()
+    public static void SwitchWindow<TNewWindow>() where TNewWindow : UserControl, new()
         => Internal_SwitchWindow(new TNewWindow());
 
-    private static void Internal_SwitchWindow<TNewWindow>(TNewWindow newWindow) where TNewWindow : BaseWindow
+    private static void Internal_SwitchWindow<TNewWindow>(TNewWindow newWindow) where TNewWindow : UserControl
     {
-        _ = Application.Current.Dispatcher.Invoke(async () =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
-            Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
-            Application.Current.MainWindow = newWindow;
-
-            newWindow.Show();
-            newWindow.Visibility = Visibility.Hidden;
-            await Task.Delay(50);
-            
-            Application.Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
-
-            newWindow.ContentRendered += (_, _) =>
-            {
-                foreach (Window window in Application.Current.Windows)
-                {
-                    if (window != newWindow)
-                    {
-                        window.Close();
-                    }
-                }
-
-                newWindow.Visibility = Visibility.Visible;
-            };
+            Application.Current.MainWindow.Content = newWindow;
         });
     }
-
-    //private static void Internal_SwitchWindow<TNewWindow>(TNewWindow newWindow) where TNewWindow : BaseWindow
-    //{
-    //    //The delay before closing the old window in ms
-    //    const int SwitchDelayMs = 150;
-
-    //    _ = Application.Current.Dispatcher.Invoke(async () =>
-    //    {
-    //        Application.Current.MainWindow = newWindow;
-    //        newWindow.Show();
-
-    //        await Task.Delay(SwitchDelayMs);
-
-    //        foreach (Window window in Application.Current.Windows)
-    //        {
-    //            if (window != newWindow)
-    //            {
-    //                window.Close();
-    //            }
-    //        }
-    //    });
-    //}
 }

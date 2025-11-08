@@ -6,9 +6,9 @@ using CacxShared.ApiResources;
 using CacxShared.Endpoints;
 using CacxShared.SharedDTOs;
 using Cristiano3120.Logging;
-using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace CacxClient.Windows;
@@ -16,15 +16,17 @@ namespace CacxClient.Windows;
 /// <summary>
 /// Interaction logic for CreateAccWindow.xaml
 /// </summary>
-public partial class CreateAccWindow : BaseWindow
+public partial class CreateAccWindow : UserControl
 {
     private CancellationTokenSource? _animationCts;
     private readonly Color _animatedErrorColor;
     private readonly Brush _defaultErrorBrush;
+    private readonly Logger _logger;
 
     public CreateAccWindow()
     {
-        logger.LogDebug(LoggerParams.None, $"{nameof(CreateAccWindow)} initialized.");
+        _logger = App.GetLogger();
+        _logger.LogDebug(LoggerParams.None, $"{nameof(CreateAccWindow)} initialized.");
 
         InitializeComponent();
         InitBirthdayBoxes();
@@ -35,12 +37,6 @@ public partial class CreateAccWindow : BaseWindow
 
         _animatedErrorColor = App.Current.Resources["ErrorColor"] as Color? ?? Color.FromRgb(234, 23, 31);
         _defaultErrorBrush = App.Current.Resources["DefaultErrorBrush"] as Brush ?? Brushes.LightGray;
-    }
-
-    protected override void OnClosing(CancelEventArgs e)
-    {
-        _animationCts?.Dispose();
-        base.OnClosing(e);
     }
 
     /// <summary>
@@ -66,9 +62,7 @@ public partial class CreateAccWindow : BaseWindow
     }
 
     private async void GoBackBtn_ClickAsync(object sender, RoutedEventArgs args)
-    {
-        GuiHelper.SwitchWindow<LoginWindow>();
-    }
+        => GuiHelper.SwitchWindow<LoginWindow>();
 
     private async void ContinueBtn_ClickAsync(object sender, RoutedEventArgs e)
     {

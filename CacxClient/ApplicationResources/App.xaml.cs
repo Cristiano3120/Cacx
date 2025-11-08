@@ -48,10 +48,9 @@ public partial class App : Application
         // Fix for S2696: Move static field assignment to a static method
         InitializeServiceProvider(services);
 
-        //GuiHelper.SwitchWindow<LoginWindow>();
-        LoginWindow loginWindow = new();
-        loginWindow.Show();
-        Current.MainWindow = loginWindow;
+        MainWindow = new MainWindow();
+        MainWindow.Show();
+        Current.MainWindow = MainWindow;
     }
 
     private static void InitializeServiceProvider(ServiceCollection services)

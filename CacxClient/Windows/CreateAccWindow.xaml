@@ -1,12 +1,11 @@
-﻿<local:BaseWindow x:Class="CacxClient.Windows.CreateAccWindow"
+﻿<UserControl x:Class="CacxClient.Windows.CreateAccWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CacxClient.Windows"
         xmlns:cc="clr-namespace:CacxClient.CostumComponents"
-        mc:Ignorable="d"
-        Title="CreateAccWindow" Style="{StaticResource SmallWindowStyle}">
+        mc:Ignorable="d">
     <Grid>
         <TextBlock Foreground="{StaticResource DefaultErrorBrush}" Visibility="Hidden"
                    TextAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Center"
@@ -29,4 +28,4 @@
         <Button x:Name="ContinueBtn" Content="Continue"
                 Width="80" Height="30" Margin="0, 260, 0, 0"/>
     </Grid>
-</local:BaseWindow>
+</UserControl>
