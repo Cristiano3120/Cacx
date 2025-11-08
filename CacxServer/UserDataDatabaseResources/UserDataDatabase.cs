@@ -127,7 +127,74 @@ public class UserDataDatabase(Logger logger, string connStr, IServiceScopeFactor
         }
     }
 
-    public async Task<DatabaseResult<object>> AddUserToDbAsync(User user)
+    public async Task<DatabaseResult<User>> GetUserByLoginDataAsync(LoginRequest loginRequest)
+    {
+        try
+        {
+            const string SqlLogin = $@"
+            SELECT *
+            FROM ""{nameof(UserDataDbContext.Users)}""
+            WHERE ""{nameof(DbUser.EmailHash)}"" = @EmailHash;";
+
+            await using NpgsqlConnection conn = new(_connectionString);
+            await conn.OpenAsync();
+            
+            await using NpgsqlCommand cmd = new(SqlLogin, conn);
+            _ = cmd.Parameters.AddWithValue("EmailHash", SharedCryptographyHelper.Hash(loginRequest.Email));
+
+            await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
+            if (!await reader.ReadAsync())
+            {
+                return new DatabaseResult<User>()
+                {
+                    RequestSuccessful = true,
+                    ReturnedValue = null
+                };
+            }
+
+            byte[] storedHashedPassword = await reader.GetFieldValueAsync<byte[]>(reader.GetOrdinal(nameof(DbUser.PasswordHash)));
+            byte[] inputHashedPassword = SharedCryptographyHelper.Hash(loginRequest.Password);
+
+            if (!SharedCryptographyHelper.Verify(inputHashedPassword, storedHashedPassword))
+            {
+                _logger.LogInformation(LoggerParams.None, $"Failed login attempt for email: {loginRequest.Email}");
+                return new DatabaseResult<User>()
+                {
+                    RequestSuccessful = true,
+                    ReturnedValue = null
+                };
+            }
+
+            User user = new()
+            {
+                Id = await reader.GetFieldValueAsync<ulong>(reader.GetOrdinal(nameof(DbUser.Id))),
+                Username = await reader.GetFieldValueAsync<string>(reader.GetOrdinal(nameof(DbUser.Username))),
+                Email = SharedCryptographyHelper.Decrypt(await reader.GetFieldValueAsync<byte[]>(reader.GetOrdinal(nameof(DbUser.Email)))),
+                FirstName = SharedCryptographyHelper.Decrypt(await reader.GetFieldValueAsync<byte[]>(reader.GetOrdinal(nameof(DbUser.FirstName)))),
+                LastName = SharedCryptographyHelper.Decrypt(await reader.GetFieldValueAsync<byte[]>(reader.GetOrdinal(nameof(DbUser.LastName)))),
+                ProfilePictureUrl = await reader.GetFieldValueAsync<string>(reader.GetOrdinal(nameof(DbUser.ProfilePictureUrl))),
+                Birthday = await reader.GetFieldValueAsync<DateOnly>(reader.GetOrdinal(nameof(DbUser.Birthday))),
+                Biography = SharedCryptographyHelper.Decrypt(await reader.GetFieldValueAsync<byte[]>(reader.GetOrdinal(nameof(DbUser.Biography))))
+            };
+
+            return new DatabaseResult<User>()
+            {
+                RequestSuccessful = true,
+                ReturnedValue = user
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(LoggerParams.None, ex, CallerInfos.Create());
+            return new DatabaseResult<User>()
+            {
+                RequestSuccessful = false,
+                ReturnedValue = null
+            };
+        }
+    }
+
+    public async Task<DatabaseResult<User>> AddUserToDbAsync(User user)
     {
         try
         {
@@ -138,15 +205,16 @@ public class UserDataDatabase(Logger logger, string connStr, IServiceScopeFactor
 
             _logger.LogInformation(LoggerParams.None, $"Added {user.Username} to the db!");
 
-            return new DatabaseResult<object>()
+            return new DatabaseResult<User>()
             {
-                RequestSuccessful = true
+                RequestSuccessful = true,
+                ReturnedValue = user with { Password = string.Empty }
             };
         }
         catch (Exception ex)
         {
             _logger.LogError(LoggerParams.None, ex, CallerInfos.Create());
-            return new DatabaseResult<object>()
+            return new DatabaseResult<User>()
             {
                 RequestSuccessful = false
             };

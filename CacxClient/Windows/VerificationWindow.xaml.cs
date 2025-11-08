@@ -20,17 +20,12 @@ public partial class VerificationWindow : BaseWindow
     private readonly Color _animatedErrorColor;
     private readonly Brush _defaultErrorBrush;
     private readonly User _user;
-    private readonly Http _http;
 
-    //TODO: profilePictureBytes müssen an home übergeben werden und an die Image database übergeben werden
-    //Oder maybe erst an Image database übergeben und die url holen
     public VerificationWindow(User user, string profilePicturePath)
     {
         InitializeComponent();
 
-        _http = App.GetHttp();
         _user = user;
-
         _animatedErrorColor = App.Current.Resources["ErrorColor"] as Color? ?? Color.FromRgb(234, 23, 31);
         _defaultErrorBrush = App.Current.Resources["DefaultErrorBrush"] as Brush ?? Brushes.LightGray;
 
@@ -55,7 +50,6 @@ public partial class VerificationWindow : BaseWindow
         }
 
         ApiResponse<bool> response =  await VerifyAsync(verificationCode);
-
         if (!response.IsSuccess)
         {
             errorMsg = "Something went wrong :( Try Again!";
@@ -73,7 +67,6 @@ public partial class VerificationWindow : BaseWindow
         }
 
         User? createdUser = await CreateUserAsync();
-        
         if (createdUser is null)
         {
             errorMsg = "Something went wrong :( Try Again!";
@@ -82,12 +75,17 @@ public partial class VerificationWindow : BaseWindow
             return;
         }
 
+        FileStream? profilePictureStream = default;
         if (!string.IsNullOrEmpty(_profilePicturePath))
         {
-            await UploadProfilePictureAsync(createdUser);
+            (string url, profilePictureStream) = await UploadProfilePictureAsync(createdUser);
+            createdUser = createdUser with
+            {
+                ProfilePictureUrl = url,
+            };
         }
 
-        HomeWindow homeWindow = new(createdUser);
+        HomeWindow homeWindow = new(createdUser, profilePictureStream);
         GuiHelper.SwitchWindow(homeWindow);
     }
 
@@ -96,21 +94,30 @@ public partial class VerificationWindow : BaseWindow
         string verifyEndpoint = Endpoints.GetAuthEndpoint(AuthEndpoint.Verify);
         CallerInfos callerInfos = CallerInfos.Create();
 
-        return await _http.PostAsync<VerificationRequestData, bool>(new(_user.Username, verificationCode), verifyEndpoint, callerInfos);
+        return await http.PostAsync<VerificationRequestData, bool>(new(_user.Username, verificationCode), verifyEndpoint, callerInfos);
     }
 
-    private async Task UploadProfilePictureAsync(User createdUser)
+    private async Task<(string url, FileStream fileStream)> UploadProfilePictureAsync(User createdUser)
     {
         string uploadEndpoint = Endpoints.GetAuthEndpoint(AuthEndpoint.UploadProfilePicture);
         int indexOfLastPathSeperator = _profilePicturePath.LastIndexOf(Path.PathSeparator);
+
+        FileStream fileStream = File.OpenRead(_profilePicturePath);
         ProfilePictureUploadRequest request = new()
         {
-            FileStream = File.OpenRead(_profilePicturePath),
+            FileStream = fileStream,
             FileName = $"{_profilePicturePath[++indexOfLastPathSeperator..]}",
             UserId = createdUser.Id,
         };
 
-        _ = await _http.PostAsync<ProfilePictureUploadRequest, object>(request, uploadEndpoint, CallerInfos.Create());
+        _ = http.PostAsync<ProfilePictureUploadRequest, object>(request, uploadEndpoint, CallerInfos.Create());
+        return ($"{createdUser.Id}/profilePicture{GetFileType(_profilePicturePath)}", fileStream);
+    }
+
+    private static string GetFileType(string filePath)
+    {
+        int indexOfLastDot = filePath.LastIndexOf('.');
+        return filePath[indexOfLastDot..];
     }
 
     private async Task<User?> CreateUserAsync()
@@ -118,7 +125,7 @@ public partial class VerificationWindow : BaseWindow
         CallerInfos callerInfos = CallerInfos.Create();
         string endpoint = Endpoints.GetAuthEndpoint(AuthEndpoint.CreateAcc);
 
-        ApiResponse<User> apiResponse = await _http.PostAsync<User, User>(_user, endpoint, callerInfos);
+        ApiResponse<User> apiResponse = await http.PostAsync<User, User>(_user, endpoint, callerInfos);
         return apiResponse.Data;
     }
 
@@ -139,6 +146,6 @@ public partial class VerificationWindow : BaseWindow
             Username = user.Username,
         };
 
-        _ = await _http.PostAsync<UniqueUserData, object>(uniqueUserData, endpoint, CallerInfos.Create());
+        _ = await http.PostAsync<UniqueUserData, object>(uniqueUserData, endpoint, CallerInfos.Create());
     }
 }

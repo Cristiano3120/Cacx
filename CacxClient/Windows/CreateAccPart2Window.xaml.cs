@@ -7,7 +7,6 @@ using CacxShared.SharedDTOs;
 using Cristiano3120.Logging;
 using Microsoft.Win32;
 using System.ComponentModel;
-using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;

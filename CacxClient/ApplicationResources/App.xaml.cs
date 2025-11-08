@@ -1,4 +1,5 @@
 ﻿using CacxClient.Communication.HTTPCommunication;
+using CacxClient.Helpers;
 using CacxClient.Windows;
 using CacxShared.Endpoints;
 using CacxShared.Helper;
@@ -47,12 +48,10 @@ public partial class App : Application
         // Fix for S2696: Move static field assignment to a static method
         InitializeServiceProvider(services);
 
+        //GuiHelper.SwitchWindow<LoginWindow>();
         LoginWindow loginWindow = new();
         loginWindow.Show();
         Current.MainWindow = loginWindow;
-
-        await Task.Delay(1000);
-        var t = await http.GetBytesAsync(Endpoints.GetCdnEndpoint(Bucket.User, resourcePath: "12/profilePicture.png"), CallerInfos.Create());
     }
 
     private static void InitializeServiceProvider(ServiceCollection services)

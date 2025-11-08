@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CacxServer.Controllers;
 
 [ApiController]
-[Route($"{Endpoints.BaseAuthEndpoint}")]
+[Route($"{Endpoints.BaseEndpoint}/{Endpoints.BaseAuthEndpoint}")]
 public sealed class AuthController(AuthService authService
     , ObjectStorageManager storageManager
     , LoggingHelper loggingHelper
@@ -109,5 +109,20 @@ public sealed class AuthController(AuthService authService
 
         _loggingHelper.AddInfosForLogging(HttpContext, typeof(object), response);
         return Ok(response);
+    }
+
+    [HttpPost($"{AuthEndpoint.Login}")]
+    [ProducesResponseType(typeof(ApiResponse<User>), StatusCodes.Status200OK)]
+    public async Task<ActionResult> LoginAsync([FromBody] LoginRequest loginRequest)
+    {
+        DatabaseResult<User> databaseResult = await authService.LoginAsync(loginRequest);
+        ApiResponse<User> apiResponse = new()
+        {
+            IsSuccess = databaseResult.RequestSuccessful,
+            Data = databaseResult.ReturnedValue
+        };
+        
+        _loggingHelper.AddInfosForLogging(HttpContext, typeof(User), apiResponse);
+        return Ok(apiResponse);
     }
 }

@@ -31,7 +31,7 @@ public partial class CreateAccWindow : BaseWindow
 
         GeneratePwBtn.Click += GeneratePwBtn_Click;
         ContinueBtn.Click += ContinueBtn_ClickAsync;
-        GoBackBtn.Click += GoBackBtn_Click;
+        GoBackBtn.Click += GoBackBtn_ClickAsync;
 
         _animatedErrorColor = App.Current.Resources["ErrorColor"] as Color? ?? Color.FromRgb(234, 23, 31);
         _defaultErrorBrush = App.Current.Resources["DefaultErrorBrush"] as Brush ?? Brushes.LightGray;
@@ -65,8 +65,10 @@ public partial class CreateAccWindow : BaseWindow
         }
     }
 
-    private void GoBackBtn_Click(object sender, RoutedEventArgs args)
-        => GuiHelper.SwitchWindow<LoginWindow>();
+    private async void GoBackBtn_ClickAsync(object sender, RoutedEventArgs args)
+    {
+        GuiHelper.SwitchWindow<LoginWindow>();
+    }
 
     private async void ContinueBtn_ClickAsync(object sender, RoutedEventArgs e)
     {

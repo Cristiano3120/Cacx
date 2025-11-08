@@ -1,24 +1,27 @@
-﻿using CacxShared.SharedDTOs;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using CacxShared.Endpoints;
+using CacxShared.SharedDTOs;
+using CacxShared.SharedMinioResources;
+using Cristiano3120.Logging;
+using System.IO;
 
 namespace CacxClient.Windows;
+
 /// <summary>
 /// Interaction logic for HomeWindow.xaml
 /// </summary>
 public partial class HomeWindow : BaseWindow
 {
-    public HomeWindow(User user)
+    private User _user;
+
+    public HomeWindow(User user, FileStream? profilePictureStream)
     {
         InitializeComponent();
+        _user = user;
+
+        if (profilePictureStream is null)
+        {
+            byte[] bytes = http.GetBytesAsync(Endpoints.GetCdnEndpoint(Bucket.User, user.ProfilePictureUrl), callerInfos: CallerInfos.Create()).Result;
+            Console.WriteLine(bytes.Length);
+        }
     }
 }

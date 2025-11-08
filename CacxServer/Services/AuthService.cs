@@ -6,6 +6,9 @@ using CacxShared.SharedDTOs;
 using Cristiano3120.Logging;
 using CacxServer.UserDataDatabaseResources;
 using CacxShared.ApiResources;
+using CacxShared.Endpoints;
+using CacxShared.SharedMinioResources;
+using CacxServer.Storage;
 
 namespace CacxServer.Services;
 
@@ -82,21 +85,14 @@ public sealed class AuthService(UserDataDatabase userDataDatabase, Logger logger
     {
         User idUser = user with
         {
-            Id = SnowflakeGenerator.Generate()
+            Id = SnowflakeGenerator.Generate(),
+            ProfilePictureUrl = Endpoints.GetCdnEndpoint(Bucket.User, ObjectPaths.GetUserProfilePicturePath(user.Id)),
         };
 
-        DatabaseResult<object> databaseResult 
+        DatabaseResult<User> databaseResult 
             = await userDataDatabase.AddUserToDbAsync(idUser);
 
-        if (databaseResult.RequestSuccessful)
-        {
-            return idUser with
-            {
-                Password = ""
-            };
-        }
-
-        return null;
+        return databaseResult.ReturnedValue;
     }
 
     public async Task<bool> SendVerificationEmailAsync(UniqueUserData uniqueUserData, int verificationCode)
@@ -136,4 +132,7 @@ public sealed class AuthService(UserDataDatabase userDataDatabase, Logger logger
         return true;
 #endif
     }
+
+    internal async Task<DatabaseResult<User>> LoginAsync(LoginRequest loginRequest)
+        => await userDataDatabase.GetUserByLoginDataAsync(loginRequest);   
 }

@@ -23,29 +23,56 @@ internal static class GuiHelper
     /// If the <see cref="Window"/> needs a special constructor that needs to be called
     /// instantiate a <see cref="Window"/> of that type beforehand and just pass it as an param
     /// </param>
-    public static void SwitchWindow<TNewWindow>() where TNewWindow : BaseWindow, new() 
+    public static void SwitchWindow<TNewWindow>() where TNewWindow : BaseWindow, new()
         => Internal_SwitchWindow(new TNewWindow());
 
     private static void Internal_SwitchWindow<TNewWindow>(TNewWindow newWindow) where TNewWindow : BaseWindow
     {
-        //The delay before closing the old window in ms
-        const int SwitchDelayMs = 150;
-
         _ = Application.Current.Dispatcher.Invoke(async () =>
         {
+            Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
             Application.Current.MainWindow = newWindow;
 
             newWindow.Show();
-            await Task.Delay(SwitchDelayMs);
+            newWindow.Visibility = Visibility.Hidden;
+            await Task.Delay(50);
+            
+            Application.Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
 
-            foreach (Window window in Application.Current.Windows)
+            newWindow.ContentRendered += (_, _) =>
             {
-                if (window is not TNewWindow)
+                foreach (Window window in Application.Current.Windows)
                 {
-                    window.Close();
-                    break;
+                    if (window != newWindow)
+                    {
+                        window.Close();
+                    }
                 }
-            }
+
+                newWindow.Visibility = Visibility.Visible;
+            };
         });
     }
+
+    //private static void Internal_SwitchWindow<TNewWindow>(TNewWindow newWindow) where TNewWindow : BaseWindow
+    //{
+    //    //The delay before closing the old window in ms
+    //    const int SwitchDelayMs = 150;
+
+    //    _ = Application.Current.Dispatcher.Invoke(async () =>
+    //    {
+    //        Application.Current.MainWindow = newWindow;
+    //        newWindow.Show();
+
+    //        await Task.Delay(SwitchDelayMs);
+
+    //        foreach (Window window in Application.Current.Windows)
+    //        {
+    //            if (window != newWindow)
+    //            {
+    //                window.Close();
+    //            }
+    //        }
+    //    });
+    //}
 }

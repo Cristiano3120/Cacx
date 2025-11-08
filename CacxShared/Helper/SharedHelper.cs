@@ -13,6 +13,7 @@ public static class SharedHelper
     /// <exception cref="Exception">Thrown if the project base path cannot be determined from the current application context.</exception>
     public static string GetDynamicPath(Project project, string relativePath)
     {
+#if DEBUG
         string projectBasePath = AppContext.BaseDirectory;
         int binIndex = projectBasePath.IndexOf($"{Path.DirectorySeparatorChar}Cacx{Path.DirectorySeparatorChar}", StringComparison.Ordinal);
 
@@ -24,6 +25,9 @@ public static class SharedHelper
         binIndex += 6; //Offset Cacx// TODO: Rework
         projectBasePath = projectBasePath[..binIndex];
         return Path.Combine(projectBasePath, $"{project}", relativePath);
+#else
+    return Path.Combine(AppContext.BaseDirectory, relativePath);
+#endif
     }
 
     /// <summary>
