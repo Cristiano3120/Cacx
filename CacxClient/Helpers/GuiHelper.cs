@@ -1,6 +1,7 @@
 ﻿using CacxClient.Windows;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Animation;
 
 namespace CacxClient.Helpers;
 
@@ -27,11 +28,34 @@ internal static class GuiHelper
     public static void SwitchWindow<TNewWindow>() where TNewWindow : UserControl, new()
         => Internal_SwitchWindow(new TNewWindow());
 
+    //TODO: Auto Login
+    //TODO: Maus cursor loading machen während request und btn deaktivieren
     private static void Internal_SwitchWindow<TNewWindow>(TNewWindow newWindow) where TNewWindow : UserControl
     {
         Application.Current.Dispatcher.Invoke(() =>
         {
-            Application.Current.MainWindow.Content = newWindow;
+            Application app = Application.Current;
+            Window mainWindow = app.MainWindow;
+
+            if (mainWindow.Content is not UIElement oldContent)
+            {
+                mainWindow.Content = newWindow;
+                return;
+            }
+
+            TimeSpan duration = TimeSpan.FromMilliseconds(150);
+
+            DoubleAnimation fadeOut = new(fromValue: 1, toValue: 0, duration);
+            DoubleAnimation fadeIn = new(fromValue: 0, toValue: 1, duration);
+
+            fadeOut.Completed += (_, _) =>
+            {
+                mainWindow.Content = newWindow;
+                newWindow.BeginAnimation(UIElement.OpacityProperty, fadeIn);
+            };
+
+            oldContent.BeginAnimation(UIElement.OpacityProperty, fadeOut);
         });
     }
+
 }
