@@ -53,10 +53,14 @@ public partial class LoginWindow : UserControl
             Password = PasswordTextBox.Text
         };
 
+        GuiHelper.ChangeRequestUI(userControl: this, LoginBtn,  requestDone: false);
+
         string endpoint = Endpoints.GetAuthEndpoint(AuthEndpoint.Login);
         CallerInfos callerInfos = CallerInfos.Create();
         ApiResponse<User> response = await _http.PostAsync<LoginRequest, User>(loginRequest, endpoint, callerInfos);
         
+        GuiHelper.ChangeRequestUI(userControl: this, LoginBtn, requestDone: true);
+
         if (response.Data is null)
         {
             InfoTextBlock.TriggerDisplayAnimation(_defaultErrorBrush, _animatedErrorColor, $"Wrong login data!", ref _animationCts);

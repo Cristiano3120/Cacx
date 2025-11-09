@@ -1,6 +1,7 @@
 ﻿using CacxClient.Windows;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media.Animation;
 
 namespace CacxClient.Helpers;
@@ -28,8 +29,6 @@ internal static class GuiHelper
     public static void SwitchWindow<TNewWindow>() where TNewWindow : UserControl, new()
         => Internal_SwitchWindow(new TNewWindow());
 
-    //TODO: Auto Login
-    //TODO: Maus cursor loading machen während request und btn deaktivieren
     private static void Internal_SwitchWindow<TNewWindow>(TNewWindow newWindow) where TNewWindow : UserControl
     {
         Application.Current.Dispatcher.Invoke(() =>
@@ -58,4 +57,15 @@ internal static class GuiHelper
         });
     }
 
+    /// <summary>
+    /// This method deactivates the button and shows a loading animation(loading cursor)
+    /// </summary>
+    /// <param name="requestDone">If <c>true</c> the UI changes will be reverted</param>
+    internal static void ChangeRequestUI(UserControl userControl, Button btn, bool requestDone)
+    {
+        btn.IsEnabled = requestDone;
+        userControl.Cursor = requestDone 
+            ? Cursors.Arrow 
+            : Cursors.Wait;
+    }
 }

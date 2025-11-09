@@ -57,7 +57,12 @@ public partial class VerificationWindow : UserControl
             return;
         }
 
+        GuiHelper.ChangeRequestUI(userControl: this, VerifyBtn, requestDone: false);
+
         ApiResponse<bool> response =  await VerifyAsync(verificationCode);
+
+        GuiHelper.ChangeRequestUI(userControl: this, VerifyBtn, requestDone: true);
+
         if (!response.IsSuccess)
         {
             errorMsg = "Something went wrong :( Try Again!";

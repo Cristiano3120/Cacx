@@ -9,6 +9,7 @@ using Cristiano3120.Logging;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace CacxClient.Windows;
@@ -73,6 +74,7 @@ public partial class CreateAccWindow : UserControl
         }
 
         GuiHelper.SwitchWindow(new CreateAccPart2Window(user));
+        _animationCts?.Dispose();
     }
 
     private async Task<User?> ValidateInputAsync()
@@ -141,7 +143,7 @@ public partial class CreateAccWindow : UserControl
         return (true, birthday);
     }
 
-    private static async Task<(bool requestSuccesful, bool emailFound)> CheckEmailAsync(string email)
+    private async Task<(bool requestSuccesful, bool emailFound)> CheckEmailAsync(string email)
     {
         Http http = App.GetHttp();
         UniqueUserData uniqueUserData = new()
@@ -149,10 +151,14 @@ public partial class CreateAccWindow : UserControl
             Email = email,
             Username = ""
         };
+        
+        GuiHelper.ChangeRequestUI(userControl: this, ContinueBtn, requestDone: false);
 
         string endpoint = Endpoints.GetAuthEndpoint(AuthEndpoint.CheckUserUniqueness);
         ApiResponse<(bool emailFound, bool usernameFound)> response =
             await http.PostAsync<UniqueUserData, (bool emailFound, bool usernameFound)>(uniqueUserData, endpoint, CallerInfos.Create());
+
+        GuiHelper.ChangeRequestUI(userControl: this, ContinueBtn, requestDone: true);
 
         return (response.IsSuccess, response.Data.emailFound);
     }

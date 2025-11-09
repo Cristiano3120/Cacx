@@ -6,7 +6,7 @@ using CacxShared.Endpoints;
 using CacxShared.SharedDTOs;
 using Cristiano3120.Logging;
 using Microsoft.Win32;
-using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -23,7 +23,7 @@ public partial class CreateAccPart2Window : UserControl
     private CancellationTokenSource? _animationCts;
     private readonly Color _animatedErrorColor;
     private readonly Brush _defaultErrorBrush;
-    private string? _profilePicturePath;
+    private string _profilePicturePath;
     private readonly Logger _logger;
     private readonly User _user;
 
@@ -37,6 +37,7 @@ public partial class CreateAccPart2Window : UserControl
         _defaultErrorBrush = App.Current.Resources["DefaultErrorBrush"] as Brush ?? Brushes.LightGray;
 
         _user = user;
+        _profilePicturePath = string.Empty;
 
         GoBackBtn.Click += GoBackBtn_Click;
         SignUpBtn.Click += SignUpBtn_ClickAsync;
@@ -44,12 +45,6 @@ public partial class CreateAccPart2Window : UserControl
         ProfilePictureEllipse_Init();
         _logger.LogDebug(LoggerParams.None, $"{nameof(CreateAccPart2Window)} initialized");
     }
-
-    //protected override void OnClosing(CancelEventArgs e)
-    //{
-    //    base.OnClosed(e);
-    //    _animationCts?.Dispose();
-    //}
 
     private void ProfilePictureEllipse_Init()
     {
@@ -112,6 +107,7 @@ public partial class CreateAccPart2Window : UserControl
         }
 
         GuiHelper.SwitchWindow(new VerificationWindow(validatedUser, _profilePicturePath));
+        _animationCts?.Dispose();
     }
 
     private async Task<User?> ValidateInputAsync()
@@ -200,7 +196,7 @@ public partial class CreateAccPart2Window : UserControl
         return true;
     }
 
-    private static async Task<(bool requestSuccesful, bool emailFound, bool usernameFound)> CheckEmailAndUsernameAsync(string email, string username)
+    private async Task<(bool requestSuccesful, bool emailFound, bool usernameFound)> CheckEmailAndUsernameAsync(string email, string username)
     {
         Http http = App.GetHttp();
         UniqueUserData uniqueUserData = new()
@@ -209,10 +205,13 @@ public partial class CreateAccPart2Window : UserControl
             Username = username
         };
 
+        GuiHelper.ChangeRequestUI(userControl: this, SignUpBtn, requestDone: false);
+
         string endpoint = Endpoints.GetAuthEndpoint(AuthEndpoint.CheckUserUniqueness);
         ApiResponse<(bool emailFound, bool usernameFound)> response =
             await http.PostAsync<UniqueUserData, (bool emailFound, bool usernameFound)>(uniqueUserData, endpoint, CallerInfos.Create());
-    
+
+        GuiHelper.ChangeRequestUI(userControl: this, SignUpBtn, requestDone: true);
 
         return (response.IsSuccess, response.Data.emailFound, response.Data.usernameFound);
     }
