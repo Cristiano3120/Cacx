@@ -1,0 +1,14 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- BACKGROUND / SURFACES -->
+    <Color x:Key="WindowBackground">#1f1e1f</Color>
+    <Color x:Key="PanelBackground">#1f1e1f</Color> <!--Panels-->
+    <Color x:Key="InputBackground">#2e2d2e</Color> <!--Inputs-->
+    <Color x:Key="HoverColor">#cccccc</Color> <!--Hover-->
+
+    <!-- TEXT-->
+    <Color x:Key="TextPrimaryColor">Black</Color>
+    
+    <!-- BORDERS -->
+    <Color x:Key="BorderPrimary">#1a191a</Color>
+</ResourceDictionary>

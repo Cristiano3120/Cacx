@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="CacxClient/CacxClient.csproj" />
+  <Project Path="CacxServer/CacxServer.csproj" />
+  <Project Path="CacxShared/CacxShared.csproj" Id="84276237-132f-44f1-8fd9-2f2915e08399" />
+</Solution>

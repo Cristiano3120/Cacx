@@ -1,0 +1,17 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--############################-->
+    <!--      SURFACE BRUSHES       -->
+    <!--############################-->
+
+    <SolidColorBrush x:Key="WindowBackgroundBrush" Color="{DynamicResource WindowBackground}" /> 
+    <SolidColorBrush x:Key="PanelBackgroundBrush" Color="{DynamicResource PanelBackground}" />
+    <SolidColorBrush x:Key="InputBackgroundBrush" Color="{DynamicResource InputBackground}" />
+    <SolidColorBrush x:Key="HoverBrush" Color="{DynamicResource HoverColor}" />
+
+    <!--############################-->
+    <!--      TEXT BRUSHES       -->
+    <!--############################-->
+    <SolidColorBrush x:Key="PrimaryTextBrush" Color="{DynamicResource TextPrimaryColor}"/>
+    <SolidColorBrush x:Key="PrimaryBorderBrush" Color="{DynamicResource BorderPrimary}"/>
+</ResourceDictionary>
