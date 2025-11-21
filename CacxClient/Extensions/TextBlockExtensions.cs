@@ -134,4 +134,47 @@ internal static class TextBlockExtensions
 
         return storyboard;
     }
+
+    public static void EnableMoveAnimation(this TextBlock textBlock, TextBox targetTextBox, double labelYPos, double moveBy)
+    {
+        TranslateTransform transform = new(offsetX: 0, offsetY: labelYPos);
+        textBlock.Foreground = textBlock.Foreground.Clone();
+        textBlock.RenderTransform = transform;
+
+        targetTextBox.GotFocus += (_, __) =>
+        {
+
+            DoubleAnimation doubleAnimation = new()
+            {
+                Duration = TimeSpan.FromMilliseconds(200),
+                By = -moveBy
+            };
+            textBlock.RenderTransform.BeginAnimation(TranslateTransform.YProperty, doubleAnimation);
+
+            ColorAnimation fgAnim = new()
+            {
+                To = (Color)Application.Current.Resources["HoverColor"],
+                Duration = TimeSpan.FromMilliseconds(200)
+            };
+            textBlock.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, fgAnim);
+
+            targetTextBox.LostFocus += (_, __) =>
+            {
+                DoubleAnimation doubleAnimation = new()
+                {
+                    Duration = TimeSpan.FromMilliseconds(200),
+                    By = moveBy
+                };
+                textBlock.RenderTransform.BeginAnimation(TranslateTransform.YProperty, doubleAnimation);
+
+                ColorAnimation fgAnim = new()
+                {
+                    To = (Color)Application.Current.Resources["TextPrimaryColor"],
+                    Duration = TimeSpan.FromMilliseconds(200)
+                };
+                textBlock.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, fgAnim);
+            };
+        };
+
+    }
 }

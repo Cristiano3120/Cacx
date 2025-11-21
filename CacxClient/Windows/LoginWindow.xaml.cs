@@ -15,13 +15,5 @@ public partial class LoginWindow : UserControl
     {
         InitializeComponent();
         _loginViewModel = loginViewModel;
-        Task.Run(async () =>
-        {
-            await Task.Delay(1000);
-            Application.Current.Dispatcher.BeginInvoke(async () =>
-            {
-                
-            });
-        });
     }
 }

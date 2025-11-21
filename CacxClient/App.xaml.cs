@@ -54,7 +54,8 @@ public partial class App : Application
 
                     _ = services.AddTransient<LoginViewModel>();
                 }).Build();
-    }
+        //TODO: MACH DIE TEXTBLOCK ANIM IN IMPROVEDTEXTBOX.XAML via C# damit da die Farbe auch passt einfach als TextBlock Extension
+    } //TODO: MACH MAYBE NEN IAUTHSERVICE ABER VORHER MERGEN UND AUF MAIN ARBEITEN! 
 
     protected override void OnStartup(StartupEventArgs e)
     {

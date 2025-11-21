@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using CacxClient.Extensions;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace CacxClient.CustomUserControls;
@@ -10,6 +11,9 @@ public partial class ImprovedTextBox : UserControl
     public ImprovedTextBox()
     {
         InitializeComponent();
+
+        InnerTextBlock.EnableMoveAnimation(targetTextBox: InnerTextBox, labelYPos: LabelYPosition, moveBy: 5);
+        InnerTextBox.EnableFocusAnimation();
     }
 
     public static readonly DependencyProperty LabelProperty =

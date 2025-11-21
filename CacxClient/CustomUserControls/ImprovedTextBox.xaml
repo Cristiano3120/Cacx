@@ -20,42 +20,13 @@
              AcceptsReturn="{Binding AcceptsReturn, RelativeSource={RelativeSource AncestorType=UserControl}}"
              TextWrapping="{Binding TextWrapping, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
 
-        <TextBlock Text="{Binding Label, RelativeSource={RelativeSource AncestorType=UserControl}}"
+        <TextBlock x:Name="InnerTextBlock" Text="{Binding Label, RelativeSource={RelativeSource AncestorType=UserControl}}"
                    Margin="3,0,0,0"
                    VerticalAlignment="Top"
-                   RenderTransformOrigin="0,0">
-            <TextBlock.RenderTransform>
-                <TranslateTransform Y="{Binding LabelYPosition, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
-            </TextBlock.RenderTransform>
+                   RenderTransformOrigin="0,0"
+                   Style="{StaticResource BaseTextBlockStyle}">
 
-            <TextBlock.Style>
-                <Style TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsKeyboardFocusWithin, ElementName=InnerTextBox}" Value="True">
-                            <DataTrigger.EnterActions>
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(TranslateTransform.Y)"
-                                                         By="-5" Duration="{StaticResource DurationValue}"/>
-                                        <ColorAnimation Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)"
-                                                        To="White" Duration="{StaticResource DurationValue}"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </DataTrigger.EnterActions>
-                            <DataTrigger.ExitActions>
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(TranslateTransform.Y)"
-                                                         By="5" Duration="{StaticResource DurationValue}"/>
-                                        <ColorAnimation Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)"
-                                                        To="Black" Duration="{StaticResource DurationValue}"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </DataTrigger.ExitActions>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </TextBlock.Style>
-            </TextBlock>
+            
+        </TextBlock>
     </Grid>
 </UserControl>
