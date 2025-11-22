@@ -1,6 +1,6 @@
 ﻿using CacxClient.Commands;
 using CacxClient.Helper;
-using CacxClient.Services;
+using CacxClient.Interfaces;
 using Cristiano3120.Logging;
 using System.ComponentModel;
 using System.Windows.Input;
@@ -11,7 +11,7 @@ public class LoginViewModel : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
     public event Action<string>? OnInvalidData;
-    private readonly AuthService _authService;
+    private readonly IAuthService _authService;
     private readonly Logger _logger;
 
     public ICommand LoginCommand { get; }
@@ -38,7 +38,7 @@ public class LoginViewModel : INotifyPropertyChanged
     protected void OnPropertyChanged(string name)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-    public LoginViewModel(AuthService authService, Logger logger)
+    public LoginViewModel(IAuthService authService, Logger logger)
     {
         LoginCommand = new RelayCommand(async (_) => await LoginAsync(), CanLogin); //TODO: RateLimiter
 

@@ -39,9 +39,9 @@ public partial class App : Application
                 .ConfigureServices((context, services) =>
                 {
                     _ = services.AddSingleton<ITokenProvider, TokenProvider>();
+                    _ = services.AddSingleton<IAuthService, AuthService>();  
                     _ = services.AddSingleton<IPathHelper, PathHelper>();
                     _ = services.AddSingleton<IHttp, Http>();
-                    _ = services.AddSingleton<AuthService>(); //TODO: IAuthService
                     _ = services.AddSingleton<MainWindow>();
                     _ = services.AddSingleton((serviceProvider) =>
                     {
@@ -49,13 +49,13 @@ public partial class App : Application
                         {
                             LogLevel = LogLevel.Debug,
                         };
+
                         return new Logger(loggerSettings);
                     });
 
                     _ = services.AddTransient<LoginViewModel>();
                 }).Build();
-        //TODO: MACH DIE TEXTBLOCK ANIM IN IMPROVEDTEXTBOX.XAML via C# damit da die Farbe auch passt einfach als TextBlock Extension
-    } //TODO: MACH MAYBE NEN IAUTHSERVICE ABER VORHER MERGEN UND AUF MAIN ARBEITEN! 
+    }
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -70,7 +70,7 @@ public partial class App : Application
         await AppHost.StopAsync();
         _ = FreeConsole();
         base.OnExit(e);
-    }
+    } //TODO: Button.xaml musst die HoverAnimations per Button extension machen wegen dynamic anim
 
     private static void InitMainWindow(IServiceProvider provider)
     {

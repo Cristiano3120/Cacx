@@ -11,6 +11,8 @@
         <Setter Property="FontWeight" Value="SemiBold"/>
     </Style>
 
+    <Style TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}"/>
+    
     <Style TargetType="TextBlock" x:Key="MovingTextBlockAnim" BasedOn="{StaticResource BaseTextBlockStyle}">
         <Style.Triggers>
             <DataTrigger Binding="{Binding IsKeyboardFocusWithin, ElementName=InnerTextBox}" Value="True">

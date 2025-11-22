@@ -1,4 +1,6 @@
-﻿using CacxClient.MVVM;
+﻿using CacxClient.Extensions;
+using CacxClient.MVVM;
+using Microsoft.VisualBasic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -15,5 +17,12 @@ public partial class LoginWindow : UserControl
     {
         InitializeComponent();
         _loginViewModel = loginViewModel;
+        LoginBtn.EnableHoverAnimation();
+
+        _ = Task.Run(async () =>
+        {
+            await Task.Delay(5000);
+            Application.Current.Resources.MergedDictionaries[0]["HoverColor"] = Colors.Pink;
+        });
     }
 }

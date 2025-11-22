@@ -1,6 +1,8 @@
-﻿namespace CacxClient.Services;
+﻿using CacxClient.Interfaces;
 
-public class AuthService
+namespace CacxClient.Services;
+
+public class AuthService : IAuthService
 {
     public async Task LoginAsync()
     {
