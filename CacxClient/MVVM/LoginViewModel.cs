@@ -51,24 +51,23 @@ public class LoginViewModel : INotifyPropertyChanged
 
     private async Task LoginAsync()
     {
-        _logger.LogInformation(LoggerParams.None, () => "Attempting to log in");
-
-        if (!await NetworkHelper.IsEmailValidAsync(Email))
+        if (! await ValidateDataAsync())
         {
-            const string ErrorMsg = "The entered Email is invalid";
-            OnInvalidData?.Invoke(ErrorMsg);
-
             return;
         }
 
+        _logger.LogInformation(LoggerParams.None, () => "Attempting to log in");
         await _authService.LoginAsync();
     }
 
-    private bool CanLogin(object? _)
+    private static bool CanLogin(object? _)
+        => true;
+
+    private async Task<bool> ValidateDataAsync()
     {
         _logger.LogInformation(LoggerParams.None, () => "Checking if login is possible");
 
-        if (string.IsNullOrEmpty(Email))
+        if (string.IsNullOrEmpty(Email) || !await NetworkHelper.IsEmailValidAsync(Email))
         {
             const string ErrorMsg = "You have to enter a Email";
             OnInvalidData?.Invoke(ErrorMsg);

@@ -8,12 +8,13 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <TextBlock x:Name="ErrorTextBlock" Text="This is an error" VerticalAlignment="Top" HorizontalAlignment="Center" 
-                   Margin="0, 150, 0, 0" Foreground="Red" />
+        <TextBlock x:Name="InformationTextBlock" Text="This is an error" VerticalAlignment="Top" HorizontalAlignment="Center" 
+                   Margin="0, 150, 0, 0" Visibility="Hidden"/>
 
-        <custom:ImprovedTextBox Height="35" Width="200" Label="Test"/>
-        <custom:ImprovedTextBox Height="35" Width="200" Label="Test" Margin="0, 150, 0, 0"/>
+        <custom:ImprovedTextBox Height="35" Width="200" Label="Email" Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"/>
+        <custom:ImprovedTextBox Height="35" Width="200" Label="Password" Margin="0, 150, 0, 0" Text="{Binding Password, Mode=TwoWay}"/>
 
-        <Button x:Name="LoginBtn" Content="Login" Width="70" Height="30" VerticalAlignment="Bottom" Margin="0, 0, 0, 50"/>
+        <Button x:Name="LoginBtn" Content="Login" Width="70" Height="30" 
+                VerticalAlignment="Bottom" Margin="0, 0, 0, 50" Command="{Binding LoginCommand}"/>
     </Grid>
 </UserControl>

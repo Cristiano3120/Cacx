@@ -8,6 +8,7 @@
 
     <!-- TEXT-->
     <Color x:Key="TextPrimaryColor">Black</Color>
+    <Color x:Key="TextErrorColor">Red</Color>
     
     <!-- BORDERS -->
     <Color x:Key="BorderPrimary">#1a191a</Color>

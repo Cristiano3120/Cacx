@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 
 namespace CacxClient.Helper;
@@ -32,5 +33,19 @@ public static class GuiHelper
 
             oldContent.BeginAnimation(UIElement.OpacityProperty, fadeOut);
         });
+    }
+
+    /// <summary>
+    /// Darkens the given color by a given factor
+    /// </summary>
+    /// <param name="colorToDarken"></param>
+    /// <param name="factor">0.0 == black; 1.0 no change</param>
+    /// <returns></returns>
+    public static Color Darken(Color colorToDarken, double factor)
+    {
+        return Color.FromRgb(
+            (byte)(colorToDarken.R * factor),
+            (byte)(colorToDarken.G * factor),
+            (byte)(colorToDarken.B * factor));
     }
 }

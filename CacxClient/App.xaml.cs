@@ -70,7 +70,7 @@ public partial class App : Application
         await AppHost.StopAsync();
         _ = FreeConsole();
         base.OnExit(e);
-    } //TODO: Button.xaml musst die HoverAnimations per Button extension machen wegen dynamic anim
+    }
 
     private static void InitMainWindow(IServiceProvider provider)
     {
