@@ -1,6 +1,8 @@
 ﻿using CacxClient.Commands;
 using CacxClient.Helper;
 using CacxClient.Interfaces;
+using CacxClient.Services.RateLimiter;
+using CacxShared.SharedDTOs;
 using Cristiano3120.Logging;
 using System.ComponentModel;
 using System.Windows.Input;
@@ -10,11 +12,18 @@ namespace CacxClient.MVVM;
 public class LoginViewModel : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
+    public event Action<bool>? OnRequestRunningStateChanged;
     public event Action<string>? OnInvalidData;
+
+    private readonly ICursorService _cursorService;
     private readonly IAuthService _authService;
+    private readonly IRateLimiter _rateLimiter;
+
     private readonly Logger _logger;
+    private bool _isRequestRunning;
 
     public ICommand LoginCommand { get; }
+
     public string Email 
     { 
         get => field; 
@@ -38,30 +47,59 @@ public class LoginViewModel : INotifyPropertyChanged
     protected void OnPropertyChanged(string name)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-    public LoginViewModel(IAuthService authService, Logger logger)
+    public LoginViewModel(IAuthService authService, ICursorService cursorService, 
+        RateLimiters rateLimiters, Logger logger)
     {
-        LoginCommand = new RelayCommand(async (_) => await LoginAsync(), CanLogin); //TODO: RateLimiter
+        LoginCommand = new RelayCommand(async (_) => await LoginAsync(), CanLogin);
 
+        _rateLimiter = rateLimiters.Login;
+        _cursorService = cursorService;
         _authService = authService;
+
+        _isRequestRunning = false;
         _logger = logger;
 
         Email = string.Empty;
         Password = string.Empty;
+
+        OnRequestRunningStateChanged += isRequestRunning =>
+        {
+            _isRequestRunning = isRequestRunning;
+            CommandManager.InvalidateRequerySuggested();
+
+            if (isRequestRunning)
+            {
+                _cursorService.SetCursor(Cursors.Wait);
+            }
+            else
+            {
+                _cursorService.ResetCursor();
+            }
+        };
     }
 
+    //TryConsume klappt aber deaktiviert den btn nicht!!
     private async Task LoginAsync()
     {
-        if (! await ValidateDataAsync())
+        if (!await ValidateDataAsync() || !_rateLimiter.TryConsume())
         {
             return;
         }
 
+        OnRequestRunningStateChanged?.Invoke(true);
+
         _logger.LogInformation(LoggerParams.None, () => "Attempting to log in");
-        await _authService.LoginAsync();
+        await _authService.LoginAsync(new LoginRequest() 
+        {
+            Email = Email, 
+            Password = Password 
+        });
+
+        OnRequestRunningStateChanged?.Invoke(false);
     }
 
-    private static bool CanLogin(object? _)
-        => true;
+    private bool CanLogin(object? _)
+        => !_isRequestRunning;
 
     private async Task<bool> ValidateDataAsync()
     {

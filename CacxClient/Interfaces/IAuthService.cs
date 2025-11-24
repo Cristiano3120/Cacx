@@ -1,6 +1,8 @@
-﻿namespace CacxClient.Interfaces;
+﻿using CacxShared.SharedDTOs;
+
+namespace CacxClient.Interfaces;
 
 public interface IAuthService
 {
-    public async Task LoginAsync() { }
+    public Task LoginAsync(LoginRequest loginRequest);
 }

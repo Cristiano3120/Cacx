@@ -2,6 +2,7 @@
 using CacxClient.Interfaces;
 using CacxClient.MVVM;
 using CacxClient.Services;
+using CacxClient.Services.RateLimiter;
 using CacxClient.Windows;
 using Cristiano3120.Logging;
 using Microsoft.Extensions.Configuration;
@@ -38,9 +39,11 @@ public partial class App : Application
                 })
                 .ConfigureServices((context, services) =>
                 {
+                    _ = services.AddSingleton<ICursorService, CursorService>();
                     _ = services.AddSingleton<ITokenProvider, TokenProvider>();
                     _ = services.AddSingleton<IAuthService, AuthService>();  
                     _ = services.AddSingleton<IPathHelper, PathHelper>();
+                    _ = services.AddSingleton<RateLimiters>();
                     _ = services.AddSingleton<IHttp, Http>();
                     _ = services.AddSingleton<MainWindow>();
                     _ = services.AddSingleton((serviceProvider) =>
