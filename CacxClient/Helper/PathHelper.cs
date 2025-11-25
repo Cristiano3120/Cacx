@@ -7,6 +7,7 @@ namespace CacxClient.Helper;
 public enum PathType
 {
     Logs,
+    Resources
 }
 
 public class PathHelper(IConfiguration configuration) : IPathHelper

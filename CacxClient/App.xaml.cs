@@ -3,6 +3,7 @@ using CacxClient.Interfaces;
 using CacxClient.MVVM;
 using CacxClient.Services;
 using CacxClient.Services.RateLimiter;
+using CacxClient.Services.ResourceManagment;
 using CacxClient.Windows;
 using Cristiano3120.Logging;
 using Microsoft.Extensions.Configuration;
@@ -39,6 +40,7 @@ public partial class App : Application
                 })
                 .ConfigureServices((context, services) =>
                 {
+                    _ = services.AddSingleton<ILocalizationService, LocalizationService>();
                     _ = services.AddSingleton<ICursorService, CursorService>();
                     _ = services.AddSingleton<ITokenProvider, TokenProvider>();
                     _ = services.AddSingleton<IAuthService, AuthService>();  
@@ -58,7 +60,11 @@ public partial class App : Application
 
                     _ = services.AddTransient<LoginViewModel>();
                 }).Build();
-    }
+    } 
+    //TODO: guck ob sprachen ändern zur runtime klappt
+    //TODO: Mach für den hyperlink auch nen resx eintrag
+    //TODO: Musst btn größe dynamisch an die text länge anpassen
+    //TODO: Rework PathHelper
 
     protected override void OnStartup(StartupEventArgs e)
     {

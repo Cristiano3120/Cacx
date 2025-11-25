@@ -44,6 +44,16 @@ public class LoginViewModel : INotifyPropertyChanged
         }
     }
 
+    public bool LoginBtnEnabled
+    {
+        get => field;
+        set
+        {
+            field = value;
+            OnPropertyChanged(nameof(LoginBtnEnabled));
+        }
+    }
+
     protected void OnPropertyChanged(string name)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
@@ -51,6 +61,10 @@ public class LoginViewModel : INotifyPropertyChanged
         RateLimiters rateLimiters, Logger logger)
     {
         LoginCommand = new RelayCommand(async (_) => await LoginAsync(), CanLogin);
+        LoginBtnEnabled = true;
+        
+        Email = string.Empty;
+        Password = string.Empty;
 
         _rateLimiter = rateLimiters.Login;
         _cursorService = cursorService;
@@ -59,11 +73,9 @@ public class LoginViewModel : INotifyPropertyChanged
         _isRequestRunning = false;
         _logger = logger;
 
-        Email = string.Empty;
-        Password = string.Empty;
-
         OnRequestRunningStateChanged += isRequestRunning =>
         {
+            LoginBtnEnabled = !isRequestRunning;
             _isRequestRunning = isRequestRunning;
             CommandManager.InvalidateRequerySuggested();
 
@@ -78,10 +90,16 @@ public class LoginViewModel : INotifyPropertyChanged
         };
     }
 
-    //TryConsume klappt aber deaktiviert den btn nicht!!
     private async Task LoginAsync()
     {
-        if (!await ValidateDataAsync() || !_rateLimiter.TryConsume())
+        if (!_rateLimiter.TryConsume())
+        {
+            const string ErrorMsg = "Don´t spam :( You gotta wait a bit!";
+            OnInvalidData?.Invoke(ErrorMsg);
+            return;
+        }
+
+        if (!await ValidateDataAsync())
         {
             return;
         }

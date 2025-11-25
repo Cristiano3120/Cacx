@@ -19,6 +19,7 @@ public partial class LoginWindow : UserControl
         DataContext = _loginViewModel;
 
         LoginBtn.EnableHoverAnimation();
+        CreateAccHyperlink.EnableHoverAnimation();
         _loginViewModel.OnInvalidData += DisplayInformation;
     }
 

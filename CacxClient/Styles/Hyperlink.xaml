@@ -1,0 +1,14 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style TargetType="Hyperlink">
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+
+        <Style.Triggers>
+            <Trigger Property="Cursor" Value="Hand"/>
+            <EventTrigger RoutedEvent="Hyperlink.Click">
+                <BeginStoryboard Storyboard="{StaticResource BounceAnimation}" HandoffBehavior="Compose"/>
+            </EventTrigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>
