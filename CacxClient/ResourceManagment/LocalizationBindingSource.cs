@@ -1,19 +1,18 @@
-﻿using CacxClient.Services.ResourceManagment;
-using System.Collections.Specialized;
+﻿using CacxClient.Services;
+using System.ComponentModel;
 
 namespace CacxClient.ResourceManagment;
 
-public class LocalizationBindingSource : INotifyCollectionChanged
+public class LocalizationBindingSource : INotifyPropertyChanged
 {
-    public event NotifyCollectionChangedEventHandler? CollectionChanged;
-
+    public event PropertyChangedEventHandler? PropertyChanged;
     public string this[string key] => LocalizationService.Instance.GetString(key);
 
     public LocalizationBindingSource()
     {
         LocalizationService.Instance.PropertyChanged += (_, __) =>
         {
-            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
         };
     }
 }

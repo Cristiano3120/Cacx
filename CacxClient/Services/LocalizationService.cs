@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Reflection;
 
-namespace CacxClient.Services.ResourceManagment;
+namespace CacxClient.Services;
 
 public sealed class LocalizationService : INotifyPropertyChanged, ILocalizationService
 {
@@ -15,15 +15,15 @@ public sealed class LocalizationService : INotifyPropertyChanged, ILocalizationS
     public void SetLanguage(LanguageCode languageCode)
     {
         string languageCodeStr = $"{languageCode}".ToLower();
-        CurrentCulture = new CultureInfo(languageCodeStr);
+        Instance.CurrentCulture = new CultureInfo(languageCodeStr);
         
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
+        Instance.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
     }
 
     public string GetString(string propertyName)
     {
         string[] parts = propertyName.Split('_'); //Example Login_Email
-        string filename = $"Resources_de_{parts[0]}";
+        string filename = $"Resources_{CurrentCulture.TwoLetterISOLanguageName}_{parts[0]}";
         string fullType = $"CacxClient.Resources.{CurrentCulture.TwoLetterISOLanguageName}.{filename}";
 
         Type? resType = Type.GetType(fullType);

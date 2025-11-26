@@ -11,7 +11,7 @@ public class LocalizationExtension(string key) : MarkupExtension
     {
         Binding binding = new($"[{Key}]")
         {
-            Source = new LocalizationBindingSource()
+            Source = new LocalizationBindingSource(),
         };
 
         return binding.ProvideValue(serviceProvider);
