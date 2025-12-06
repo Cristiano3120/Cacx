@@ -13,7 +13,8 @@
                         BorderThickness="{StaticResource Button_BorderThickness}"
                         BorderBrush="{DynamicResource PrimaryBorderBrush}"
                         CornerRadius="{StaticResource Button_CornerRadius}" 
-                        Background="{TemplateBinding Background}">
+                        Background="{TemplateBinding Background}"
+                        Padding="{TemplateBinding Padding}">
 
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True"/>
                     </Border>

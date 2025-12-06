@@ -1,61 +1,55 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <UseWPF>true</UseWPF>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net10.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseWPF>true</UseWPF>
 
-  <ItemGroup>
-    <PackageReference Include="Cristiano3120.Logger" Version="1.0.7" />
-    <PackageReference Include="DnsClient" Version="1.8.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.0" />
-  </ItemGroup>
+		<InterceptorsNamespaces>
+			$(InterceptorsNamespaces);
+			Microsoft.Extensions.Configuration.Binder.SourceGeneration
+		</InterceptorsNamespaces>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\CacxShared\CacxShared.csproj" />
-  </ItemGroup>
+	
 
-  <ItemGroup>
-    <Folder Include="Themes\" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Cacx.LanguageManager" Version="1.1.0" />
+		<PackageReference Include="Cristiano3120.Logger" Version="1.0.7" />
+		<PackageReference Include="DnsClient" Version="1.8.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Resources\de\Resources.de.Login.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.de.Login.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Resources\en\Resources.en.Login.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.en.Login.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Resources\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\CacxShared\CacxShared.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="Resources\de\Resources.de.Login.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.de.Login.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Resources\en\Resources.en.Login.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.en.Login.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Resources\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="Themes\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<SplashScreen Include="SplashScreen.gif" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Resources\Login\Login.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Login.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="Resources\Login\Login.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Login.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
 
 </Project>

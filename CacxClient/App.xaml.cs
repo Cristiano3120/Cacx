@@ -1,4 +1,7 @@
-﻿using CacxClient.Helper;
+﻿using Cacx.LanguageManager.Abstractions;
+using Cacx.LanguageManager.Core;
+using Cacx.LanguageManager.Wpf;
+using CacxClient.Helper;
 using CacxClient.Interfaces;
 using CacxClient.MVVM;
 using CacxClient.Services;
@@ -8,6 +11,8 @@ using Cristiano3120.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
 
@@ -28,9 +33,10 @@ public partial class App : Application
 
     public App()
     {
+        SetupExceptionHandling();
         _ = AllocConsole();
 
-        const string PathToAppsettings = @"C:\\Users\\Crist\\source\\repos\\Cacx\\CacxClient\\appsettings.json"; //TODO: NICHT HARDCODEN
+        string PathToAppsettings = GetPathToAppsettings();
         AppHost = Host.CreateDefaultBuilder()
                 .ConfigureAppConfiguration((context, config) =>
                 {
@@ -39,11 +45,11 @@ public partial class App : Application
                 })
                 .ConfigureServices((context, services) =>
                 {
+#pragma warning disable CA1416
                     _ = services.AddSingleton<ILocalizationService, LocalizationService>();
                     _ = services.AddSingleton<ICursorService, CursorService>();
                     _ = services.AddSingleton<ITokenProvider, TokenProvider>();
-                    _ = services.AddSingleton<IAuthService, AuthService>();  
-                    _ = services.AddSingleton<IPathHelper, PathHelper>();
+                    _ = services.AddSingleton<IAuthService, AuthService>();
                     _ = services.AddSingleton<RateLimiters>();
                     _ = services.AddSingleton<IHttp, Http>();
                     _ = services.AddSingleton<MainWindow>();
@@ -58,11 +64,12 @@ public partial class App : Application
                     });
 
                     _ = services.AddTransient<LoginViewModel>();
+
+                    LocalizationProvider.Service = new LocalizationService(basePath: "CacxClient.Resources.Login.Login");
+                    LocalizationProvider.Service.SetLanguage(new System.Globalization.CultureInfo("en-US"));
                 }).Build();
-    } 
-    //TODO: Mach für den hyperlink auch nen resx eintrag
-    //TODO: Musst btn größe dynamisch an die text länge anpassen
-    //TODO: Rework PathHelper
+    }
+#pragma warning restore CA1416
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -84,5 +91,43 @@ public partial class App : Application
         MainWindow mainWindow = provider.GetRequiredService<MainWindow>();
         mainWindow.Content = new LoginWindow(provider.GetRequiredService<LoginViewModel>());
         mainWindow.Show();
+    }
+
+    private static string GetPathToAppsettings()
+    {
+        string path = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
+        if (!Debugger.IsAttached)
+        {
+            // .exe is running
+            return path;
+        }
+        
+        int indexOfBin = path.IndexOf(@"\bin", StringComparison.OrdinalIgnoreCase);
+        if (indexOfBin >= 0)
+        {
+            path = path[..indexOfBin] + @"\appsettings.json";
+        }
+
+        return path;
+    }
+
+    private void SetupExceptionHandling()
+    {
+        string logFilePath = Path.Combine(AppContext.BaseDirectory, "UnhandledExceptions.log");
+
+        AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+        {
+            File.AppendAllText(logFilePath, $"{DateTime.Now}: {e.ExceptionObject}{Environment.NewLine}\n");
+        };
+
+        DispatcherUnhandledException += (s, e) =>
+        {
+            File.AppendAllText(logFilePath, $"{DateTime.Now}: {e.Exception}{Environment.NewLine}\n");
+        };
+
+        TaskScheduler.UnobservedTaskException += (s, e) =>
+        {
+            File.AppendAllText(logFilePath, $"{DateTime.Now}: {e.Exception}{Environment.NewLine}\n");
+        };
     }
 }

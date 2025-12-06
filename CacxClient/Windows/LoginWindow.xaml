@@ -5,22 +5,26 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CacxClient.Windows"
              xmlns:custom="clr-namespace:CacxClient.CustomUserControls"
-             xmlns:loc="clr-namespace:CacxClient.ResourceManagment"
+             xmlns:loc="clr-namespace:Cacx.LanguageManager.Wpf;assembly=Cacx.LanguageManager.Wpf"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <TextBlock x:Name="InformationTextBlock" Text="This is an error" VerticalAlignment="Top" HorizontalAlignment="Center" 
                    Margin="0, 150, 0, 0" Visibility="Hidden"/>
 
-        <custom:ImprovedTextBox Height="35" Width="200" Label="{loc:Localization Login_EmailLabel}" Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"/>
-        <custom:ImprovedTextBox Height="35" Width="200" Label="{loc:Localization Login_PasswordLabel}" Margin="0, 150, 0, 0" Text="{Binding Password, Mode=TwoWay}"/>
+        <custom:ImprovedTextBox Height="35" Width="200" Label="{loc:Localization EmailLabel}" Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"/>
+        <custom:ImprovedTextBox Height="35" Width="200" Label="{loc:Localization PasswordLabel}" Margin="0, 150, 0, 0" Text="{Binding Password, Mode=TwoWay}"/>
 
         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0, 205, 0, 0">
-            <Hyperlink x:Name="CreateAccHyperlink">No account yet? Click here!</Hyperlink>
+            <Hyperlink x:Name="CreateAccHyperlink">
+                <TextBlock Text="{loc:Localization CreateAccHyperlink}"/>
+            </Hyperlink>
         </TextBlock>
-        
-        <Button x:Name="LoginBtn" Content="{loc:Localization Login_LoginBtnContent}" Width="70" Height="30" 
-                VerticalAlignment="Bottom" Margin="0, 0, 0, 50" Command="{Binding LoginCommand}"
-                IsEnabled="{Binding LoginBtnEnabled}"/>
+
+        <Button x:Name="LoginBtn" MinWidth="65" Height="30" Padding="5, 0"
+            VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0, 0, 0, 50" 
+            Content="{loc:Localization LoginBtn}"
+            Command="{Binding LoginCommand}" IsEnabled="{Binding LoginBtnEnabled}"/>
+
     </Grid>
 </UserControl>

@@ -1,4 +1,5 @@
 ﻿using DnsClient;
+using System.Net.Mail;
 
 namespace CacxClient.Helper;
 
