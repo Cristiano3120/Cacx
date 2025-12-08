@@ -1,7 +1,7 @@
 ﻿using CacxShared.APIResponse;
 using Cristiano3120.Logging;
 
-namespace CacxClient.Interfaces;
+namespace CacxClient.Abstractions;
 
 internal interface IHttp
 {

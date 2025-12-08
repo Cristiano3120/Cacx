@@ -1,6 +1,6 @@
 ﻿using CacxShared.SharedDTOs;
 
-namespace CacxClient.Interfaces;
+namespace CacxClient.Abstractions;
 
 public interface IAuthService
 {

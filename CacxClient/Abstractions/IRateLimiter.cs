@@ -1,4 +1,4 @@
-﻿namespace CacxClient.Interfaces;
+﻿namespace CacxClient.Abstractions;
 
 public interface IRateLimiter
 {

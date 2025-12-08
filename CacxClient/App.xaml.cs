@@ -1,8 +1,6 @@
 ﻿using Cacx.LanguageManager.Abstractions;
 using Cacx.LanguageManager.Core;
-using Cacx.LanguageManager.Wpf;
-using CacxClient.Helper;
-using CacxClient.Interfaces;
+using CacxClient.Abstractions;
 using CacxClient.MVVM;
 using CacxClient.Services;
 using CacxClient.Services.RateLimiter;
@@ -46,7 +44,7 @@ public partial class App : Application
                 .ConfigureServices((context, services) =>
                 {
 #pragma warning disable CA1416
-                    _ = services.AddSingleton<ILocalizationService, LocalizationService>();
+                    _ = services.AddSingleton<ILocalizationService, LocalizationService>((_) => new LocalizationService(basePath: "CacxClient.Resources.Login.Login"));
                     _ = services.AddSingleton<ICursorService, CursorService>();
                     _ = services.AddSingleton<ITokenProvider, TokenProvider>();
                     _ = services.AddSingleton<IAuthService, AuthService>();
@@ -64,10 +62,9 @@ public partial class App : Application
                     });
 
                     _ = services.AddTransient<LoginViewModel>();
-
-                    LocalizationProvider.Service = new LocalizationService(basePath: "CacxClient.Resources.Login.Login");
-                    LocalizationProvider.Service.SetLanguage(new System.Globalization.CultureInfo("en-US"));
                 }).Build();
+
+        _ = AppHost.Services.GetRequiredService<ILocalizationService>();
     }
 #pragma warning restore CA1416
 

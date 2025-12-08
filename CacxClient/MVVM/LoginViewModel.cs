@@ -1,6 +1,6 @@
 ﻿using CacxClient.Commands;
 using CacxClient.Helper;
-using CacxClient.Interfaces;
+using CacxClient.Abstractions;
 using CacxClient.Services.RateLimiter;
 using CacxShared.SharedDTOs;
 using Cristiano3120.Logging;

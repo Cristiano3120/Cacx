@@ -1,5 +1,6 @@
 ﻿using CacxClient.Extensions;
 using CacxClient.MVVM;
+using CacxClient.Resources;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -11,22 +12,18 @@ namespace CacxClient.Windows;
 /// </summary>
 public partial class LoginWindow : UserControl
 {
-    private readonly LoginViewModel _loginViewModel;
-
     public LoginWindow(LoginViewModel loginViewModel)
     {
         InitializeComponent();
-        _loginViewModel = loginViewModel;
-        DataContext = _loginViewModel;
+        DataContext = loginViewModel;
 
         LoginBtn.EnableHoverAnimation();
         CreateAccHyperlink.EnableHoverAnimation();
-        _loginViewModel.OnInvalidData += DisplayInformation;
+        loginViewModel.OnInvalidData += DisplayInformation;
     }
 
     public void DisplayInformation(string msg)
     {
-        Color color = (Color)Application.Current.Resources.MergedDictionaries[0]["TextErrorColor"]; //TODO: Don´t Hardcode!
-        InformationTextBlock.TriggerDisplayAnimation(color, msg);
+        InformationTextBlock.TriggerDisplayAnimation(ColorResources.TextErrorColor, msg);
     }
 }

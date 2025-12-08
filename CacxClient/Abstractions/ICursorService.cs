@@ -1,6 +1,6 @@
 ﻿using System.Windows.Input;
 
-namespace CacxClient.Interfaces;
+namespace CacxClient.Abstractions;
 
 public interface ICursorService
 {

@@ -1,4 +1,4 @@
-﻿using CacxClient.Interfaces;
+﻿using CacxClient.Abstractions;
 using CacxShared.APIResponse;
 using Cristiano3120.Logging;
 using Microsoft.Extensions.Configuration;

@@ -1,4 +1,4 @@
-﻿using CacxClient.Interfaces;
+﻿using CacxClient.Abstractions;
 using CacxShared.SharedDTOs;
 
 namespace CacxClient.Services;
