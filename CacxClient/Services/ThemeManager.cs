@@ -2,30 +2,44 @@
 using System.IO;
 using System.Text.Json;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Media;
 
 namespace CacxClient.Services;
 
-internal static class ThemeManager
+internal sealed class ThemeManager(IPathProvider pathProvider)
 {
     public static void SetToLightMode()
     {
-
+        SetToSpecificMode("LightTheme.json");
     }
 
     public static void SetToDarkMode()
     {
-
+        SetToSpecificMode("DarkTheme.json");
     }
 
     public static void SetToPinkMode()
     {
-
+        
     }
 
+    private static void SetToSpecificMode(string filename)
+    {
+        string filepath = Path.Combine("Resources/Themes", filename);
+        Theme? theme = JsonSerializer.Deserialize<Theme>(filepath);
+        if (theme is null || theme.Colors.Count == 0)
+        {
+            return;
+        }
+
+        ApplyTheme(theme);
+    }
+
+
     // This method is only for creating the theme json file. Not used in production.
-    public static void CreateThemeTest()
+    //call after window creation in app.xaml.cs 
+    //Change Path and Name
+    public void CreateThemeTest()
     {
         Color[] arr = [.. Application.Current.Resources.MergedDictionaries[0].Values.Cast<Color>()];
         Dictionary<string, Color> darkModeColors = [];
@@ -39,11 +53,11 @@ internal static class ThemeManager
 
         Theme theme = new()
         {
-            Name = "DarkMode",
+            Name = "LightMode",
             Colors = darkModeColors
         };
 
-        File.WriteAllText("C:\\Users\\Crist\\source\\repos\\Cacx\\CacxClient\\Resources\\Themes\\DarkTheme.json", JsonSerializer.Serialize(theme, new JsonSerializerOptions() { WriteIndented = true}));
+        File.WriteAllText(path: pathProvider.GetPath("Resources/Themes/LightTheme.json"), JsonSerializer.Serialize(theme, new JsonSerializerOptions() { WriteIndented = true}));
     }
 
     private static void ApplyTheme(Theme theme)

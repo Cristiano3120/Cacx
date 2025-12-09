@@ -1,0 +1,82 @@
+{
+  "Name": "LightMode",
+  "Colors": {
+    "HoverColor": {
+      "ColorContext": null,
+      "A": 255,
+      "R": 204,
+      "G": 204,
+      "B": 204,
+      "ScA": 1,
+      "ScR": 0.60382736,
+      "ScG": 0.60382736,
+      "ScB": 0.60382736
+    },
+    "PanelBackground": {
+      "ColorContext": null,
+      "A": 255,
+      "R": 31,
+      "G": 30,
+      "B": 31,
+      "ScA": 1,
+      "ScR": 0.013702083,
+      "ScG": 0.0129830325,
+      "ScB": 0.013702083
+    },
+    "TextPrimaryColor": {
+      "ColorContext": null,
+      "A": 255,
+      "R": 0,
+      "G": 0,
+      "B": 0,
+      "ScA": 1,
+      "ScR": 0,
+      "ScG": 0,
+      "ScB": 0
+    },
+    "WindowBackground": {
+      "ColorContext": null,
+      "A": 255,
+      "R": 31,
+      "G": 30,
+      "B": 31,
+      "ScA": 1,
+      "ScR": 0.013702083,
+      "ScG": 0.0129830325,
+      "ScB": 0.013702083
+    },
+    "InputBackground": {
+      "ColorContext": null,
+      "A": 255,
+      "R": 46,
+      "G": 45,
+      "B": 46,
+      "ScA": 1,
+      "ScR": 0.027320893,
+      "ScG": 0.026241222,
+      "ScB": 0.027320893
+    },
+    "TextErrorColor": {
+      "ColorContext": null,
+      "A": 255,
+      "R": 255,
+      "G": 0,
+      "B": 0,
+      "ScA": 1,
+      "ScR": 1,
+      "ScG": 0,
+      "ScB": 0
+    },
+    "BorderPrimary": {
+      "ColorContext": null,
+      "A": 255,
+      "R": 26,
+      "G": 25,
+      "B": 26,
+      "ScA": 1,
+      "ScR": 0.010329823,
+      "ScG": 0.009721218,
+      "ScB": 0.010329823
+    }
+  }
+}

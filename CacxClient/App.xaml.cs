@@ -31,10 +31,11 @@ public partial class App : Application
 
     public App()
     {
-        SetupExceptionHandling();
+        PathProvider pathProvider = new();
+        SetupExceptionHandling(pathProvider);
         _ = AllocConsole();
 
-        string PathToAppsettings = GetPathToAppsettings();
+        string PathToAppsettings = pathProvider.GetPath(relativePath: "appsettings.json");
         AppHost = Host.CreateDefaultBuilder()
                 .ConfigureAppConfiguration((context, config) =>
                 {
@@ -47,8 +48,10 @@ public partial class App : Application
                     _ = services.AddSingleton<ILocalizationService, LocalizationService>((_) => new LocalizationService(basePath: "CacxClient.Resources.Login.Login"));
                     _ = services.AddSingleton<ICursorService, CursorService>();
                     _ = services.AddSingleton<ITokenProvider, TokenProvider>();
+                    _ = services.AddSingleton<IPathProvider, PathProvider>();
                     _ = services.AddSingleton<IAuthService, AuthService>();
                     _ = services.AddSingleton<RateLimiters>();
+                    _ = services.AddSingleton<ThemeManager>();
                     _ = services.AddSingleton<IHttp, Http>();
                     _ = services.AddSingleton<MainWindow>();
                     _ = services.AddSingleton((serviceProvider) =>
@@ -64,7 +67,7 @@ public partial class App : Application
                     _ = services.AddTransient<LoginViewModel>();
                 }).Build();
 
-        _ = AppHost.Services.GetRequiredService<ILocalizationService>();
+        _ = AppHost.Services.GetRequiredService<ILocalizationService>();    
     }
 #pragma warning restore CA1416
 
@@ -90,27 +93,10 @@ public partial class App : Application
         mainWindow.Show();
     }
 
-    private static string GetPathToAppsettings()
+    private void SetupExceptionHandling(IPathProvider pathProvider)
     {
-        string path = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
-        if (!Debugger.IsAttached)
-        {
-            // .exe is running
-            return path;
-        }
-        
-        int indexOfBin = path.IndexOf(@"\bin", StringComparison.OrdinalIgnoreCase);
-        if (indexOfBin >= 0)
-        {
-            path = path[..indexOfBin] + @"\appsettings.json";
-        }
-
-        return path;
-    }
-
-    private void SetupExceptionHandling()
-    {
-        string logFilePath = Path.Combine(AppContext.BaseDirectory, "UnhandledExceptions.log");
+        const string FileName = "UnhandledExceptions.log";
+        string logFilePath = pathProvider.GetPath(FileName);
 
         AppDomain.CurrentDomain.UnhandledException += (s, e) =>
         {
