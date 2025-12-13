@@ -4,7 +4,7 @@
 
 Here’s a **showcase** of the current state:
 
-[> YouTube Link](https://youtu.be/BQpcjLBUYU4)]
+https://youtu.be/BQpcjLBUYU4
 
 ---
 
