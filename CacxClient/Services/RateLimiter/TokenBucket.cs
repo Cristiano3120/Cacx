@@ -39,7 +39,6 @@ public sealed class TokenBucket(TimeSpan regenerationRate, int maxTokens) : IRat
     public bool TryConsume()
     {
         Refill();
-        Console.WriteLine(_tokens);
         if (_tokens == 0)
         {
             return false;

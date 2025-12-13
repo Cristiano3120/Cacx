@@ -15,7 +15,7 @@
                    Margin="0, 150, 0, 0" Visibility="Hidden"/>
 
         <custom:ImprovedTextBox Height="35" Width="200" Label="{loc:Localization EmailLabel}" Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"/>
-        <custom:ImprovedTextBox Height="35" Width="200" Label="{loc:Localization PasswordLabel}" Margin="0, 150, 0, 0" Text="{Binding Password, Mode=TwoWay}"/>
+        <custom:ImprovedTextBox Height="35" Width="200" Label="{loc:Localization PasswordLabel}" Margin="0, 150, 0, 0" Text="{Binding Password, Mode=OneWayToSource}"/>
 
         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0, 205, 0, 0">
             <Hyperlink x:Name="CreateAccHyperlink">

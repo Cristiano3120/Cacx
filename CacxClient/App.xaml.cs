@@ -9,10 +9,10 @@ using Cristiano3120.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace CacxClient;
 
@@ -50,7 +50,6 @@ public partial class App : Application
                     _ = services.AddSingleton<ITokenProvider, TokenProvider>();
                     _ = services.AddSingleton<IPathProvider, PathProvider>();
                     _ = services.AddSingleton<IAuthService, AuthService>();
-                    _ = services.AddSingleton<RateLimiters>();
                     _ = services.AddSingleton<ThemeManager>();
                     _ = services.AddSingleton<IHttp, Http>();
                     _ = services.AddSingleton<MainWindow>();
@@ -64,6 +63,7 @@ public partial class App : Application
                         return new Logger(loggerSettings);
                     });
 
+                    _ = services.AddTransient<RegisterViewModel>();        
                     _ = services.AddTransient<LoginViewModel>();
                 }).Build();
 
@@ -93,24 +93,28 @@ public partial class App : Application
         mainWindow.Show();
     }
 
+    /// <summary>
+    /// This is not a beautiful implementation, but it works.
+    /// I´m only doing this because I´m leaving this project behind and just need to quickly switch between windows
+    /// for demo purposes.
+    /// </summary>
+    public static void SwitchWindow(UserControl window)
+    {
+        AppHost.Services.GetRequiredService<MainWindow>().Content = window;
+    }
+
     private void SetupExceptionHandling(IPathProvider pathProvider)
     {
         const string FileName = "UnhandledExceptions.log";
         string logFilePath = pathProvider.GetPath(FileName);
 
-        AppDomain.CurrentDomain.UnhandledException += (s, e) =>
-        {
-            File.AppendAllText(logFilePath, $"{DateTime.Now}: {e.ExceptionObject}{Environment.NewLine}\n");
-        };
+        AppDomain.CurrentDomain.UnhandledException += (s, e) 
+            => File.AppendAllText(logFilePath, $"{DateTime.Now}: {e.ExceptionObject}{Environment.NewLine}\n");
 
-        DispatcherUnhandledException += (s, e) =>
-        {
-            File.AppendAllText(logFilePath, $"{DateTime.Now}: {e.Exception}{Environment.NewLine}\n");
-        };
+        DispatcherUnhandledException += (s, e) 
+            => File.AppendAllText(logFilePath, $"{DateTime.Now}: {e.Exception}{Environment.NewLine}\n");
 
-        TaskScheduler.UnobservedTaskException += (s, e) =>
-        {
-            File.AppendAllText(logFilePath, $"{DateTime.Now}: {e.Exception}{Environment.NewLine}\n");
-        };
+        TaskScheduler.UnobservedTaskException += (s, e) 
+            => File.AppendAllText(logFilePath, $"{DateTime.Now}: {e.Exception}{Environment.NewLine}\n");
     }
 }

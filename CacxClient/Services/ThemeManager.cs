@@ -8,19 +8,22 @@ namespace CacxClient.Services;
 
 internal sealed class ThemeManager(IPathProvider pathProvider)
 {
+    public const string LightTheme = "LightTheme.json";
+    public const string DarkTheme = "DarkTheme.json";
+
     public static void SetToLightMode()
     {
-        SetToSpecificMode("LightTheme.json");
+        SetToSpecificMode(LightTheme);
     }
 
     public static void SetToDarkMode()
     {
-        SetToSpecificMode("DarkTheme.json");
+        SetToSpecificMode(DarkTheme);
     }
 
     public static void SetToPinkMode()
     {
-        
+        throw new NotImplementedException("There is no pink preset yet");
     }
 
     private static void SetToSpecificMode(string filename)

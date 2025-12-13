@@ -57,8 +57,7 @@ public class LoginViewModel : INotifyPropertyChanged
     protected void OnPropertyChanged(string name)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-    public LoginViewModel(IAuthService authService, ICursorService cursorService, 
-        RateLimiters rateLimiters, Logger logger)
+    public LoginViewModel(IAuthService authService, ICursorService cursorService, Logger logger)
     {
         LoginCommand = new RelayCommand(async (_) => await LoginAsync(), CanLogin);
         LoginBtnEnabled = true;
@@ -66,7 +65,7 @@ public class LoginViewModel : INotifyPropertyChanged
         Email = string.Empty;
         Password = string.Empty;
 
-        _rateLimiter = rateLimiters.Login;
+        _rateLimiter = RateLimiters.Login;
         _cursorService = cursorService;
         _authService = authService;
 
@@ -121,6 +120,7 @@ public class LoginViewModel : INotifyPropertyChanged
 
     private async Task<bool> ValidateDataAsync()
     {
+        Console.WriteLine(Password);
         _logger.LogInformation(LoggerParams.None, () => "Checking if login is possible");
 
         if (string.IsNullOrEmpty(Email) || !await NetworkHelper.IsEmailValidAsync(Email))

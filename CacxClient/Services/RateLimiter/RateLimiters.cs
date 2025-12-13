@@ -2,8 +2,8 @@
 
 namespace CacxClient.Services.RateLimiter;
 
-public class RateLimiters
+public static class RateLimiters
 {
-    public IRateLimiter Login { get; } = new TokenBucket(regenerationRate: TimeSpan.FromSeconds(3), maxTokens: 2);
-    public IRateLimiter CreateAcc { get; } = new TokenBucket(regenerationRate: TimeSpan.FromSeconds(2), maxTokens: 3);
+    public static IRateLimiter Login => new TokenBucket(regenerationRate: TimeSpan.FromSeconds(3), maxTokens: 2);
+    public static IRateLimiter Register => new TokenBucket(regenerationRate: TimeSpan.FromSeconds(5), maxTokens: 3);
 }
