@@ -8,22 +8,6 @@ https://youtu.be/BQpcjLBUYU4
 
 ---
 
-### ⚠️ Note
-
-I'm going to **discontinue this version** of the project and pick it back up using **other technologies**.  
-WPF gave me quite some **headaches**, which is why I decided to leave a **C#-only codebase** behind.
-
----
-
-### ✨ The New Plan
-
-The new messenger will run on **Electron** with a **C# server** handling the backend.
-
-- **Server**: [GitHub Repo Link]  
-- **Client**: [GitHub Repo Link]
-
----
-
 💡 **Fun Fact:**  
 
 I started this project a **long, long time ago**. I kept restarting it **completely from scratch** because I got so much better at coding that my older code just didn’t meet my quality standards anymore.  
