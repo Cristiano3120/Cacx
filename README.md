@@ -1,6 +1,6 @@
 # 🚀 Cacx 📱💬
 
-### A Discord-like Messenger originally written in **C# and WPF**
+### A Discord-like Messenger written in **C# and WPF**
 
 Here’s a **showcase** of the current state:
 
