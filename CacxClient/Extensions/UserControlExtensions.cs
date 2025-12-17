@@ -1,13 +1,18 @@
-﻿using System.Windows;
+﻿using System.Windows.Media.Animation;
 using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
+using System.Windows;
 
-namespace CacxClient.Helper;
+namespace CacxClient.Extensions;
 
-public static class GuiHelper
+internal static class UserControlExtensions
 {
-    internal static void SwitchWindow(UserControl windowToSwitchTo)
+    /// <summary>
+    /// Switches the current MainWindow content to the provided UserControl with a fade animation.
+    /// Call this like: new SomeUserControl().SwitchTo();
+    /// Real example: new RegisterWindow().SwitchTo();
+    /// </summary>
+    /// <param name="windowToSwitchTo"></param>
+    internal static void SwitchTo(this UserControl windowToSwitchTo)
     {
         Application.Current.Dispatcher.Invoke(() =>
         {
@@ -33,19 +38,5 @@ public static class GuiHelper
 
             oldContent.BeginAnimation(UIElement.OpacityProperty, fadeOut);
         });
-    }
-
-    /// <summary>
-    /// Darkens the given color by a given factor
-    /// </summary>
-    /// <param name="colorToDarken"></param>
-    /// <param name="factor">0.0 == black; 1.0 no change</param>
-    /// <returns></returns>
-    public static Color Darken(Color colorToDarken, double factor)
-    {
-        return Color.FromRgb(
-            (byte)(colorToDarken.R * factor),
-            (byte)(colorToDarken.G * factor),
-            (byte)(colorToDarken.B * factor));
     }
 }

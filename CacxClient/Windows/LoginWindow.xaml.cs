@@ -19,12 +19,11 @@ public partial class LoginWindow : UserControl
         LoginBtn.EnableHoverAnimation();
         CreateAccHyperlink.EnableHoverAnimation();
 
-        CreateAccHyperlink.Click += (_, _) => GuiHelper.SwitchWindow(new RegisterWindow());
+        CreateAccHyperlink.Click += (_, _) => new RegisterWindow().SwitchTo();
         loginViewModel.OnInvalidData += DisplayInformation;
     }
 
     public void DisplayInformation(string msg)
-    {
-        InformationTextBlock.TriggerDisplayAnimation(ColorResources.TextErrorColor, msg);
-    }
+        => InformationTextBlock.TriggerDisplayAnimation(ColorResources.TextErrorColor, msg);
+    
 }

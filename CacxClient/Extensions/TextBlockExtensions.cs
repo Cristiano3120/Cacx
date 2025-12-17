@@ -1,5 +1,4 @@
-﻿using CacxClient.Helper;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
@@ -16,10 +15,10 @@ internal static class TextBlockExtensions
             ownerType: typeof(TextBlockExtensions),
             defaultMetadata: new PropertyMetadata(null));
 
-    public static void SetAnimationCTS(this TextBlock textBlock, CancellationTokenSource value)
+    private static void SetAnimationCTS(this TextBlock textBlock, CancellationTokenSource value)
         => Application.Current.Dispatcher.Invoke(() => textBlock.SetValue(AnimationCTSProperty, value));
     
-    public static CancellationTokenSource? GetAnimationCTS(this TextBlock textBlock)
+    private static CancellationTokenSource? GetAnimationCTS(this TextBlock textBlock)
     {
         CancellationTokenSource? cts = Application.Current.Dispatcher.Invoke(() =>
         {
@@ -113,7 +112,7 @@ internal static class TextBlockExtensions
     {
         ColorAnimation colorAnimation = new()
         {
-            From = GuiHelper.Darken(colorToDarken: colorToAnimateTo, factor: 0.3),
+            From = colorToAnimateTo.Darken(factor: 0.3),
             To = colorToAnimateTo,
             Duration = TimeSpan.FromSeconds(0.35),
         };
