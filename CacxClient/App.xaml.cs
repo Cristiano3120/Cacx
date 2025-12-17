@@ -9,8 +9,10 @@ using Cristiano3120.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -45,15 +47,22 @@ public partial class App : Application
                 .ConfigureServices((context, services) =>
                 {
 #pragma warning disable CA1416
+                    JsonSerializerOptions jsonSerializerOptions = new()
+                    {
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                        WriteIndented = true,
+                    };
+
                     _ = services.AddSingleton<ILocalizationService, LocalizationService>((_) => new LocalizationService(basePath: "CacxClient.Resources.Login.Login"));
+                    _ = services.AddSingleton((_) => new ThemeManager(pathProvider, jsonSerializerOptions));
                     _ = services.AddSingleton<ICursorService, CursorService>();
                     _ = services.AddSingleton<ITokenProvider, TokenProvider>();
                     _ = services.AddSingleton<IPathProvider, PathProvider>();
                     _ = services.AddSingleton<IAuthService, AuthService>();
-                    _ = services.AddSingleton<ThemeManager>();
+                    _ = services.AddSingleton(jsonSerializerOptions);
                     _ = services.AddSingleton<IHttp, Http>();
                     _ = services.AddSingleton<MainWindow>();
-                    _ = services.AddSingleton((serviceProvider) =>
+                    _ = services.AddSingleton((_) =>
                     {
                         LoggerSettings loggerSettings = new()
                         {
@@ -62,12 +71,12 @@ public partial class App : Application
 
                         return new Logger(loggerSettings);
                     });
-
-                    _ = services.AddTransient<RegisterViewModel>();        
+                   
+                    _ = services.AddTransient<RegisterViewModel>();
                     _ = services.AddTransient<LoginViewModel>();
                 }).Build();
 
-        _ = AppHost.Services.GetRequiredService<ILocalizationService>();    
+        _ = AppHost.Services.GetRequiredService<ILocalizationService>();
     }
 #pragma warning restore CA1416
 
@@ -91,9 +100,18 @@ public partial class App : Application
         MainWindow mainWindow = provider.GetRequiredService<MainWindow>();
         mainWindow.Content = new LoginWindow(provider.GetRequiredService<LoginViewModel>());
         mainWindow.Show();
+
+        //For Demo purposes only...
+        CultureInfo cultureInfo = new("en-US");
+        provider.GetRequiredService<ILocalizationService>().SetLanguage(cultureInfo); //language switch
+
+        ThemeManager themeManager = provider.GetRequiredService<ThemeManager>();
+        themeManager.CreateThemeTest();
+        themeManager.SetToLightMode(); //theme switch
     }
 
     /// <summary>
+    /// To Do: Rework
     /// This is not a beautiful implementation, but it works.
     /// I´m only doing this because I´m leaving this project behind and just need to quickly switch between windows
     /// for demo purposes.
@@ -108,13 +126,13 @@ public partial class App : Application
         const string FileName = "UnhandledExceptions.log";
         string logFilePath = pathProvider.GetPath(FileName);
 
-        AppDomain.CurrentDomain.UnhandledException += (s, e) 
+        AppDomain.CurrentDomain.UnhandledException += (s, e)
             => File.AppendAllText(logFilePath, $"{DateTime.Now}: {e.ExceptionObject}{Environment.NewLine}\n");
 
-        DispatcherUnhandledException += (s, e) 
+        DispatcherUnhandledException += (s, e)
             => File.AppendAllText(logFilePath, $"{DateTime.Now}: {e.Exception}{Environment.NewLine}\n");
 
-        TaskScheduler.UnobservedTaskException += (s, e) 
+        TaskScheduler.UnobservedTaskException += (s, e)
             => File.AppendAllText(logFilePath, $"{DateTime.Now}: {e.Exception}{Environment.NewLine}\n");
     }
 }

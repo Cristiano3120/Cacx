@@ -1,4 +1,5 @@
 ﻿using CacxClient.Abstractions;
+using System.Collections;
 using System.IO;
 using System.Text.Json;
 using System.Windows;
@@ -6,17 +7,17 @@ using System.Windows.Media;
 
 namespace CacxClient.Services;
 
-internal sealed class ThemeManager(IPathProvider pathProvider)
+internal sealed class ThemeManager(IPathProvider pathProvider, JsonSerializerOptions jsonSerializerOptions)
 {
-    public const string LightTheme = "LightTheme.json";
-    public const string DarkTheme = "DarkTheme.json";
+    public const string LightTheme = "LightMode.json";
+    public const string DarkTheme = "DarkMode.json";
 
-    public static void SetToLightMode()
+    public void SetToLightMode()
     {
         SetToSpecificMode(LightTheme);
     }
 
-    public static void SetToDarkMode()
+    public void SetToDarkMode()
     {
         SetToSpecificMode(DarkTheme);
     }
@@ -26,10 +27,12 @@ internal sealed class ThemeManager(IPathProvider pathProvider)
         throw new NotImplementedException("There is no pink preset yet");
     }
 
-    private static void SetToSpecificMode(string filename)
+    private void SetToSpecificMode(string filename)
     {
         string filepath = Path.Combine("Resources/Themes", filename);
-        Theme? theme = JsonSerializer.Deserialize<Theme>(filepath);
+        string content = File.ReadAllText(pathProvider.GetPath(filepath));
+
+        Theme? theme = JsonSerializer.Deserialize<Theme>(content);
         if (theme is null || theme.Colors.Count == 0)
         {
             return;
@@ -44,30 +47,42 @@ internal sealed class ThemeManager(IPathProvider pathProvider)
     //Change Path and Name
     public void CreateThemeTest()
     {
-        Color[] arr = [.. Application.Current.Resources.MergedDictionaries[0].Values.Cast<Color>()];
-        Dictionary<string, Color> darkModeColors = [];
-        int i = 0;
+        const string BrushCollectionName = "Brushes.xaml";
+        ResourceDictionary brushDictonary = Application.Current.Resources.MergedDictionaries
+            .First(x => x.Source.OriginalString.Contains(BrushCollectionName));
 
-        foreach (string key in Application.Current.Resources.MergedDictionaries[0].Keys)
+        Dictionary<string, Color> colorsToSave = [];
+        foreach (DictionaryEntry dictionaryEntry in brushDictonary)
         {
-            darkModeColors[key] = arr[i];
-            i++;
+            if (dictionaryEntry.Key is string key 
+                && dictionaryEntry.Value is SolidColorBrush brush)
+            {
+                colorsToSave[key] = brush.Color;
+            }
         }
 
+        const string ThemeName = "DarkMode";
         Theme theme = new()
         {
-            Name = "LightMode",
-            Colors = darkModeColors
+            Name = ThemeName,
+            Colors = colorsToSave
         };
-
-        File.WriteAllText(path: pathProvider.GetPath("Resources/Themes/LightTheme.json"), JsonSerializer.Serialize(theme, new JsonSerializerOptions() { WriteIndented = true}));
+        
+        File.WriteAllText(path: pathProvider.GetPath($"Resources/Themes/{ThemeName}.json"), JsonSerializer.Serialize(theme, jsonSerializerOptions));
     }
 
     private static void ApplyTheme(Theme theme)
     {
-        foreach ((string? key, Color color) in theme.Colors)
+        const string BrushCollectionName = "Brushes.xaml";
+        ResourceDictionary brushDictonary = Application.Current.Resources.MergedDictionaries
+            .First(x => x.Source.OriginalString.Contains(BrushCollectionName));
+
+        foreach ((string key, Color color) in theme.Colors)
         {
-            Application.Current.Resources[key] = color;
+            if (brushDictonary[key] is SolidColorBrush brush)
+            {
+                brush.Color = color;
+            }
         }
     }
 }
