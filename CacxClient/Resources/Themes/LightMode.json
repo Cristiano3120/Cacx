@@ -1,0 +1,71 @@
+{
+  "name": "LightMode",
+  "colors": {
+    "HoverBrush": {
+      "colorContext": null,
+      "a": 255,
+      "r": 255,
+      "g": 192,
+      "b": 203,
+      "scA": 1,
+      "scR": 1,
+      "scG": 0.52711517,
+      "scB": 0.5972018
+    },
+    "InputBackgroundBrush": {
+      "colorContext": null,
+      "a": 255,
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "scA": 1,
+      "scR": 1,
+      "scG": 1,
+      "scB": 1
+    },
+    "PrimaryTextBrush": {
+      "colorContext": null,
+      "a": 255,
+      "r": 0,
+      "g": 0,
+      "b": 0,
+      "scA": 1,
+      "scR": 0,
+      "scG": 0,
+      "scB": 0
+    },
+    "PrimaryBorderBrush": {
+      "colorContext": null,
+      "a": 255,
+      "r": 204,
+      "g": 204,
+      "b": 204,
+      "scA": 1,
+      "scR": 0.60382736,
+      "scG": 0.60382736,
+      "scB": 0.60382736
+    },
+    "WindowBackgroundBrush": {
+      "colorContext": null,
+      "a": 255,
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "scA": 1,
+      "scR": 1,
+      "scG": 1,
+      "scB": 1
+    },
+    "PanelBackgroundBrush": {
+      "colorContext": null,
+      "a": 255,
+      "r": 243,
+      "g": 243,
+      "b": 243,
+      "scA": 1,
+      "scR": 0.8962694,
+      "scG": 0.8962694,
+      "scB": 0.8962694
+    }
+  }
+}

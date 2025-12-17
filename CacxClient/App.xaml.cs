@@ -3,18 +3,15 @@ using Cacx.LanguageManager.Core;
 using CacxClient.Abstractions;
 using CacxClient.MVVM;
 using CacxClient.Services;
-using CacxClient.Services.RateLimiter;
 using CacxClient.Windows;
 using Cristiano3120.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace CacxClient;
 
@@ -25,11 +22,11 @@ public partial class App : Application
 {
     public static IHost AppHost { get; private set; } = default!;
 
-    [DllImport("kernel32.dll", EntryPoint = "AllocConsole", SetLastError = true, CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
-    private static extern int AllocConsole();
+    [LibraryImport("kernel32.dll", EntryPoint = "AllocConsole", SetLastError = true)]
+    private static partial int AllocConsole();
 
-    [DllImport("kernel32.dll", EntryPoint = "FreeConsole", SetLastError = true, CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
-    private static extern int FreeConsole();
+    [LibraryImport("kernel32.dll", EntryPoint = "FreeConsole", SetLastError = true)]
+    private static partial int FreeConsole();
 
     public App()
     {
@@ -46,7 +43,6 @@ public partial class App : Application
                 })
                 .ConfigureServices((context, services) =>
                 {
-#pragma warning disable CA1416
                     JsonSerializerOptions jsonSerializerOptions = new()
                     {
                         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -71,14 +67,14 @@ public partial class App : Application
 
                         return new Logger(loggerSettings);
                     });
-                   
+
                     _ = services.AddTransient<RegisterViewModel>();
                     _ = services.AddTransient<LoginViewModel>();
                 }).Build();
 
         _ = AppHost.Services.GetRequiredService<ILocalizationService>();
     }
-#pragma warning restore CA1416
+
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -100,25 +96,6 @@ public partial class App : Application
         MainWindow mainWindow = provider.GetRequiredService<MainWindow>();
         mainWindow.Content = new LoginWindow(provider.GetRequiredService<LoginViewModel>());
         mainWindow.Show();
-
-        //For Demo purposes only...
-        CultureInfo cultureInfo = new("en-US");
-        provider.GetRequiredService<ILocalizationService>().SetLanguage(cultureInfo); //language switch
-
-        ThemeManager themeManager = provider.GetRequiredService<ThemeManager>();
-        themeManager.CreateThemeTest();
-        themeManager.SetToLightMode(); //theme switch
-    }
-
-    /// <summary>
-    /// To Do: Rework
-    /// This is not a beautiful implementation, but it works.
-    /// I´m only doing this because I´m leaving this project behind and just need to quickly switch between windows
-    /// for demo purposes.
-    /// </summary>
-    public static void SwitchWindow(UserControl window)
-    {
-        AppHost.Services.GetRequiredService<MainWindow>().Content = window;
     }
 
     private void SetupExceptionHandling(IPathProvider pathProvider)

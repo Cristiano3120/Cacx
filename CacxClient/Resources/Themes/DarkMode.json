@@ -1,28 +1,6 @@
 {
   "name": "DarkMode",
   "colors": {
-    "PanelBackgroundBrush": {
-      "colorContext": null,
-      "a": 255,
-      "r": 31,
-      "g": 30,
-      "b": 31,
-      "scA": 1,
-      "scR": 0.013702083,
-      "scG": 0.0129830325,
-      "scB": 0.013702083
-    },
-    "HoverBrush": {
-      "colorContext": null,
-      "a": 255,
-      "r": 204,
-      "g": 204,
-      "b": 204,
-      "scA": 1,
-      "scR": 0.60382736,
-      "scG": 0.60382736,
-      "scB": 0.60382736
-    },
     "PrimaryTextBrush": {
       "colorContext": null,
       "a": 255,
@@ -34,16 +12,16 @@
       "scG": 0,
       "scB": 0
     },
-    "InputBackgroundBrush": {
+    "PanelBackgroundBrush": {
       "colorContext": null,
       "a": 255,
-      "r": 46,
-      "g": 45,
-      "b": 46,
+      "r": 31,
+      "g": 30,
+      "b": 31,
       "scA": 1,
-      "scR": 0.027320893,
-      "scG": 0.026241222,
-      "scB": 0.027320893
+      "scR": 0.013702083,
+      "scG": 0.0129830325,
+      "scB": 0.013702083
     },
     "WindowBackgroundBrush": {
       "colorContext": null,
@@ -66,6 +44,28 @@
       "scR": 0.010329823,
       "scG": 0.009721218,
       "scB": 0.010329823
+    },
+    "InputBackgroundBrush": {
+      "colorContext": null,
+      "a": 255,
+      "r": 46,
+      "g": 45,
+      "b": 46,
+      "scA": 1,
+      "scR": 0.027320893,
+      "scG": 0.026241222,
+      "scB": 0.027320893
+    },
+    "HoverBrush": {
+      "colorContext": null,
+      "a": 255,
+      "r": 204,
+      "g": 204,
+      "b": 204,
+      "scA": 1,
+      "scR": 0.60382736,
+      "scG": 0.60382736,
+      "scB": 0.60382736
     }
   }
 }

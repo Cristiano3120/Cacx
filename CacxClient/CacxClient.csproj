@@ -11,6 +11,8 @@
 			$(InterceptorsNamespaces);
 			Microsoft.Extensions.Configuration.Binder.SourceGeneration
 		</InterceptorsNamespaces>
+
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	

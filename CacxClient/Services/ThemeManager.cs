@@ -1,4 +1,5 @@
 ﻿using CacxClient.Abstractions;
+using Cristiano3120.Logging;
 using System.Collections;
 using System.IO;
 using System.Text.Json;
@@ -22,17 +23,12 @@ internal sealed class ThemeManager(IPathProvider pathProvider, JsonSerializerOpt
         SetToSpecificMode(DarkTheme);
     }
 
-    public static void SetToPinkMode()
-    {
-        throw new NotImplementedException("There is no pink preset yet");
-    }
-
     private void SetToSpecificMode(string filename)
     {
         string filepath = Path.Combine("Resources/Themes", filename);
         string content = File.ReadAllText(pathProvider.GetPath(filepath));
 
-        Theme? theme = JsonSerializer.Deserialize<Theme>(content);
+        Theme? theme = JsonSerializer.Deserialize<Theme>(content, jsonSerializerOptions);
         if (theme is null || theme.Colors.Count == 0)
         {
             return;
@@ -42,10 +38,11 @@ internal sealed class ThemeManager(IPathProvider pathProvider, JsonSerializerOpt
     }
 
 
-    // This method is only for creating the theme json file. Not used in production.
-    //call after window creation in app.xaml.cs 
-    //Change Path and Name
-    public void CreateThemeTest()
+    /// <summary>
+    /// Reads all the Brushes from the Brush ResourceDictionary and saves them into a Theme json file.
+    /// </summary>
+    /// <param name="themeName"></param>
+    public void CreateTheme(string themeName)
     {
         const string BrushCollectionName = "Brushes.xaml";
         ResourceDictionary brushDictonary = Application.Current.Resources.MergedDictionaries
@@ -61,14 +58,14 @@ internal sealed class ThemeManager(IPathProvider pathProvider, JsonSerializerOpt
             }
         }
 
-        const string ThemeName = "DarkMode";
         Theme theme = new()
         {
-            Name = ThemeName,
+            Name = themeName,
             Colors = colorsToSave
         };
         
-        File.WriteAllText(path: pathProvider.GetPath($"Resources/Themes/{ThemeName}.json"), JsonSerializer.Serialize(theme, jsonSerializerOptions));
+        string path = pathProvider.GetPath($"Resources/Themes/{themeName}.json");
+        File.WriteAllText(path, contents: JsonSerializer.Serialize(theme, jsonSerializerOptions));
     }
 
     private static void ApplyTheme(Theme theme)
@@ -77,12 +74,15 @@ internal sealed class ThemeManager(IPathProvider pathProvider, JsonSerializerOpt
         ResourceDictionary brushDictonary = Application.Current.Resources.MergedDictionaries
             .First(x => x.Source.OriginalString.Contains(BrushCollectionName));
 
-        foreach ((string key, Color color) in theme.Colors)
+        Application.Current.Dispatcher.Invoke(() =>
         {
-            if (brushDictonary[key] is SolidColorBrush brush)
+            foreach ((string key, Color color) in theme.Colors)
             {
-                brush.Color = color;
+                if (brushDictonary[key] is SolidColorBrush brush)
+                {
+                    brush.Color = color;
+                }
             }
-        }
+        });
     }
 }
