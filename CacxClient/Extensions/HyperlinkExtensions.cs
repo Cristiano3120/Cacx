@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using CacxClient.Services;
+using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
@@ -15,7 +16,7 @@ internal static class HyperlinkExtensions
         {
             ColorAnimation colorAnimation = new()
             {
-                To = (Color)Application.Current.Resources.MergedDictionaries[0]["HoverColor"],
+                To = ThemeManager.GetColor(key: "HoverColor"),
                 Duration = duration
             };
 
@@ -26,7 +27,7 @@ internal static class HyperlinkExtensions
         {
             ColorAnimation colorAnimation = new()
             {
-                To = (Color)Application.Current.Resources.MergedDictionaries[0]["TextPrimaryColor"],
+                To = ThemeManager.GetColor(key: "TextPrimaryColor"),
                 Duration = duration
             };
             

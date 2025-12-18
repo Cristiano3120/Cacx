@@ -47,7 +47,7 @@ public static class TextBoxExtensions
 
             ColorAnimation borderAnim = new()
             {
-                To = (Color)Application.Current.Resources["BorderPrimary"],
+                To = (Color)Application.Current.Resources["BorderPrimaryColor"],
                 Duration = TimeSpan.FromSeconds(0.2)
             };
             border.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, borderAnim);

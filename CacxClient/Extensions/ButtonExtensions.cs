@@ -54,7 +54,7 @@ internal static class ButtonExtensions
 
             ColorAnimation bBAnimation = new()
             {
-                To = (Color)Application.Current.Resources["BorderPrimary"],
+                To = (Color)Application.Current.Resources["BorderPrimaryColor"],
                 Duration = duration
             };
 

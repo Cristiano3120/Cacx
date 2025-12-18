@@ -1,5 +1,4 @@
 ﻿using CacxClient.Abstractions;
-using Cristiano3120.Logging;
 using System.Collections;
 using System.IO;
 using System.Text.Json;
@@ -37,6 +36,38 @@ internal sealed class ThemeManager(IPathProvider pathProvider, JsonSerializerOpt
         ApplyTheme(theme);
     }
 
+    private static ResourceDictionary GetBrushesDictionary()
+    {
+        const string BrushCollectionName = "Brushes.xaml";
+        return GetResourceDictionary(BrushCollectionName);
+    }
+
+    private static ResourceDictionary GetColorsDictionary()
+    {
+        const string ColorCollectionName = "Colors.xaml";
+        return GetResourceDictionary(ColorCollectionName);
+    }
+
+    private static ResourceDictionary GetResourceDictionary(string collectionName)
+        => Application.Current.Resources.MergedDictionaries
+            .First(x => x.Source.OriginalString.Contains(collectionName));
+
+
+    /// <summary>
+    /// Retrieves the color associated with the specified key from the application's color resource dictionary.
+    /// </summary>
+    /// <param name="key">The key that identifies the color resource to retrieve. Cannot be null.</param>
+    /// <returns>A <see cref="Color"/> value if the key exists and is associated with a color; otherwise, <see langword="null"/>.</returns>
+    public static Color? GetColor(string key)
+    {
+        ResourceDictionary colorDictonary = GetColorsDictionary();
+        if (colorDictonary[key] is Color color)
+        {
+            return color;
+        }
+
+        return null;
+    }
 
     /// <summary>
     /// Reads all the Brushes from the Brush ResourceDictionary and saves them into a Theme json file.
@@ -44,14 +75,12 @@ internal sealed class ThemeManager(IPathProvider pathProvider, JsonSerializerOpt
     /// <param name="themeName"></param>
     public void CreateTheme(string themeName)
     {
-        const string BrushCollectionName = "Brushes.xaml";
-        ResourceDictionary brushDictonary = Application.Current.Resources.MergedDictionaries
-            .First(x => x.Source.OriginalString.Contains(BrushCollectionName));
+        ResourceDictionary brushDictonary = GetBrushesDictionary();
 
         Dictionary<string, Color> colorsToSave = [];
         foreach (DictionaryEntry dictionaryEntry in brushDictonary)
         {
-            if (dictionaryEntry.Key is string key 
+            if (dictionaryEntry.Key is string key
                 && dictionaryEntry.Value is SolidColorBrush brush)
             {
                 colorsToSave[key] = brush.Color;
@@ -63,25 +92,27 @@ internal sealed class ThemeManager(IPathProvider pathProvider, JsonSerializerOpt
             Name = themeName,
             Colors = colorsToSave
         };
-        
+
         string path = pathProvider.GetPath($"Resources/Themes/{themeName}.json");
         File.WriteAllText(path, contents: JsonSerializer.Serialize(theme, jsonSerializerOptions));
     }
 
     private static void ApplyTheme(Theme theme)
     {
-        const string BrushCollectionName = "Brushes.xaml";
-        ResourceDictionary brushDictonary = Application.Current.Resources.MergedDictionaries
-            .First(x => x.Source.OriginalString.Contains(BrushCollectionName));
-
         Application.Current.Dispatcher.Invoke(() =>
         {
+            ResourceDictionary brushDictonary = GetBrushesDictionary();
+            ResourceDictionary colorDictonary = GetColorsDictionary();
+
             foreach ((string key, Color color) in theme.Colors)
             {
                 if (brushDictonary[key] is SolidColorBrush brush)
                 {
                     brush.Color = color;
                 }
+
+                string colorKey = key.Replace("Brush", "Color"); //Brushes always end in "Brush", Colors in "Color"
+                colorDictonary[colorKey] = color;
             }
         });
     }

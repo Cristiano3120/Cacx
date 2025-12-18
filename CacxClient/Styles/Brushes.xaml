@@ -4,14 +4,14 @@
     <!--      SURFACE BRUSHES       -->
     <!--############################-->
 
-    <SolidColorBrush x:Key="WindowBackgroundBrush" Color="{DynamicResource WindowBackground}" /> 
-    <SolidColorBrush x:Key="PanelBackgroundBrush" Color="{DynamicResource PanelBackground}" />
-    <SolidColorBrush x:Key="InputBackgroundBrush" Color="{DynamicResource InputBackground}" />
+    <SolidColorBrush x:Key="WindowBackgroundColorBrush" Color="{DynamicResource WindowBackgroundColor}" /> 
+    <SolidColorBrush x:Key="PanelBackgroundColorBrush" Color="{DynamicResource PanelBackgroundColor}" />
+    <SolidColorBrush x:Key="InputBackgroundColorBrush" Color="{DynamicResource InputBackgroundColor}" />
     <SolidColorBrush x:Key="HoverBrush" Color="{DynamicResource HoverColor}" />
 
     <!--############################-->
     <!--      TEXT BRUSHES       -->
     <!--############################-->
     <SolidColorBrush x:Key="PrimaryTextBrush" Color="{DynamicResource TextPrimaryColor}"/>
-    <SolidColorBrush x:Key="PrimaryBorderBrush" Color="{DynamicResource BorderPrimary}"/>
+    <SolidColorBrush x:Key="PrimaryBorderBrush" Color="{DynamicResource BorderPrimaryColor}"/>
 </ResourceDictionary>

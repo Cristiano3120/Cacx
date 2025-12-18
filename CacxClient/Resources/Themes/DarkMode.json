@@ -12,7 +12,7 @@
       "scG": 0,
       "scB": 0
     },
-    "PanelBackgroundBrush": {
+    "PanelBackgroundColorBrush": {
       "colorContext": null,
       "a": 255,
       "r": 31,
@@ -23,7 +23,7 @@
       "scG": 0.0129830325,
       "scB": 0.013702083
     },
-    "WindowBackgroundBrush": {
+    "WindowBackgroundColorBrush": {
       "colorContext": null,
       "a": 255,
       "r": 31,
@@ -45,7 +45,7 @@
       "scG": 0.009721218,
       "scB": 0.010329823
     },
-    "InputBackgroundBrush": {
+    "InputBackgroundColorBrush": {
       "colorContext": null,
       "a": 255,
       "r": 46,

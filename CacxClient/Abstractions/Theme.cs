@@ -6,5 +6,5 @@ internal sealed record Theme
 {
     public string? Name { get; init; } = default!;
 
-    public Dictionary<string, Color> Colors { get; init; } = [];
+    public IReadOnlyDictionary<string, Color> Colors { get; init; } = new Dictionary<string, Color>();
 }

@@ -9,7 +9,7 @@
 
 
     <Style TargetType="TextBox" x:Key="BaseTextBoxStyle">
-        <Setter Property="Background" Value="{DynamicResource InputBackgroundBrush}" />
+        <Setter Property="Background" Value="{DynamicResource InputBackgroundColorBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBorderBrush}"/>
         <Setter Property="FontWeight" Value="{StaticResource TextBox_FontWeight}" />
