@@ -1,5 +1,4 @@
 ﻿using CacxClient.Extensions;
-using CacxClient.Helper;
 using CacxClient.MVVM;
 using CacxClient.Resources;
 using System.Windows.Controls;
@@ -19,7 +18,6 @@ public partial class LoginWindow : UserControl
         LoginBtn.EnableHoverAnimation();
         CreateAccHyperlink.EnableHoverAnimation();
 
-        CreateAccHyperlink.Click += (_, _) => new RegisterWindow().SwitchTo();
         loginViewModel.OnInvalidData += DisplayInformation;
     }
 

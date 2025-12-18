@@ -6,21 +6,26 @@
              xmlns:cc="clr-namespace:CacxClient.CustomUserControls"
              xmlns:local="clr-namespace:CacxClient.Windows"
              xmlns:loc="clr-namespace:Cacx.LanguageManager.Wpf;assembly=Cacx.LanguageManager.Wpf"
+             xmlns:vm="clr-namespace:CacxClient.MVVM"
              mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance Type=vm:RegisterViewModel}"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <cc:ImprovedTextBox Height="35" Width="200" Margin="0, 0, 0, 300"
+        <cc:ImprovedTextBox Height="35" Width="200" Margin="0, 0, 0, 250"
             Label="{loc:Localization EmailLabel}" Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"/>
-        <cc:ImprovedTextBox Height="35" Width="200" Margin="0, 0, 0, 150"
+        <cc:ImprovedTextBox Height="35" Width="200" Margin="0, 0, 0, 100"
             Label="{loc:Localization PasswordLabel}" Text="{Binding Password, Mode=OneWayToSource}"/>
-        <cc:ImprovedTextBox Height="35" Width="200" Margin="0, 0, 0, 0"
+        <cc:ImprovedTextBox Height="35" Width="200" Margin="0, 50, 0, 0"
             Label="{loc:Localization Username}" Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}"/>
-        <cc:ImprovedTextBox Height="35" Width="200" Margin="0, 150, 0, 0"
+        <cc:ImprovedTextBox Height="35" Width="200" Margin="0, 200, 0, 0"
             Label="{loc:Localization DisplayName}" Text="{Binding DisplayName, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <Button x:Name="LoginBtn" MinWidth="65" Height="30" Padding="5, 0"
+        <Button x:Name="RegisterBtn" MinWidth="65" Height="35" Padding="5, 0"
                 VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0, 0, 0, 50" 
                 Command="{Binding RegisterCommand}" IsEnabled="{Binding RegisterBtnEnabled}"
                 Content="{loc:Localization ReigisterBtn}"/>
+
+        <Button x:Name="RandomPasswordBtn" Width="35" Height="35" Margin="250, 0, 0, 100" Content="🎲"
+                Command="{Binding GeneratePasswordCommand}"/>
     </Grid>
 </UserControl>

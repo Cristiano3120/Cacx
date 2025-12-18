@@ -1,4 +1,5 @@
 ﻿using CacxClient.Abstractions;
+using CacxClient.Commands;
 using CacxClient.Services.RateLimiter;
 using Cristiano3120.Logging;
 using System.ComponentModel;
@@ -6,10 +7,11 @@ using System.Windows.Input;
 
 namespace CacxClient.MVVM;
 
-internal class RegisterViewModel : INotifyPropertyChanged
+public class RegisterViewModel : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
     public ICommand RegisterCommand { get; }
+    public ICommand GeneratePasswordCommand { get; }
 
     private readonly ICursorService _cursorService;
     private readonly IAuthService _authService;
@@ -69,6 +71,11 @@ internal class RegisterViewModel : INotifyPropertyChanged
     public RegisterViewModel(IAuthService authService, ICursorService cursorService, Logger logger)
     {
         logger.LogInformation(LoggerParams.None, () => "RegisterViewModel initialized");
+
+        //TODO: Implement, call btn.Enable... in xaml.cs
+        RegisterCommand = new RelayCommand(); 
+        GeneratePasswordCommand = new RelayCommand();   
+
         _rateLimiter = RateLimiters.Register;
         _cursorService = cursorService;
         _authService = authService;

@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
+﻿using CacxClient.MVVM;
+using Microsoft.Extensions.DependencyInjection;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace CacxClient.Windows;
 /// <summary>
@@ -17,8 +8,15 @@ namespace CacxClient.Windows;
 /// </summary>
 public partial class RegisterWindow : UserControl
 {
+    public RegisterWindow(RegisterViewModel registerViewModel)
+    {
+        InitializeComponent();
+        DataContext = registerViewModel;
+    }
+
     public RegisterWindow()
     {
         InitializeComponent();
+        DataContext = App.AppHost.Services.GetRequiredService<RegisterViewModel>();
     }
 }

@@ -1,7 +1,9 @@
-﻿using CacxClient.Commands;
+﻿using CacxClient.Abstractions;
+using CacxClient.Commands;
+using CacxClient.Extensions;
 using CacxClient.Helper;
-using CacxClient.Abstractions;
 using CacxClient.Services.RateLimiter;
+using CacxClient.Windows;
 using CacxShared.SharedDTOs;
 using Cristiano3120.Logging;
 using System.ComponentModel;
@@ -23,6 +25,7 @@ public class LoginViewModel : INotifyPropertyChanged
     private bool _isRequestRunning;
 
     public ICommand LoginCommand { get; }
+    public ICommand SwitchToRegisterCommand { get; }
 
     public string Email 
     { 
@@ -60,6 +63,8 @@ public class LoginViewModel : INotifyPropertyChanged
     public LoginViewModel(IAuthService authService, ICursorService cursorService, Logger logger)
     {
         LoginCommand = new RelayCommand(async (_) => await LoginAsync(), CanLogin);
+        SwitchToRegisterCommand = new RelayCommand(async (_) => new RegisterWindow().SwitchTo(), CanLogin);
+
         LoginBtnEnabled = true;
         
         Email = string.Empty;
