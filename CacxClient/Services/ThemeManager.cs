@@ -9,19 +9,12 @@ namespace CacxClient.Services;
 
 internal sealed class ThemeManager(IPathProvider pathProvider, JsonSerializerOptions jsonSerializerOptions)
 {
-    public const string LightTheme = "LightMode.json";
-    public const string DarkTheme = "DarkMode.json";
-
     public void SetToLightMode()
-    {
-        SetToSpecificMode(LightTheme);
-    }
-
+        => SetToSpecificMode(filename: "LightMode.json");
+    
     public void SetToDarkMode()
-    {
-        SetToSpecificMode(DarkTheme);
-    }
-
+        => SetToSpecificMode(filename: "DarkMode.json");
+    
     private void SetToSpecificMode(string filename)
     {
         string filepath = Path.Combine("Resources/Themes", filename);
