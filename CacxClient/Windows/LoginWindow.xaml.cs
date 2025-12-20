@@ -22,6 +22,5 @@ public partial class LoginWindow : UserControl
     }
 
     public void DisplayInformation(string msg)
-        => InformationTextBlock.TriggerDisplayAnimation(ColorResources.TextErrorColor, msg);
-    
+        => InformationTextBlock.TriggerDisplayAnimation(ColorResources.TextErrorColor, msg);  
 }

@@ -45,7 +45,6 @@ internal sealed class ThemeManager(IPathProvider pathProvider, JsonSerializerOpt
         => Application.Current.Resources.MergedDictionaries
             .First(x => x.Source.OriginalString.Contains(collectionName));
 
-
     /// <summary>
     /// Retrieves the color associated with the specified key from the application's color resource dictionary.
     /// </summary>
@@ -60,6 +59,23 @@ internal sealed class ThemeManager(IPathProvider pathProvider, JsonSerializerOpt
         }
 
         return null;
+    }
+
+    /// <summary>
+    /// Retrieves the color associated with the specified key from the application's color resource dictionary.
+    /// </summary>
+    /// <param name="key">The key that identifies the color resource to retrieve. Cannot be null.</param>
+    /// <param name="backupColor">The backup color to return if the key does not exist or is not associated with a color.</param>
+    /// <returns>A <see cref="Color"/> value if the key exists and is associated with a color; otherwise, <see langword="null"/>.</returns>
+    public static Color GetColor(string key, Color backupColor)
+    {
+        ResourceDictionary colorDictonary = GetColorsDictionary();
+        if (colorDictonary[key] is Color color)
+        {
+            return color;
+        }
+
+        return backupColor;
     }
 
     /// <summary>

@@ -1,13 +1,14 @@
 ﻿using CacxClient.Abstractions;
 using CacxClient.Commands;
+using CacxClient.Helper;
 using CacxClient.RandomPasswordGenerator;
 using CacxClient.Services;
 using CacxClient.Services.RateLimiter;
-using Cristiano3120.Logging;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using CacxShared.SharedDTOs;
 
 namespace CacxClient.MVVM;
 
@@ -15,13 +16,13 @@ public class RegisterViewModel : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
     public event Action<string, Color>? OnDisplayInformation;
+    public event Action<bool>? OnRequestRunningStateChanged;
     public ICommand RegisterCommand { get; }
     public ICommand GeneratePasswordCommand { get; }
 
-    private readonly ICursorService _cursorService;
     private readonly IAuthService _authService;
     private readonly IRateLimiter _rateLimiter;
-    private readonly Logger _logger;
+    private bool _isRequestRunning;
 
     public string Email
     {
@@ -73,10 +74,19 @@ public class RegisterViewModel : INotifyPropertyChanged
         }
     }
 
-    public RegisterViewModel(IAuthService authService, ICursorService cursorService, Logger logger)
+    public bool LoginBtnEnabled
     {
-        logger.LogInformation(LoggerParams.None, () => "RegisterViewModel initialized");
+        get => field;
+        set 
+        {
+            field = value;
+            OnPropertyChanged(nameof(LoginBtnEnabled));
+        }
+    }
 
+
+    public RegisterViewModel(IAuthService authService, ICursorService cursorService)
+    {
         RegisterCommand = new RelayCommand(async (_) => await RegisterAsync(), CanRegister); 
         GeneratePasswordCommand = new RelayCommand(async (_) =>
         {
@@ -87,12 +97,26 @@ public class RegisterViewModel : INotifyPropertyChanged
             color ??= Colors.LightGray;
 
             OnDisplayInformation?.Invoke("Copied to clipboard", color.Value);
-        });   
+        });
+
+        OnRequestRunningStateChanged += isRequestRunning =>
+        {
+            LoginBtnEnabled = !isRequestRunning;
+            _isRequestRunning = isRequestRunning;
+            CommandManager.InvalidateRequerySuggested();
+
+            if (isRequestRunning)
+            {
+                cursorService.SetCursor(Cursors.Wait);
+            }
+            else
+            {
+                cursorService.ResetCursor();
+            }
+        };
 
         _rateLimiter = RateLimiters.Register;
-        _cursorService = cursorService;
         _authService = authService;
-        _logger = logger;
 
         Email = string.Empty;
         Username = string.Empty;
@@ -100,15 +124,69 @@ public class RegisterViewModel : INotifyPropertyChanged
         Password = string.Empty;
     }
 
-    public async Task RegisterAsync()
+    private async Task RegisterAsync()
     {
-        
+        if (!_rateLimiter.TryConsume())
+        {
+            const string ErrorMsg = "Don´t spam :( You gotta wait a bit!";
+            OnDisplayInformation?.Invoke(ErrorMsg, ThemeManager.GetColor(key: "TextErrorColor", Colors.Red));
+            return;
+        }
+
+        if (! await ValidateDataAsync())
+        {
+            return;
+        }
+
+        OnRequestRunningStateChanged?.Invoke(true);
+        await _authService.RegisterAsync(new RegisterRequest()
+        {
+            Email = Email,
+            Username = Username,
+            DisplayName = DisplayName,
+            Password = Password
+        });
+    }
+
+    private async Task<bool> ValidateDataAsync()
+    {
+        Color errorColor = ThemeManager.GetColor(key: "TextErrorColor", Colors.Red);
+
+        if (string.IsNullOrEmpty(Email) || !await NetworkHelper.IsEmailValidAsync(Email))
+        {
+            const string ErrorMsg = "The entered email is invalid";
+            OnDisplayInformation?.Invoke(ErrorMsg, errorColor);
+
+            return false;
+        }
+
+        const byte MinPasswordLength = 8;
+        if (string.IsNullOrEmpty(Email) || Password.Length < MinPasswordLength)
+        {
+            const string ErrorMsg = "Password must be at least 8 characters long";
+            OnDisplayInformation?.Invoke(ErrorMsg, errorColor);
+            return false;
+        }
+
+        if (string.IsNullOrEmpty(Username) || Username.Any(x => !char.IsLetterOrDigit(x) && x != '_' && x != '-'))
+        {
+            const string ErrorMsg = "Username can only contain letters, digits, underscores and hyphens";
+            OnDisplayInformation?.Invoke(ErrorMsg, errorColor);
+            return false;
+        }
+
+        if (string.IsNullOrEmpty(DisplayName))
+        {
+            const string ErrorMsg = "Display name cannot be empty";
+            OnDisplayInformation?.Invoke(ErrorMsg, errorColor);
+            return false;
+        }
+
+        return true;
     }
 
     public bool CanRegister(object? sender)
-    {
-        return true;
-    }
+        => !_isRequestRunning;
 
     protected void OnPropertyChanged(string name)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

@@ -1,4 +1,5 @@
-﻿using CacxClient.Abstractions;
+﻿using Cacx.LanguageManager.Core;
+using CacxClient.Abstractions;
 using CacxClient.Commands;
 using CacxClient.Extensions;
 using CacxClient.Helper;
@@ -17,7 +18,6 @@ public class LoginViewModel : INotifyPropertyChanged
     public event Action<bool>? OnRequestRunningStateChanged;
     public event Action<string>? OnInvalidData;
 
-    private readonly ICursorService _cursorService;
     private readonly IAuthService _authService;
     private readonly IRateLimiter _rateLimiter;
 
@@ -62,8 +62,9 @@ public class LoginViewModel : INotifyPropertyChanged
 
     public LoginViewModel(IAuthService authService, ICursorService cursorService, Logger logger)
     {
+        string resourceBasePath = "CacxClient.Resources.Register.Register";
         LoginCommand = new RelayCommand(async (_) => await LoginAsync(), CanLogin);
-        SwitchToRegisterCommand = new RelayCommand(async (_) => new RegisterWindow().SwitchTo(), CanLogin);
+        SwitchToRegisterCommand = new RelayCommand(async (_) => new RegisterWindow().SwitchTo(resourceBasePath), CanLogin);
 
         LoginBtnEnabled = true;
         
@@ -71,7 +72,6 @@ public class LoginViewModel : INotifyPropertyChanged
         Password = string.Empty;
 
         _rateLimiter = RateLimiters.Login;
-        _cursorService = cursorService;
         _authService = authService;
 
         _isRequestRunning = false;
@@ -85,11 +85,11 @@ public class LoginViewModel : INotifyPropertyChanged
 
             if (isRequestRunning)
             {
-                _cursorService.SetCursor(Cursors.Wait);
+                cursorService.SetCursor(Cursors.Wait);
             }
             else
             {
-                _cursorService.ResetCursor();
+                cursorService.ResetCursor();
             }
         };
     }
@@ -125,12 +125,11 @@ public class LoginViewModel : INotifyPropertyChanged
 
     private async Task<bool> ValidateDataAsync()
     {
-        Console.WriteLine(Password);
         _logger.LogInformation(LoggerParams.None, () => "Checking if login is possible");
 
         if (string.IsNullOrEmpty(Email) || !await NetworkHelper.IsEmailValidAsync(Email))
         {
-            const string ErrorMsg = "You have to enter a Email";
+            const string ErrorMsg = "The entered email is invalid";
             OnInvalidData?.Invoke(ErrorMsg);
 
             return false;

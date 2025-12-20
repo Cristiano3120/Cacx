@@ -17,7 +17,7 @@ public partial class RegisterWindow : UserControl
 
         RegisterBtn.EnableHoverAnimation();
         RandomPasswordBtn.EnableHoverAnimation();
-
+        
         registerViewModel.OnDisplayInformation += DisplayInformation;
     }
 

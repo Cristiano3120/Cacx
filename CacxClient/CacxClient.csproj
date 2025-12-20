@@ -18,7 +18,7 @@
 	
 
 	<ItemGroup>
-		<PackageReference Include="Cacx.LanguageManager" Version="1.1.0" />
+		<PackageReference Include="Cacx.LanguageManager" Version="1.1.2" />
 		<PackageReference Include="Cristiano3120.Logger" Version="1.0.7" />
 		<PackageReference Include="DnsClient" Version="1.8.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.0" />
@@ -41,6 +41,11 @@
 			<AutoGen>True</AutoGen>
 			<DependentUpon>Login.resx</DependentUpon>
 		</Compile>
+		<Compile Update="Resources\Register\Register.Designer.cs">
+		  <DesignTime>True</DesignTime>
+		  <AutoGen>True</AutoGen>
+		  <DependentUpon>Register.resx</DependentUpon>
+		</Compile>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -48,10 +53,13 @@
 			<Generator>ResXFileCodeGenerator</Generator>
 			<LastGenOutput>Login.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
+		<EmbeddedResource Update="Resources\Register\Register.resx">
+		  <Generator>ResXFileCodeGenerator</Generator>
+		  <LastGenOutput>Register.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Folder Include="Resources\Themes\" />
 	</ItemGroup>
-
 </Project>
