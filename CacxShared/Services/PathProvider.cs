@@ -1,10 +1,9 @@
-﻿using CacxClient.Abstractions;
+﻿using CacxShared.Abstractions;
 using System.Diagnostics;
-using System.IO;
 
-namespace CacxClient.Services;
+namespace CacxShared.Services;
 
-internal class PathProvider : IPathProvider
+public class PathProvider : IPathProvider
 {
     public string GetPath(string relativePath)
     {

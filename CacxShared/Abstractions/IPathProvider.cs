@@ -1,6 +1,6 @@
-﻿namespace CacxClient.Abstractions;
+﻿namespace CacxShared.Abstractions;
 
-internal interface IPathProvider
+public interface IPathProvider
 {
     /// <summary>
     /// relativePath has to include the extension.

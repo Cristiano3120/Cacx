@@ -1,4 +1,5 @@
 ﻿using CacxClient.Abstractions;
+using CacxShared.Abstractions;
 using System.Collections;
 using System.IO;
 using System.Text.Json;

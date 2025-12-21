@@ -19,14 +19,14 @@
         <cc:ImprovedTextBox Height="35" Width="200" Margin="0, 0, 0, 100"
             Label="{loc:Localization PasswordLabel}" Text="{Binding Password, Mode=TwoWay}"/>
         <cc:ImprovedTextBox Height="35" Width="200" Margin="0, 50, 0, 0"
-            Label="{loc:Localization Username}" Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}"/>
+            Label="{loc:Localization UsernameLabel}" Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}"/>
         <cc:ImprovedTextBox Height="35" Width="200" Margin="0, 200, 0, 0"
-            Label="{loc:Localization DisplayName}" Text="{Binding DisplayName, UpdateSourceTrigger=PropertyChanged}"/>
+            Label="{loc:Localization DisplayNameLabel}" Text="{Binding DisplayName, UpdateSourceTrigger=PropertyChanged}"/>
 
         <Button x:Name="RegisterBtn" MinWidth="65" Height="35" Padding="5, 0"
-                VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0, 0, 0, 50" 
+                VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0, 0, 0, 40" 
                 Command="{Binding RegisterCommand}" IsEnabled="{Binding RegisterBtnEnabled}"
-                Content="{loc:Localization ReigisterBtn}"/>
+                Content="{loc:Localization RegisterBtn}"/>
 
         <Button x:Name="RandomPasswordBtn" Width="35" Height="35" Margin="250, 0, 0, 100" Content="🎲"
                 Command="{Binding GeneratePasswordCommand}"/>

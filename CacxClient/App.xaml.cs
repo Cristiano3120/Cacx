@@ -4,6 +4,8 @@ using CacxClient.Abstractions;
 using CacxClient.MVVM;
 using CacxClient.Services;
 using CacxClient.Windows;
+using CacxShared.Abstractions;
+using CacxShared.Services;
 using Cristiano3120.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

@@ -118,18 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DisplayNameLabel" xml:space="preserve">
-    <value>Display Name</value>
+    <value>Anzeigename</value>
   </data>
   <data name="EmailLabel" xml:space="preserve">
     <value>Email</value>
   </data>
   <data name="PasswordLabel" xml:space="preserve">
-    <value>Password</value>
+    <value>Passwort</value>
   </data>
   <data name="RegisterBtn" xml:space="preserve">
-    <value>Register</value>
+    <value>Anmelden</value>
   </data>
   <data name="UsernameLabel" xml:space="preserve">
-    <value>Username</value>
+    <value>Benutzername</value>
   </data>
 </root>

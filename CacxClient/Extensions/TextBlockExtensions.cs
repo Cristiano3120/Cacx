@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using CacxClient.Services;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
@@ -155,7 +156,7 @@ internal static class TextBlockExtensions
 
             ColorAnimation fgAnim = new()
             {
-                To = (Color)Application.Current.Resources["HoverColor"],
+                To = ThemeManager.GetColor(key: "HoverColor"),
                 Duration = TimeSpan.FromMilliseconds(200)
             };
             textBlock.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, fgAnim);
@@ -171,7 +172,7 @@ internal static class TextBlockExtensions
 
                 ColorAnimation fgAnim = new()
                 {
-                    To = (Color)Application.Current.Resources["TextPrimaryColor"],
+                    To = ThemeManager.GetColor(key: "TextPrimaryColor"),
                     Duration = TimeSpan.FromMilliseconds(200)
                 };
                 textBlock.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, fgAnim);

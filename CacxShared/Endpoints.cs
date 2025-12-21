@@ -8,5 +8,6 @@ public static class Endpoints
     {
         public const string BaseAuth = "auth";
         public const string Register = "register";
+        public const string Login = "login";
     }
 }

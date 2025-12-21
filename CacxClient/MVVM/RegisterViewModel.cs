@@ -122,6 +122,7 @@ public class RegisterViewModel : INotifyPropertyChanged
         Username = string.Empty;
         DisplayName = string.Empty;
         Password = string.Empty;
+        RegisterBtnEnabled = true;
     }
 
     private async Task RegisterAsync()

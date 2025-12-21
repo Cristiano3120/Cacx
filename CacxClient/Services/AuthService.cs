@@ -10,7 +10,7 @@ public class AuthService : IAuthService
         await Task.Delay(3000);
     }
 
-    public async Task RegisterAsync(object registerRequest)
+    public async Task RegisterAsync(RegisterRequest registerRequest)
     {
         await Task.Delay(3000);
     }

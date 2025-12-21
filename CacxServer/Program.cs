@@ -1,5 +1,5 @@
-using CacxServer.Helper;
-using CacxServer.Interfaces;
+using CacxShared.Abstractions;
+using CacxShared.Services;
 using Cristiano3120.Logging;
 using LogLevel = Cristiano3120.Logging.LogLevel;
 
@@ -12,16 +12,16 @@ public class Program
     public static void Main(string[] args)
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+        PathProvider pathProvider = new();
 
-        PathHelper pathHelper = new(builder.Configuration);
-        _ = builder.Services.AddSingleton<IPathHelper, PathHelper>((_) => pathHelper);
+        _ = builder.Services.AddSingleton<IPathProvider, PathProvider>((_) => pathProvider);
 
         _ = builder.Services.AddSingleton((serviceProvider) =>
         {
             LoggerSettings settings = new()
             {
                 LogLevel = LogLevel.Debug,
-                PathToLogDirectory = pathHelper.GetPath(PathType.Logs),
+                PathToLogDirectory = pathProvider.GetPath("Logs"),
             };
 
             return new Logger(settings);

@@ -20,11 +20,6 @@ internal static class UserControlExtensions
     {
         Application.Current.Dispatcher.Invoke(() =>
         {
-            if (resourceBasePath is not null)
-            {
-                LocalizationProvider.Service.UpdateContext(resourceBasePath);  
-            }
-
             Application app = Application.Current;
             Window mainWindow = app.MainWindow;
 
@@ -42,6 +37,12 @@ internal static class UserControlExtensions
             fadeOut.Completed += (_, _) =>
             {
                 mainWindow.Content = windowToSwitchTo;
+
+                if (resourceBasePath is not null)
+                {
+                    LocalizationProvider.Service.UpdateContext(resourceBasePath);
+                }
+
                 windowToSwitchTo.BeginAnimation(UIElement.OpacityProperty, fadeIn);
             };
 
