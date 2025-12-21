@@ -1,6 +1,9 @@
+using CacxServer.Data.Redis;
+using CacxServer.Data.Redis.Abstractions;
 using CacxShared.Abstractions;
 using CacxShared.Services;
 using Cristiano3120.Logging;
+using StackExchange.Redis;
 using LogLevel = Cristiano3120.Logging.LogLevel;
 
 namespace CacxServer;
@@ -15,6 +18,17 @@ public class Program
         PathProvider pathProvider = new();
 
         _ = builder.Services.AddSingleton<IPathProvider, PathProvider>((_) => pathProvider);
+        _ = builder.Services.AddSingleton<IConnectionMultiplexer, ConnectionMultiplexer>((_) =>
+        {
+            ConfigurationOptions conf = new()
+            {
+                EndPoints = { "localhost:6379" },
+
+            };
+
+            return ConnectionMultiplexer.Connect(conf);
+        });
+        _ = builder.Services.AddScoped<IRedisService, RedisService>();
 
         _ = builder.Services.AddSingleton((serviceProvider) =>
         {
@@ -34,7 +48,6 @@ public class Program
         _ = builder.Services.AddOpenApi();
 
         WebApplication app = builder.Build();
-
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
