@@ -9,10 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt-Official" Version="0.1.109" />
     <PackageReference Include="Cristiano3120.Logger" Version="1.0.7" />
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0-rc.2.25502.107" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
     <PackageReference Include="NRedisStack" Version="1.1.1" />
   </ItemGroup>
 

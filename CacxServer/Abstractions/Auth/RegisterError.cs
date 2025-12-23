@@ -1,6 +1,6 @@
 ﻿namespace CacxServer.Abstractions.Auth;
 
-public enum RegisterError
+public enum RegisterError : byte
 {
     PendingReservationExists,
     EmailOrUsernameTaken

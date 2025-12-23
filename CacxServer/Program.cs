@@ -1,12 +1,17 @@
 using CacxServer.Abstractions;
 using CacxServer.Abstractions.Auth;
+using CacxServer.Data.PostgreSQL;
+using CacxServer.Data.PostgreSQL.Abstractions;
+using CacxServer.Data.PostgreSQL.Repositories;
 using CacxServer.Data.Redis;
 using CacxServer.Data.Redis.Abstractions;
+using CacxServer.Security.Hashing;
 using CacxServer.Services;
 using CacxShared.Abstractions;
 using CacxShared.Services;
 using Cristiano3120.Logging;
 using DotNetEnv;
+using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 using LogLevel = Cristiano3120.Logging.LogLevel;
 
@@ -23,10 +28,12 @@ public class Program
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
         PathProvider pathProvider = new();
 
+        _ = builder.Services.AddKeyedSingleton<IHashingService, Sha256HashingService>(HashingAlgorithm.Sha256);
+        _ = builder.Services.AddKeyedSingleton<IHashingService, BCryptHashingService>(HashingAlgorithm.BCrypt);
         _ = builder.Services.AddSingleton<IVerificationTokenService, VerificationTokenService>();
+        _ = builder.Services.AddSingleton<IPathProvider, PathProvider>((_) => pathProvider);
         _ = builder.Services.AddSingleton<INotificationService, NotificationService>();
         _ = builder.Services.AddScoped<IAuthService, AuthService>();
-        _ = builder.Services.AddSingleton<IPathProvider, PathProvider>((_) => pathProvider);
         _ = builder.Services.AddSingleton<IConnectionMultiplexer, ConnectionMultiplexer>((_) =>
         {
             ConfigurationOptions conf = new()
@@ -38,6 +45,7 @@ public class Program
             return ConnectionMultiplexer.Connect(conf);
         });
         _ = builder.Services.AddScoped<IAuthRedisService, AuthRedisService>();
+        _ = builder.Services.AddScoped<IAuthRepository, AuthRepository>();
         _ = builder.Services.AddSingleton((serviceProvider) =>
         {
             LoggerSettings settings = new()
@@ -50,6 +58,9 @@ public class Program
         });
 
         // Add services to the container.
+
+        _ = builder.Services.AddDbContextPool<CacxDbContext>(opt => opt.UseNpgsql(
+            connectionString: builder.Configuration.GetConnectionString("PostgreSQL")));
 
         _ = builder.Services.AddControllers();
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

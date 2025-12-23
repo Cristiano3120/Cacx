@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace CacxServer.Abstractions.Auth;
+﻿namespace CacxServer.Abstractions.Auth;
 
 public sealed class RegisterResult
 {

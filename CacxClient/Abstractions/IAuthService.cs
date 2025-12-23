@@ -5,7 +5,7 @@ namespace CacxClient.Abstractions;
 
 public interface IAuthService
 {
-    public Task LoginAsync(LoginRequest loginRequest);
+    Task LoginAsync(LoginRequest loginRequest);
 
-    public Task RegisterAsync(RegisterRequest registerRequest);
+    Task<RegisterResult> RegisterAsync(RegisterRequest registerRequest);
 }

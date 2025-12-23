@@ -3,11 +3,13 @@ using CacxServer.Abstractions.Auth;
 using CacxServer.Data.PostgreSQL.Abstractions;
 using CacxServer.Data.Redis.Abstractions;
 using CacxServer.Data.Redis.Entities;
+using CacxServer.Security.Hashing;
 using CacxShared.Abstractions;
 
 namespace CacxServer.Services;
 
 public class AuthService(
+    [FromKeyedServices(HashingAlgorithm.Sha256)] IHashingService hashingService,
     IVerificationTokenService verificationTokenService, 
     INotificationService notificationService, 
     IAuthRedisService authRedisService,
@@ -28,7 +30,7 @@ public class AuthService(
         {
             Email = registerRequest.Email,
             Username = registerRequest.Username,
-            VerificationCode = Hash(verificationCode), //Encryption service
+            VerificationCode = hashingService.Hash(verificationCode.ToString())
         };
         bool redisEntrySuccessful = await authRedisService.TryAddPendingVerificationAsync(token,
             pendingAuthentication, expiry);

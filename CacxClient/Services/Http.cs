@@ -9,7 +9,7 @@ using System.Text.Json;
 
 namespace CacxClient.Services;
 
-internal sealed class Http : IHttp
+public sealed class Http : IHttp
 {
     private readonly ITokenProvider _tokenProvider;
     private readonly HttpClient _httpClient;
