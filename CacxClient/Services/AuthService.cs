@@ -1,4 +1,5 @@
 ﻿using CacxClient.Abstractions;
+using CacxShared.Abstractions;
 using CacxShared.SharedDTOs;
 
 namespace CacxClient.Services;

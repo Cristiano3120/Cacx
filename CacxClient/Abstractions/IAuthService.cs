@@ -1,4 +1,5 @@
-﻿using CacxShared.SharedDTOs;
+﻿using CacxShared.Abstractions;
+using CacxShared.SharedDTOs;
 
 namespace CacxClient.Abstractions;
 

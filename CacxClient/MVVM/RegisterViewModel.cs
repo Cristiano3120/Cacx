@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using CacxShared.SharedDTOs;
+using CacxShared.Abstractions;
 
 namespace CacxClient.MVVM;
 
@@ -144,8 +145,6 @@ public class RegisterViewModel : INotifyPropertyChanged
         {
             Email = Email,
             Username = Username,
-            DisplayName = DisplayName,
-            Password = Password
         });
     }
 
