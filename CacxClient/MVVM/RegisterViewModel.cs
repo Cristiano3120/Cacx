@@ -129,24 +129,33 @@ public class RegisterViewModel : INotifyPropertyChanged
 
     private async Task RegisterAsync()
     {
+        const string ErrorColorKey = "TextErrorColor";
         if (!_rateLimiter.TryConsume())
         {
             const string ErrorMsg = "Don´t spam :( You gotta wait a bit!";
-            OnDisplayInformation?.Invoke(ErrorMsg, ThemeManager.GetColor(key: "TextErrorColor", Colors.Red));
+            OnDisplayInformation?.Invoke(ErrorMsg, ThemeManager.GetColor(key: ErrorColorKey, Colors.Red));
             return;
         }
 
         if (! await ValidateDataAsync())
-        {
             return;
-        }
-
+        
         OnRequestRunningStateChanged?.Invoke(true);
-        await _authService.RegisterAsync(new RegisterRequest()
+        RegisterResult result = await _authService.RegisterAsync(new RegisterRequest()
         {
             Email = Email,
             Username = Username,
         });
+        OnRequestRunningStateChanged?.Invoke(false);
+
+
+        if (!result.IsSuccess)
+            OnDisplayInformation?.Invoke(result.ErrorMessage!, ThemeManager.GetColor(key: ErrorColorKey, Colors.Red));
+
+        //TODO: Use the RegisterResult in the MVVM | ?Save Token | Switch screen
+        //TODO: Program.cs and App.xaml.cs clean up
+        //TODO: Auth request limiter for server | ?Ip-based
+        //TODO: Server soll http request responses loggen und falsche paths mit nem entsprechenden http code beantworten
     }
 
     private async Task<bool> ValidateDataAsync()

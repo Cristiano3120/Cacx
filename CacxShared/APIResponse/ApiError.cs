@@ -2,14 +2,8 @@
 
 namespace CacxShared.APIResponse;
 
-public record ApiError
+public sealed record ApiError
 {
     public HttpStatusCode StatusCode { get; init; }
-    public string Message { get; init; }
-
-    public ApiError(HttpStatusCode statusCode, string message)
-    {
-        StatusCode = statusCode;
-        Message = message;
-    }
+    public string? Message { get; init; }
 }

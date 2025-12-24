@@ -1,4 +1,5 @@
-﻿using CacxClient.Abstractions.Auth;
+﻿using CacxClient.Abstractions;
+using CacxClient.Abstractions.Auth;
 using CacxShared;
 using CacxShared.Abstractions;
 using CacxShared.APIResponse;
@@ -7,7 +8,7 @@ using Cristiano3120.Logging;
 
 namespace CacxClient.Services;
 
-public class AuthService(Http http, Logger logger) : IAuthService
+public class AuthService(IHttp http, Logger logger) : IAuthService
 {
     public async Task LoginAsync(LoginRequest loginRequest)
     {
@@ -27,8 +28,5 @@ public class AuthService(Http http, Logger logger) : IAuthService
             Token = apiResponse.Data,
             ErrorMessage = apiResponse?.ApiError?.Message,
         };
-        //TODO: Use the RegisterResult in the MVVM | ?Show an error msg | ?Save Token | Switch screen
-        //TODO: Program.cs and App.xaml.cs clean up
-        //TODO: Auth request limiter for server | Ip-based
     }
 }

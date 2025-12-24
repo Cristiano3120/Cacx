@@ -3,5 +3,8 @@
 public enum RegisterError : byte
 {
     PendingReservationExists,
-    EmailOrUsernameTaken
+    EmailOrUsernameTaken,
+    ServiceUnavailable,
+    NotificationFailed,
+    Unknown
 }

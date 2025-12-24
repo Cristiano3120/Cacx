@@ -23,26 +23,44 @@ public class AuthController(IAuthService authService, Logger logger) : Controlle
 
         if (!result.IsSuccess)
         {
-            string msg = result.Error!.Value == RegisterError.EmailOrUsernameTaken
-                ? "The email and/or username you entered is already in use"
-                : "The email/username you entered is reserved. It might be free in 15min or less";
+            (HttpStatusCode status, string message) = result.Error!.Value switch
+            {
+                RegisterError.EmailOrUsernameTaken
+                    => (HttpStatusCode.Conflict, "The email and/or username you entered is already in use"),
 
-            return Conflict(new ApiResponse<string>
+                RegisterError.PendingReservationExists
+                    => (HttpStatusCode.Conflict, "The email/username is currently reserved"),
+
+                RegisterError.ServiceUnavailable
+                    => (HttpStatusCode.ServiceUnavailable, "Service temporarily unavailable. Try again later"),
+
+                RegisterError.NotificationFailed
+                    => (HttpStatusCode.InternalServerError, "Failed to send verification email"),
+
+                RegisterError.Unknown
+                    => (HttpStatusCode.InternalServerError, "Unknown error"),
+                
+                _ => (HttpStatusCode.InternalServerError, "Unknown error")
+            };
+
+            return StatusCode((int)status, new ApiResponse<string>
             {
                 IsSuccess = false,
                 ApiError = new ApiError
                 {
-                    StatusCode = HttpStatusCode.Conflict,
-                    Message = msg
+                    StatusCode = status,
+                    Message = message
                 }
             });
         }
 
-        return Created(string.Empty, new ApiResponse<string>
-        {
-            IsSuccess = true,
-            Data = result.Token
-        });
+        return Created(
+            uri: string.Empty,
+            value: new ApiResponse<string>
+            {
+                IsSuccess = true,
+                Data = result.Token
+            });
     }
 
     [HttpPost(Endpoints.AuthEndpoints.Login)]

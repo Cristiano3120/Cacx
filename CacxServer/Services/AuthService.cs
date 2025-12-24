@@ -5,6 +5,10 @@ using CacxServer.Data.Redis.Abstractions;
 using CacxServer.Data.Redis.Entities;
 using CacxServer.Security.Hashing;
 using CacxShared.Abstractions;
+using Cristiano3120.Logging;
+using Npgsql;
+using StackExchange.Redis;
+using System.Net.Mail;
 
 namespace CacxServer.Services;
 
@@ -13,37 +17,62 @@ public class AuthService(
     IVerificationTokenService verificationTokenService, 
     INotificationService notificationService, 
     IAuthRedisService authRedisService,
-    IAuthRepository authRepository) : IAuthService
+    IAuthRepository authRepository,
+    Logger logger) : IAuthService
 {
     public async Task<RegisterResult> RegisterAsync(RegisterRequest registerRequest)
     {
-        if (await authRepository.CheckIfUniqueDataExistsAsync(registerRequest.Email, registerRequest.Username))
+        CallerInfos callerInfos = CallerInfos.Create();
+        try
         {
-            return RegisterResult.Fail(RegisterError.EmailOrUsernameTaken);
+            if (await authRepository.CheckIfUniqueDataExistsAsync(registerRequest.Email, registerRequest.Username))
+            {
+                return RegisterResult.Fail(RegisterError.EmailOrUsernameTaken);
+            }
+
+            TimeSpan expiry = TimeSpan.FromMinutes(15);
+            int verificationCode = verificationTokenService.GenerateVerificationCode();
+            string token = verificationTokenService.GenerateVerificationToken();
+
+            PendingAuthentication pendingAuthentication = new()
+            {
+                Email = registerRequest.Email,
+                Username = registerRequest.Username,
+                VerificationCode = hashingService.Hash(verificationCode.ToString())
+            };
+            bool redisEntrySuccessful = await authRedisService.TryAddPendingVerificationAsync(token,
+                pendingAuthentication, expiry);
+
+            if (!redisEntrySuccessful)
+            {
+                return RegisterResult.Fail(RegisterError.PendingReservationExists);
+            }
+
+            string subject = "[CACX]: Verification";
+            string body = $"Hello {registerRequest.Username} 👋 \n Here is your verification code: {verificationCode}. Make sure to be quick it will expire soon!";
+            await notificationService.SendEmailAsync(targetEmails: [registerRequest.Email], subject, body);
+
+            return RegisterResult.Success(token);
         }
-
-        TimeSpan expiry = TimeSpan.FromMinutes(15);
-        int verificationCode = verificationTokenService.GenerateVerificationCode();
-        string token = verificationTokenService.GenerateVerificationToken();
-
-        PendingAuthentication pendingAuthentication = new()
+        catch (RedisException)
         {
-            Email = registerRequest.Email,
-            Username = registerRequest.Username,
-            VerificationCode = hashingService.Hash(verificationCode.ToString())
-        };
-        bool redisEntrySuccessful = await authRedisService.TryAddPendingVerificationAsync(token,
-            pendingAuthentication, expiry);
-
-        if (!redisEntrySuccessful)
-        {
-            return RegisterResult.Fail(RegisterError.PendingReservationExists);
+            logger.LogError(LoggerParams.None, () => "Redis not available", callerInfos);
+            return RegisterResult.Fail(RegisterError.ServiceUnavailable);
         }
-
-        string subject = "[CACX]: Verification";
-        string body = $"Hello {registerRequest.Username} 👋 \n Here is your verification code: {verificationCode}. Make sure to be quick it will expire soon!";
-        await notificationService.SendEmailAsync(targetEmails: [registerRequest.Email], subject, body);
-
-        return RegisterResult.Success(token);
+        catch (NpgsqlException)
+        {
+            logger.LogError(LoggerParams.None, () => "PostgreSQL not available", callerInfos);
+            return RegisterResult.Fail(RegisterError.ServiceUnavailable);
+        }
+        catch (SmtpException)
+        {
+            logger.LogError(LoggerParams.None, () => "Notification not available", callerInfos);
+            return RegisterResult.Fail(RegisterError.NotificationFailed);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(LoggerParams.None, ex, callerInfos);
+            return RegisterResult.Fail(RegisterError.Unknown);
+        }
     }
 }
