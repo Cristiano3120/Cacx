@@ -1,6 +1,7 @@
 ﻿using Cacx.LanguageManager.Abstractions;
 using Cacx.LanguageManager.Core;
 using CacxClient.Abstractions;
+using CacxClient.Abstractions.Auth;
 using CacxClient.MVVM;
 using CacxClient.Services;
 using CacxClient.Windows;

@@ -1,4 +1,4 @@
-﻿using CacxClient.Abstractions;
+﻿using CacxClient.Abstractions.Auth;
 using CacxShared;
 using CacxShared.Abstractions;
 using CacxShared.APIResponse;
@@ -19,11 +19,16 @@ public class AuthService(Http http, Logger logger) : IAuthService
         logger.LogInformation(LoggerParams.None, () => "Trying to register");
         ApiResponse<string> apiResponse = await http.PostAsync<RegisterRequest, string>(
             data: registerRequest,
-            endpoint: $"{Endpoints.Base}/{Endpoints.AuthEndpoints.BaseAuth}/{Endpoints.AuthEndpoints.Register}",
+            endpoint: Endpoints.AuthEndpoints.RegisterEndpoint,
             callerInfos: CallerInfos.Create());
 
-        //TODO: MAybe EndpointProvider Service
-        //TODO: RegisterResult zurückgeben und usen z.B errormsg anzeigen
-        //TODO: Abstractions folder aufräumen in Auth folder etc unterteilen
+        return new RegisterResult()
+        {
+            Token = apiResponse.Data,
+            ErrorMessage = apiResponse?.ApiError?.Message,
+        };
+        //TODO: Use the RegisterResult in the MVVM | ?Show an error msg | ?Save Token | Switch screen
+        //TODO: Program.cs and App.xaml.cs clean up
+        //TODO: Auth request limiter for server | Ip-based
     }
 }

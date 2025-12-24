@@ -1,4 +1,4 @@
-﻿namespace CacxClient.Abstractions;
+﻿namespace CacxClient.Abstractions.Auth;
 
 public sealed record RegisterResult
 {

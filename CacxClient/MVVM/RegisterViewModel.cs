@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using CacxShared.SharedDTOs;
 using CacxShared.Abstractions;
+using CacxClient.Abstractions.Auth;
 
 namespace CacxClient.MVVM;
 

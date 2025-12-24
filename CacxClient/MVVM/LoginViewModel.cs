@@ -1,5 +1,6 @@
 ﻿using Cacx.LanguageManager.Core;
 using CacxClient.Abstractions;
+using CacxClient.Abstractions.Auth;
 using CacxClient.Commands;
 using CacxClient.Extensions;
 using CacxClient.Helper;

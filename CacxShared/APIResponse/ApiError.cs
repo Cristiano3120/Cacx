@@ -2,7 +2,7 @@
 
 namespace CacxShared.APIResponse;
 
-public readonly record struct ApiError
+public record ApiError
 {
     public HttpStatusCode StatusCode { get; init; }
     public string Message { get; init; }
