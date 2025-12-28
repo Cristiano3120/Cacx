@@ -11,6 +11,9 @@ using System.Windows.Media;
 using CacxShared.SharedDTOs;
 using CacxShared.Abstractions;
 using CacxClient.Abstractions.Auth;
+using CacxClient.Windows;
+using CacxClient.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CacxClient.MVVM;
 
@@ -148,14 +151,15 @@ public class RegisterViewModel : INotifyPropertyChanged
         });
         OnRequestRunningStateChanged?.Invoke(false);
 
-
         if (!result.IsSuccess)
+        {
             OnDisplayInformation?.Invoke(result.ErrorMessage!, ThemeManager.GetColor(key: ErrorColorKey, Colors.Red));
+            return;
+        }
 
-        //TODO: Use the RegisterResult in the MVVM | ?Save Token | Switch screen
-        //TODO: Program.cs and App.xaml.cs clean up
-        //TODO: Auth request limiter for server | ?Ip-based
-        //TODO: Server soll http request responses loggen und falsche paths mit nem entsprechenden http code beantworten
+        VerificationViewModel viewModel = App.AppHost.Services.GetRequiredService<VerificationViewModel>();
+        new VerificationWindow(verificationViewModel: viewModel, token: result.Token!)
+            .SwitchTo(resourceBasePath: "CacxClient.Resources.Verification.Verification");
     }
 
     private async Task<bool> ValidateDataAsync()

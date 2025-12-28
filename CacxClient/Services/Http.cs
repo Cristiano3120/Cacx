@@ -80,7 +80,7 @@ public sealed class Http : IHttp
         catch (Exception ex)
         {
             _logger.LogError(LoggerParams.None, ex, callerInfos);
-            return ApiResponse<T>.Error(HttpStatusCode.InternalServerError, ex.Message);
+            return ApiResponse<T>.Error(HttpStatusCode.InternalServerError, "Can´t reach the server at the moment try again!");
         }
     }
 
@@ -113,7 +113,7 @@ public sealed class Http : IHttp
         catch (Exception ex)
         {
             _logger.LogError(LoggerParams.None, ex, callerInfos);
-            return ApiResponse<TOutput>.Error(HttpStatusCode.InternalServerError, ex.Message);
+            return ApiResponse<TOutput>.Error(HttpStatusCode.InternalServerError, "Can´t reach the server at the moment try again!");
         }
     }
 

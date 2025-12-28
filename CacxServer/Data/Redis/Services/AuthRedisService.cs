@@ -3,7 +3,7 @@ using CacxServer.Data.Redis.Entities;
 using StackExchange.Redis;
 using System.Text.Json;
 
-namespace CacxServer.Data.Redis;
+namespace CacxServer.Data.Redis.Services;
 
 public class AuthRedisService(IConnectionMultiplexer connectionMultiplexer) : IAuthRedisService
 {
@@ -24,7 +24,7 @@ public class AuthRedisService(IConnectionMultiplexer connectionMultiplexer) : IA
 
     public async Task CheckVerificationCodeAsync(int code)
     {
-        //erhöhe attempts
-        //Verify hash
+        //TODO: erhöhe attempts
+        //TODO: Verify hash
     }
 }

@@ -1,4 +1,6 @@
 ﻿using CacxServer.Abstractions.Auth;
+using CacxServer.Data.Redis.Abstractions;
+using CacxServer.RateLimiter.AuthRateLimiter.Abstractions;
 using CacxShared;
 using CacxShared.Abstractions;
 using CacxShared.APIResponse;
@@ -10,14 +12,36 @@ namespace CacxServer.Controllers;
 
 [ApiController]
 [Route($"{Endpoints.Base}/{Endpoints.AuthEndpoints.BaseAuth}")]
-public class AuthController(IAuthService authService, Logger logger) : ControllerBase
+public class AuthController(IAuthService authService, IAuthRateLimiter authRateLimiter, Logger logger) : ControllerBase
 {
     [HttpPost(Endpoints.AuthEndpoints.Register)]
     [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status429TooManyRequests)]
+    [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status503ServiceUnavailable)]
+    [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequest registerRequest)
     {
         logger.LogInformation(LoggerParams.None, () => "Register endpoint called");
+
+        ClientSecurityContext clientSecurityContext = new()
+        {
+            ClientIP = HttpContext.Connection.RemoteIpAddress,
+            DeviceID = registerRequest.DeviceId
+        };
+
+        if (!await authRateLimiter.CheckRegisterAsync(clientSecurityContext))
+        {
+            return StatusCode((int)HttpStatusCode.TooManyRequests, value: new ApiResponse<string>()
+            {
+                IsSuccess = false,
+                ApiError = new ApiError()
+                {
+                    StatusCode = HttpStatusCode.TooManyRequests,
+                    Message = "Too many requests. Try again later..."
+                }
+            });
+        }
 
         RegisterResult result = await authService.RegisterAsync(registerRequest);
 
@@ -65,9 +89,30 @@ public class AuthController(IAuthService authService, Logger logger) : Controlle
 
     [HttpPost(Endpoints.AuthEndpoints.Login)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
-    public IActionResult Login()
+    [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status429TooManyRequests)]
+    public async Task<IActionResult> LoginAsync([FromBody] LoginRequest loginRequest)
     {
         logger.LogInformation(LoggerParams.None, () => "Login endpoint called");
+
+        ClientSecurityContext clientSecurityContext = new()
+        {
+            ClientIP = HttpContext.Connection.RemoteIpAddress,
+            DeviceID = loginRequest.DeviceId
+        };
+
+        if (!await authRateLimiter.CheckRegisterAsync(clientSecurityContext))
+        {
+            return StatusCode((int)HttpStatusCode.TooManyRequests, value: new ApiResponse<object>()
+            {
+                IsSuccess = false,
+                ApiError = new ApiError()
+                {
+                    StatusCode = HttpStatusCode.TooManyRequests,
+                    Message = "Too many requests. Try again later..."
+                }
+            });
+        }
+
         return Ok(new ApiResponse<object>() { IsSuccess = true, Data = null });
     }
 }

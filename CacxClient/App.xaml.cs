@@ -46,21 +46,21 @@ public partial class App : Application
                 })
                 .ConfigureServices((context, services) =>
                 {
-                    JsonSerializerOptions jsonSerializerOptions = new()
-                    {
-                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                        WriteIndented = true,
-                    };
-
-                    _ = services.AddSingleton<ILocalizationService, LocalizationService>((_) => new LocalizationService(basePath: "CacxClient.Resources.Login.Login"));
-                    _ = services.AddSingleton((_) => new ThemeManager(pathProvider, jsonSerializerOptions));
+                    _ = services.AddSingleton<ILocalizationService, LocalizationService>(_ => new(basePath: "CacxClient.Resources.Login.Login"));
                     _ = services.AddSingleton<ICursorService, CursorService>();
                     _ = services.AddSingleton<ITokenProvider, TokenProvider>();
                     _ = services.AddSingleton<IPathProvider, PathProvider>();
                     _ = services.AddSingleton<IAuthService, AuthService>();
-                    _ = services.AddSingleton(jsonSerializerOptions);
+                    _ = services.AddSingleton<ThemeManager>();
                     _ = services.AddSingleton<IHttp, Http>();
                     _ = services.AddSingleton<MainWindow>();
+                    _ = services.AddSingleton(pathProvider);
+
+                    _ = services.AddSingleton<JsonSerializerOptions>(_ => new()
+                    {
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                        WriteIndented = true,
+                    });
                     _ = services.AddSingleton((_) =>
                     {
                         LoggerSettings loggerSettings = new()
@@ -75,7 +75,7 @@ public partial class App : Application
                     _ = services.AddTransient<LoginViewModel>();
                 }).Build();
 
-        _ = AppHost.Services.GetRequiredService<ILocalizationService>();
+        _ = AppHost.Services.GetRequiredService<ILocalizationService>(); //Init LocalizationService
     }
 
 

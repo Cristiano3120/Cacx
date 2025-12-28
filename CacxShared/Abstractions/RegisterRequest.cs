@@ -1,6 +1,7 @@
 ﻿namespace CacxShared.Abstractions;
 public sealed record RegisterRequest
 {
-    public string Email { get; init; } = string.Empty;
-    public string Username { get; init; } = string.Empty;
+    public required string Email { get; init; } 
+    public required string Username { get; init; } 
+    public required string DeviceId {  get; init; } 
 }

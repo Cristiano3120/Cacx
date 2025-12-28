@@ -3,16 +3,26 @@ using CacxClient.Abstractions.Auth;
 using CacxShared;
 using CacxShared.Abstractions;
 using CacxShared.APIResponse;
-using CacxShared.SharedDTOs;
 using Cristiano3120.Logging;
 
 namespace CacxClient.Services;
 
 public class AuthService(IHttp http, Logger logger) : IAuthService
 {
-    public async Task LoginAsync(LoginRequest loginRequest)
+    public async Task<LoginResult> LoginAsync(LoginRequest loginRequest)
     {
-        await Task.Delay(3000);
+        logger.LogInformation(LoggerParams.None, () => "Trying to login");
+        ApiResponse<object> apiResponse = await http.PostAsync<int, object>(
+            data: 1,
+            endpoint: Endpoints.AuthEndpoints.LoginEndpoint,
+            callerInfos: CallerInfos.Create());
+
+        return new LoginResult()
+        {
+            
+        };
+
+        //TODO: Display info return LoginResult
     }
 
     public async Task<RegisterResult> RegisterAsync(RegisterRequest registerRequest)
