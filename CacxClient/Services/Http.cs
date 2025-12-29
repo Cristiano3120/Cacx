@@ -1,5 +1,4 @@
 ﻿using CacxClient.Abstractions;
-using CacxShared.APIResponse;
 using Cristiano3120.Logging;
 using Microsoft.Extensions.Configuration;
 using System.Net;
@@ -72,7 +71,7 @@ public sealed class Http : IHttp
             string responseContent = await response.Content.ReadAsStringAsync();
 
             _logger.LogHttpPayload<T>(LoggerParams.NoNewLine, PayloadType.Received, requestType, () => responseContent);
-
+            
             return response.IsSuccessStatusCode
                 ? JsonSerializer.Deserialize<ApiResponse<T>>(responseContent, _jsonSerializerOptions)!
                 : ApiResponse<T>.Error(response.StatusCode, responseContent);

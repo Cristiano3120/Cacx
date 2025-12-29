@@ -17,7 +17,7 @@ public sealed class AuthRateLimiter(
         string ipHash = Convert.ToHexString(hashingService.Hash(securityContext.ClientIP?.ToString() ?? ""));
         string deviceHash = Convert.ToHexString(hashingService.Hash(securityContext.DeviceID));
 
-        if (ipHash.Length == 0)
+        if (string.IsNullOrEmpty(ipHash))
         {
             logger.LogWarning(LoggerParams.None, () => "IP hidden?? Decline request");
             return new AuthRateLimitResult(IsLimited: true, RetryAfter: TimeSpan.Zero);
@@ -32,10 +32,10 @@ public sealed class AuthRateLimiter(
         string ipHash = Convert.ToHexString(hashingService.Hash(securityContext.ClientIP?.ToString() ?? ""));
         string deviceHash = Convert.ToHexString(hashingService.Hash(securityContext.DeviceID));
 
-        if (ipHash.Length == 0)
+        if (string.IsNullOrEmpty(ipHash))
         {
-            Console.WriteLine("IP hidden?? Decline request");
-            return false;
+            logger.LogWarning(LoggerParams.None, () => "IP hidden?? Decline request");
+            return new AuthRateLimitResult(IsLimited: true, RetryAfter: TimeSpan.Zero);
         }
        
         IEnumerable<RateLimitRule> rateLimitRules = RateLimitRuleBuilder.BuildLoginRules(ipHash, deviceHash, username);

@@ -1,4 +1,4 @@
-﻿namespace CacxServer.Abstractions.Auth;
+﻿namespace CacxServer.Abstractions.Auth.Register;
 
 public enum RegisterError : byte
 {

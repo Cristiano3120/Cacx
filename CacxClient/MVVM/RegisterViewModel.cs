@@ -25,6 +25,7 @@ public class RegisterViewModel : INotifyPropertyChanged
     public ICommand RegisterCommand { get; }
     public ICommand GeneratePasswordCommand { get; }
 
+    private readonly IDeviceIDProvider _deviceIDProvider;
     private readonly IAuthService _authService;
     private readonly IRateLimiter _rateLimiter;
     private bool _isRequestRunning;
@@ -90,7 +91,7 @@ public class RegisterViewModel : INotifyPropertyChanged
     }
 
 
-    public RegisterViewModel(IAuthService authService, ICursorService cursorService)
+    public RegisterViewModel(IAuthService authService, ICursorService cursorService, IDeviceIDProvider deviceIDProvider)
     {
         RegisterCommand = new RelayCommand(async (_) => await RegisterAsync(), CanRegister); 
         GeneratePasswordCommand = new RelayCommand(async (_) =>
@@ -120,6 +121,7 @@ public class RegisterViewModel : INotifyPropertyChanged
             }
         };
 
+        _deviceIDProvider = deviceIDProvider;
         _rateLimiter = RateLimiters.Register;
         _authService = authService;
 
@@ -148,6 +150,7 @@ public class RegisterViewModel : INotifyPropertyChanged
         {
             Email = Email,
             Username = Username,
+            DeviceId = _deviceIDProvider.GetDeviceID().ToString(),
         });
         OnRequestRunningStateChanged?.Invoke(false);
 

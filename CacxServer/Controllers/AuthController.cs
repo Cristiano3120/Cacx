@@ -1,9 +1,10 @@
-﻿using CacxServer.Abstractions.Auth;
+﻿using CacxServer.Abstractions;
+using CacxServer.Abstractions.Auth;
+using CacxServer.Abstractions.Auth.Register;
 using CacxServer.Data.Redis.Abstractions;
 using CacxServer.RateLimiter.AuthRateLimiter.Abstractions;
 using CacxShared;
 using CacxShared.Abstractions;
-using CacxShared.APIResponse;
 using Cristiano3120.Logging;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -24,15 +25,16 @@ public class AuthController(IAuthService authService, IAuthRateLimiter authRateL
     {
         logger.LogInformation(LoggerParams.None, () => "Register endpoint called");
 
-        ClientSecurityContext clientSecurityContext = new()
-        {
-            ClientIP = HttpContext.Connection.RemoteIpAddress,
-            DeviceID = registerRequest.DeviceId
-        };
+        ClientSecurityContext clientSecurityContext = new
+        (
+            ClientIP: HttpContext.Connection.RemoteIpAddress,
+            DeviceID: registerRequest.DeviceId
+        );
 
-        if (await authRateLimiter.CheckRegisterAsync(clientSecurityContext))
+        AuthRateLimitResult rateLimitResult = await authRateLimiter.CheckRegisterAsync(clientSecurityContext);
+        if (rateLimitResult.IsLimited)
         {
-            //TODO: Implement retry header
+            Response.Headers.RetryAfter = rateLimitResult.RetryAfter.TotalSeconds.ToString();
             return StatusCode((int)HttpStatusCode.TooManyRequests, value: new ApiResponse<string>()
             {
                 IsSuccess = false,
@@ -64,7 +66,7 @@ public class AuthController(IAuthService authService, IAuthRateLimiter authRateL
 
                 RegisterError.Unknown
                     => (HttpStatusCode.InternalServerError, "Unknown error"),
-                
+
                 _ => (HttpStatusCode.InternalServerError, "Unknown error")
             };
 
@@ -95,14 +97,16 @@ public class AuthController(IAuthService authService, IAuthRateLimiter authRateL
     {
         logger.LogInformation(LoggerParams.None, () => "Login endpoint called");
 
-        ClientSecurityContext clientSecurityContext = new()
-        {
-            ClientIP = HttpContext.Connection.RemoteIpAddress,
-            DeviceID = loginRequest.DeviceId
-        };
+        ClientSecurityContext clientSecurityContext = new
+        (
+            ClientIP: HttpContext.Connection.RemoteIpAddress,
+            DeviceID: loginRequest.DeviceId
+        );
 
-        if (!await authRateLimiter.CheckRegisterAsync(clientSecurityContext))
+        AuthRateLimitResult rateLimitResult = await authRateLimiter.CheckRegisterAsync(clientSecurityContext);
+        if (rateLimitResult.IsLimited)
         {
+            Response.Headers.RetryAfter = rateLimitResult.RetryAfter.TotalSeconds.ToString();
             return StatusCode((int)HttpStatusCode.TooManyRequests, value: new ApiResponse<object>()
             {
                 IsSuccess = false,

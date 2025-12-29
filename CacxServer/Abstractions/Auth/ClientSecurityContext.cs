@@ -2,8 +2,4 @@
 
 namespace CacxServer.Abstractions.Auth;
 
-public sealed record ClientSecurityContext
-{
-    public required IPAddress? ClientIP { get; init; }
-    public required string DeviceID { get; init; }
-}
+public sealed record ClientSecurityContext(IPAddress? ClientIP, string DeviceID);

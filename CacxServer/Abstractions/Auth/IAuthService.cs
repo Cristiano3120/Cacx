@@ -1,4 +1,5 @@
-﻿using CacxShared.Abstractions;
+﻿using CacxServer.Abstractions.Auth.Register;
+using CacxShared.Abstractions;
 
 namespace CacxServer.Abstractions.Auth;
 

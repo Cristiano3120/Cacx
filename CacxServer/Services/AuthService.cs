@@ -1,5 +1,6 @@
 ﻿using CacxServer.Abstractions;
 using CacxServer.Abstractions.Auth;
+using CacxServer.Abstractions.Auth.Register;
 using CacxServer.Data.PostgreSQL.Abstractions;
 using CacxServer.Data.Redis.Abstractions;
 using CacxServer.Data.Redis.Entities;

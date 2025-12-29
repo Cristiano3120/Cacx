@@ -2,7 +2,6 @@
 using CacxClient.Abstractions.Auth;
 using CacxShared;
 using CacxShared.Abstractions;
-using CacxShared.APIResponse;
 using Cristiano3120.Logging;
 
 namespace CacxClient.Services;

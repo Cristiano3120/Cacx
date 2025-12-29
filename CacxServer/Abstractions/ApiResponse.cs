@@ -1,6 +1,7 @@
-﻿using System.Net;
+﻿using CacxShared.Abstractions;
+using System.Net;
 
-namespace CacxShared.APIResponse;
+namespace CacxServer.Abstractions;
 
 public sealed class ApiResponse<T>
 {

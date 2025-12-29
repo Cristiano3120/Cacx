@@ -1,4 +1,4 @@
-﻿namespace CacxShared.SharedDTOs;
+﻿namespace CacxShared.Abstractions;
 
 internal sealed record User
 {

@@ -11,7 +11,6 @@ using CacxServer.Security.Hashing.Abstractions;
 using CacxServer.Security.Hashing.Services;
 using CacxServer.Services;
 using CacxShared.Abstractions;
-using CacxShared.APIResponse;
 using CacxShared.Services;
 using Cristiano3120.Logging;
 using DotNetEnv;

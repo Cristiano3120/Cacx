@@ -47,6 +47,7 @@ public partial class App : Application
                 .ConfigureServices((context, services) =>
                 {
                     _ = services.AddSingleton<ILocalizationService, LocalizationService>(_ => new(basePath: "CacxClient.Resources.Login.Login"));
+                    _ = services.AddSingleton<IDeviceIDProvider, DeviceIDProvider>();
                     _ = services.AddSingleton<ICursorService, CursorService>();
                     _ = services.AddSingleton<ITokenProvider, TokenProvider>();
                     _ = services.AddSingleton<IPathProvider, PathProvider>();
@@ -78,6 +79,10 @@ public partial class App : Application
         _ = AppHost.Services.GetRequiredService<ILocalizationService>(); //Init LocalizationService
     }
 
+    //TODO: TOS checkbox bei register
+    //TODO: Register vorgang durchlaufen und schauen ob alles funktioniert/implementiert ist
+    //TODO: Implement OAUTH Login via google/apple (Login) bei GitHub Trello aufschreiben
+    //TODO: Remember me funktion (Login) bei GitHub Trello aufschreiben
 
     protected override void OnStartup(StartupEventArgs e)
     {
