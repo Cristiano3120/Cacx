@@ -1,4 +1,4 @@
-﻿namespace CacxServer.Security.Hashing;
+﻿namespace CacxServer.Security.Hashing.Abstractions;
 
 public interface IHashingService
 {

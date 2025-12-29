@@ -7,7 +7,8 @@ using CacxServer.Data.Redis.Abstractions;
 using CacxServer.Data.Redis.Services;
 using CacxServer.RateLimiter.AuthRateLimiter.Abstractions;
 using CacxServer.RateLimiter.AuthRateLimiter.Services;
-using CacxServer.Security.Hashing;
+using CacxServer.Security.Hashing.Abstractions;
+using CacxServer.Security.Hashing.Services;
 using CacxServer.Services;
 using CacxShared.Abstractions;
 using CacxShared.APIResponse;
@@ -43,7 +44,7 @@ public static class Program
             ConfigurationOptions conf = new()
             {
                 EndPoints = { "localhost:6379" },
-                Password = Env.GetString("REDIS_PASSWORD")
+                Password = Env.GetString(key: "REDIS_PASSWORD")
             };
 
             return ConnectionMultiplexer.Connect(conf);

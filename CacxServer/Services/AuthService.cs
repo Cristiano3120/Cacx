@@ -3,7 +3,7 @@ using CacxServer.Abstractions.Auth;
 using CacxServer.Data.PostgreSQL.Abstractions;
 using CacxServer.Data.Redis.Abstractions;
 using CacxServer.Data.Redis.Entities;
-using CacxServer.Security.Hashing;
+using CacxServer.Security.Hashing.Abstractions;
 using CacxShared.Abstractions;
 using Cristiano3120.Logging;
 using Npgsql;

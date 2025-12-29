@@ -4,6 +4,6 @@ namespace CacxServer.RateLimiter.AuthRateLimiter.Abstractions;
 
 public interface IAuthRateLimiter
 {
-    Task<bool> CheckRegisterAsync(ClientSecurityContext securityContext);
-    Task<bool> CheckLoginAsync(ClientSecurityContext securityContext);
+    Task<AuthRateLimitResult> CheckRegisterAsync(ClientSecurityContext securityContext);
+    Task<AuthRateLimitResult> CheckLoginAsync(ClientSecurityContext securityContext, string username);
 }

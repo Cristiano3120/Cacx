@@ -30,8 +30,9 @@ public class AuthController(IAuthService authService, IAuthRateLimiter authRateL
             DeviceID = registerRequest.DeviceId
         };
 
-        if (!await authRateLimiter.CheckRegisterAsync(clientSecurityContext))
+        if (await authRateLimiter.CheckRegisterAsync(clientSecurityContext))
         {
+            //TODO: Implement retry header
             return StatusCode((int)HttpStatusCode.TooManyRequests, value: new ApiResponse<string>()
             {
                 IsSuccess = false,

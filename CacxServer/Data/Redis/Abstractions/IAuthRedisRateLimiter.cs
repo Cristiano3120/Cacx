@@ -4,5 +4,5 @@ namespace CacxServer.Data.Redis.Abstractions;
 
 public interface IAuthRedisRateLimiter
 {
-    Task<bool> CheckRulesAsync(IEnumerable<RateLimitRule> rateLimitRules);
+    Task<AuthRateLimitResult> CheckRulesAsync(IEnumerable<RateLimitRule> rateLimitRules);
 }

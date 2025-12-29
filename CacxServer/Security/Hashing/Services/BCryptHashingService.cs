@@ -1,6 +1,7 @@
-﻿using System.Text;
+﻿using CacxServer.Security.Hashing.Abstractions;
+using System.Text;
 
-namespace CacxServer.Security.Hashing;
+namespace CacxServer.Security.Hashing.Services;
 
 public class BCryptHashingService : IHashingService
 {
