@@ -9,7 +9,12 @@
              xmlns:vm="clr-namespace:CacxClient.MVVM"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance Type=vm:LoginViewModel}"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800" 
+             d:MinHeight="450" d:MinWidth="800"
+             d:MaxHeight="450" d:MaxWidth="800"
+             Width="800" Height="450"
+             MinWidth="800" MinHeight="450"
+             MaxWidth="800" MaxHeight="450">
     <Grid>
         <TextBlock x:Name="InformationTextBlock" Text="This is an error" VerticalAlignment="Top" HorizontalAlignment="Center" 
                    Margin="0, 150, 0, 0" Visibility="Hidden"/>

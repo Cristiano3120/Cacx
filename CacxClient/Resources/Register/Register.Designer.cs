@@ -97,6 +97,15 @@ namespace CacxClient.Resources.Register {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to I accept the.
+        /// </summary>
+        internal static string TOSPrefix {
+            get {
+                return ResourceManager.GetString("TOSPrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Username.
         /// </summary>
         internal static string UsernameLabel {

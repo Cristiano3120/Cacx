@@ -20,29 +20,34 @@ internal static class UserControlExtensions
     {
         Application.Current.Dispatcher.Invoke(() =>
         {
+            
             Application app = Application.Current;
             Window mainWindow = app.MainWindow;
 
-            if (mainWindow.Content is not UIElement oldContent)
+            if (mainWindow.Content is not UIElement oldContent) //if empty content, no animation
             {
                 mainWindow.Content = windowToSwitchTo;
                 return;
             }
-
+   
             TimeSpan duration = TimeSpan.FromMilliseconds(150);
 
             DoubleAnimation fadeOut = new(fromValue: 1, toValue: 0, duration);
             DoubleAnimation fadeIn = new(fromValue: 0, toValue: 1, duration);
-
+            
             fadeOut.Completed += (_, _) =>
             {
-                mainWindow.Content = windowToSwitchTo;
-
                 if (resourceBasePath is not null)
                 {
+                    // Forces a rebinding of all properties 
+                    object? mvvm = windowToSwitchTo.DataContext; //Don´t save MVVM reference implement a service locator pattern instead
+                    windowToSwitchTo.DataContext = null; 
+
                     LocalizationProvider.Service.UpdateContext(resourceBasePath);
+                    windowToSwitchTo.DataContext = mvvm;
                 }
 
+                mainWindow.Content = windowToSwitchTo;
                 windowToSwitchTo.BeginAnimation(UIElement.OpacityProperty, fadeIn);
             };
 

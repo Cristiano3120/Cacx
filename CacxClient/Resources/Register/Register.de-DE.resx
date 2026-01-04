@@ -129,6 +129,9 @@
   <data name="RegisterBtn" xml:space="preserve">
     <value>Anmelden</value>
   </data>
+  <data name="TOSPrefix" xml:space="preserve">
+    <value>Ich akzeptiere die</value>
+  </data>
   <data name="UsernameLabel" xml:space="preserve">
     <value>Benutzername</value>
   </data>

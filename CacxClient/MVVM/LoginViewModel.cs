@@ -1,12 +1,11 @@
-﻿using Cacx.LanguageManager.Core;
-using CacxClient.Abstractions;
+﻿using CacxClient.Abstractions;
 using CacxClient.Abstractions.Auth;
 using CacxClient.Commands;
 using CacxClient.Extensions;
 using CacxClient.Helper;
 using CacxClient.Services.RateLimiter;
 using CacxClient.Windows;
-using CacxShared.SharedDTOs;
+using CacxShared.Abstractions;
 using Cristiano3120.Logging;
 using System.ComponentModel;
 using System.Windows.Input;
@@ -19,6 +18,7 @@ public class LoginViewModel : INotifyPropertyChanged
     public event Action<bool>? OnRequestRunningStateChanged;
     public event Action<string>? OnInvalidData;
 
+    private readonly IDeviceIDProvider _deviceIDProvider;
     private readonly IAuthService _authService;
     private readonly IRateLimiter _rateLimiter;
 
@@ -61,17 +61,22 @@ public class LoginViewModel : INotifyPropertyChanged
     protected void OnPropertyChanged(string name)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-    public LoginViewModel(IAuthService authService, ICursorService cursorService, Logger logger)
+    public LoginViewModel(
+        IAuthService authService, 
+        ICursorService cursorService, 
+        IDeviceIDProvider deviceIDProvider, 
+        Logger logger)
     {
         string resourceBasePath = "CacxClient.Resources.Register.Register";
         LoginCommand = new RelayCommand(async (_) => await LoginAsync(), CanLogin);
-        SwitchToRegisterCommand = new RelayCommand(async (_) => new RegisterWindow().SwitchTo(resourceBasePath), CanLogin);
+        SwitchToRegisterCommand = new RelayCommand(async (_) => new RegisterWindow().SwitchTo(resourceBasePath));
 
         LoginBtnEnabled = true;
         
         Email = string.Empty;
         Password = string.Empty;
 
+        _deviceIDProvider = deviceIDProvider;
         _rateLimiter = RateLimiters.Login;
         _authService = authService;
 
@@ -112,11 +117,13 @@ public class LoginViewModel : INotifyPropertyChanged
         OnRequestRunningStateChanged?.Invoke(true);
 
         _logger.LogInformation(LoggerParams.None, () => "Attempting to log in");
-        await _authService.LoginAsync(new LoginRequest() 
+        LoginResult loginResult = await _authService.LoginAsync(new LoginRequest() 
         {
             Email = Email, 
-            Password = Password 
+            Password = Password ,
+            DeviceId = _deviceIDProvider.GetDeviceID().ToString(),
         });
+        //TODO: Handle loginResult (success/failure)
 
         OnRequestRunningStateChanged?.Invoke(false);
     }

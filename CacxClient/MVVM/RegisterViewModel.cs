@@ -8,12 +8,12 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using CacxShared.SharedDTOs;
 using CacxShared.Abstractions;
 using CacxClient.Abstractions.Auth;
 using CacxClient.Windows;
 using CacxClient.Extensions;
 using Microsoft.Extensions.DependencyInjection;
+using Cacx.LanguageManager.Abstractions;
 
 namespace CacxClient.MVVM;
 
@@ -25,6 +25,7 @@ public class RegisterViewModel : INotifyPropertyChanged
     public ICommand RegisterCommand { get; }
     public ICommand GeneratePasswordCommand { get; }
 
+    private readonly ILocalizationService _localizationService;
     private readonly IDeviceIDProvider _deviceIDProvider;
     private readonly IAuthService _authService;
     private readonly IRateLimiter _rateLimiter;
@@ -90,8 +91,23 @@ public class RegisterViewModel : INotifyPropertyChanged
         }
     }
 
+    public bool TOSAccepted
+    {
+        get => field;
+        set
+        {
+            field = value;
+            OnPropertyChanged(nameof(TOSAccepted));
+        }
+    }
 
-    public RegisterViewModel(IAuthService authService, ICursorService cursorService, IDeviceIDProvider deviceIDProvider)
+    public string TOSPrefix => _localizationService.GetString(key: "TOSPrefix");
+
+    public RegisterViewModel(
+        ILocalizationService localizationService,
+        IDeviceIDProvider deviceIDProvider, 
+        ICursorService cursorService, 
+        IAuthService authService)
     {
         RegisterCommand = new RelayCommand(async (_) => await RegisterAsync(), CanRegister); 
         GeneratePasswordCommand = new RelayCommand(async (_) =>
@@ -121,6 +137,7 @@ public class RegisterViewModel : INotifyPropertyChanged
             }
         };
 
+        _localizationService = localizationService;
         _deviceIDProvider = deviceIDProvider;
         _rateLimiter = RateLimiters.Register;
         _authService = authService;
@@ -135,10 +152,19 @@ public class RegisterViewModel : INotifyPropertyChanged
     private async Task RegisterAsync()
     {
         const string ErrorColorKey = "TextErrorColor";
+        Color errorColor = Colors.Red;
+
+        if (!TOSAccepted)
+        {
+            const string ErrorMsg = "You must accept the Terms of Service to register";
+            OnDisplayInformation?.Invoke(ErrorMsg, ThemeManager.GetColor(key: ErrorColorKey, errorColor));
+            return;
+        }
+
         if (!_rateLimiter.TryConsume())
         {
             const string ErrorMsg = "Don´t spam :( You gotta wait a bit!";
-            OnDisplayInformation?.Invoke(ErrorMsg, ThemeManager.GetColor(key: ErrorColorKey, Colors.Red));
+            OnDisplayInformation?.Invoke(ErrorMsg, ThemeManager.GetColor(key: ErrorColorKey, errorColor));
             return;
         }
 

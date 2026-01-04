@@ -5,9 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CacxClient"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Background="{DynamicResource WindowBackgroundColorBrush}"
-        WindowStartupLocation="CenterScreen">
-    <Grid>
-        
-    </Grid>
+        Title="MainWindow" Height="500" Width="800" Background="{DynamicResource WindowBackgroundColorBrush}"
+        WindowStartupLocation="CenterScreen" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+        <ContentPresenter x:Name="MainContentPresenter"/>
 </Window>

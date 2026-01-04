@@ -9,11 +9,16 @@
              xmlns:vm="clr-namespace:CacxClient.MVVM"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance Type=vm:RegisterViewModel}"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800" 
+             d:MinHeight="450" d:MinWidth="800"
+             d:MaxHeight="450" d:MaxWidth="800"
+             Width="800" Height="450"
+             MinWidth="800" MinHeight="450"
+             MaxWidth="800" MaxHeight="450">
     <Grid>
         <TextBlock x:Name="InformationTextBlock" Text="This is an error" VerticalAlignment="Top" HorizontalAlignment="Center" 
            Margin="0, 35, 0, 0" Visibility="Hidden"/>
-        
+
         <cc:ImprovedTextBox Height="35" Width="200" Margin="0, 0, 0, 250"
             Label="{loc:Localization EmailLabel}" Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"/>
         <cc:ImprovedTextBox Height="35" Width="200" Margin="0, 0, 0, 100"
@@ -23,8 +28,20 @@
         <cc:ImprovedTextBox Height="35" Width="200" Margin="0, 200, 0, 0"
             Label="{loc:Localization DisplayNameLabel}" Text="{Binding DisplayName, UpdateSourceTrigger=PropertyChanged}"/>
 
+        <CheckBox x:Name="TosCheckBox" Width="15" Height="15" VerticalAlignment="Bottom" Margin="0, 0, 175, 80"
+                  IsChecked="{Binding TOSAccepted, Mode=OneWayToSource}">
+            <CheckBox.LayoutTransform>
+                <ScaleTransform ScaleX="1.3" ScaleY="1.3" />
+            </CheckBox.LayoutTransform>
+        </CheckBox>
+
+        <TextBlock Margin="330,0,0,82.5" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="14">
+            <Run Text="{Binding TOSPrefix, Mode=OneWay}"/>
+            <Hyperlink>TOS</Hyperlink>
+        </TextBlock>
+
         <Button x:Name="RegisterBtn" MinWidth="65" Height="35" Padding="5, 0"
-                VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0, 0, 0, 40" 
+                VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0, 350, 0, 0" 
                 Command="{Binding RegisterCommand}" IsEnabled="{Binding RegisterBtnEnabled}"
                 Content="{loc:Localization RegisterBtn}"/>
 

@@ -83,6 +83,7 @@ public partial class App : Application
     //TODO: Register vorgang durchlaufen und schauen ob alles funktioniert/implementiert ist
     //TODO: Implement OAUTH Login via google/apple (Login) bei GitHub Trello aufschreiben
     //TODO: Remember me funktion (Login) bei GitHub Trello aufschreiben
+    //TODO: Checken ob emojis überall deaktiviert sind (Außer theoretisch bei display name...)
 
     protected override void OnStartup(StartupEventArgs e)
     {
