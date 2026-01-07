@@ -7,7 +7,7 @@
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
 
                         <!-- Box -->
-                        <Border x:Name="Box"
+                        <Border x:Name="Border"
                             Width="16" Height="16"
                             CornerRadius="4"
                             BorderBrush="{DynamicResource PrimaryBorderBrush}"
@@ -17,14 +17,13 @@
                             <!-- Checkmark -->
                             <Path x:Name="CheckMark"
                               Visibility="Collapsed"
-                              Stroke="{DynamicResource PrimaryBorderBrush}"
+                              Stroke="{DynamicResource PrimaryTextBrush}"
                               StrokeThickness="2"
-                              Data="M 2 8 L 6 12 L 14 2"/>
+                              Data="M 1 7 L 5 11 L 13 3"/>
                         </Border>
 
                         <!-- Text -->
-                        <ContentPresenter Margin="6,0,0,0"
-                                      VerticalAlignment="Center"/>
+                        <ContentPresenter Margin="6,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
 
                     <!-- Triggers -->
@@ -34,7 +33,11 @@
                         </Trigger>
 
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Box" Property="Opacity" Value="0.4"/>
+                            <Setter TargetName="Border" Property="Opacity" Value="0.4"/>
+                        </Trigger>
+
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Cursor" Value="Hand"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

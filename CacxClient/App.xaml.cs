@@ -79,7 +79,9 @@ public partial class App : Application
         _ = AppHost.Services.GetRequiredService<ILocalizationService>(); //Init LocalizationService
     }
 
-    //TODO: TOS checkbox bei register
+    //TODO: TosCheckBox Border fixen
+    //TODO: HoverAnimations Extensions auslagern in UIElement Extensions maybe?? Maybe in mehr methoden unterteilen...
+    //... z.B nur Border nur Foreground etc.
     //TODO: Register vorgang durchlaufen und schauen ob alles funktioniert/implementiert ist
     //TODO: Implement OAUTH Login via google/apple (Login) bei GitHub Trello aufschreiben
     //TODO: Remember me funktion (Login) bei GitHub Trello aufschreiben

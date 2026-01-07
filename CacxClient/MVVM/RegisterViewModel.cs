@@ -14,6 +14,7 @@ using CacxClient.Windows;
 using CacxClient.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Cacx.LanguageManager.Abstractions;
+using CacxClient.Resources;
 
 namespace CacxClient.MVVM;
 
@@ -24,6 +25,7 @@ public class RegisterViewModel : INotifyPropertyChanged
     public event Action<bool>? OnRequestRunningStateChanged;
     public ICommand RegisterCommand { get; }
     public ICommand GeneratePasswordCommand { get; }
+    public ICommand OpenTOSCommand { get; }
 
     private readonly ILocalizationService _localizationService;
     private readonly IDeviceIDProvider _deviceIDProvider;
@@ -109,7 +111,8 @@ public class RegisterViewModel : INotifyPropertyChanged
         ICursorService cursorService, 
         IAuthService authService)
     {
-        RegisterCommand = new RelayCommand(async (_) => await RegisterAsync(), CanRegister); 
+        RegisterCommand = new RelayCommand(async (_) => await RegisterAsync(), CanRegister);
+        OpenTOSCommand = new RelayCommand((_) => new TOSWindow().SwitchTo(resourceBasePath: ResourceBasePaths.TOS));
         GeneratePasswordCommand = new RelayCommand(async (_) =>
         {
             Password = new PasswordGenerator().GeneratePassword(20);
@@ -188,7 +191,7 @@ public class RegisterViewModel : INotifyPropertyChanged
 
         VerificationViewModel viewModel = App.AppHost.Services.GetRequiredService<VerificationViewModel>();
         new VerificationWindow(verificationViewModel: viewModel, token: result.Token!)
-            .SwitchTo(resourceBasePath: "CacxClient.Resources.Verification.Verification");
+            .SwitchTo(resourceBasePath: ResourceBasePaths.Verification);
     }
 
     private async Task<bool> ValidateDataAsync()

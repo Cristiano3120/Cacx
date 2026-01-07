@@ -35,9 +35,9 @@
             </CheckBox.LayoutTransform>
         </CheckBox>
 
-        <TextBlock Margin="330,0,0,82.5" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="14">
+        <TextBlock Margin="330,0,0,80" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="14">
             <Run Text="{Binding TOSPrefix, Mode=OneWay}"/>
-            <Hyperlink>TOS</Hyperlink>
+            <Hyperlink x:Name="TosHyperlink" Command="{Binding OpenTOSCommand}">TOS</Hyperlink>
         </TextBlock>
 
         <Button x:Name="RegisterBtn" MinWidth="65" Height="35" Padding="5, 0"

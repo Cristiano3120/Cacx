@@ -3,29 +3,35 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Shapes;
 
 namespace CacxClient.Extensions;
 
-internal static class ButtonExtensions
+internal static class CheckBoxExtensions
 {
-    public static void EnableHoverAnimation(this Button button)
+    public static void EnableHoverAnimation(this CheckBox checkBox)
     {
-        _ = button.ApplyTemplate();
+        _ = checkBox.ApplyTemplate();
 
-        if (button.Template.FindName("Border", button) is not Border border)
+        if (checkBox.Template.FindName("Border", checkBox) is not Border border)
         {
             return;
         }
 
-        button.MouseEnter += (_, __) =>
+        if (checkBox.Template.FindName("CheckMark", checkBox) is not Path checkMark)
         {
-            border.BorderBrush = button.BorderBrush.Clone();
-            button.Foreground = button.Foreground.Clone();
-            
+            return;
+        }
+
+        checkBox.MouseEnter += (_, __) =>
+        {
+            border.BorderBrush = checkBox.BorderBrush.Clone();
+            checkMark.Stroke = checkMark.Stroke.Clone();
+
             Color? hoverColor = ThemeManager.GetColor(key: "HoverColor");
             Duration duration = new(TimeSpan.FromMilliseconds(400));
 
-            ColorAnimation fgAnimation = new()
+            ColorAnimation checkMarkAnimation = new()
             {
                 To = hoverColor,
                 Duration = duration
@@ -38,15 +44,15 @@ internal static class ButtonExtensions
             };
 
             border.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, bBAnimation);
-            button.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, fgAnimation);
+            checkMark.Stroke.BeginAnimation(SolidColorBrush.ColorProperty, checkMarkAnimation);
         };
 
-        button.MouseLeave += (_, __) =>
+        checkBox.MouseLeave += (_, __) =>
         {
-            border.BorderBrush = button.BorderBrush.Clone();
+            border.BorderBrush = checkBox.BorderBrush.Clone();
 
             Duration duration = new(TimeSpan.FromMilliseconds(250));
-            ColorAnimation fgAnimation = new()
+            ColorAnimation checkMarkAnimation = new()
             {
                 To = ThemeManager.GetColor(key: "TextPrimaryColor"),
                 Duration = duration
@@ -59,7 +65,7 @@ internal static class ButtonExtensions
             };
 
             border.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, bBAnimation);
-            button.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, fgAnimation);
+            checkMark.Stroke.BeginAnimation(SolidColorBrush.ColorProperty, checkMarkAnimation);
         };
     }
 }

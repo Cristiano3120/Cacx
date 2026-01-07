@@ -3,6 +3,7 @@ using CacxClient.Abstractions.Auth;
 using CacxClient.Commands;
 using CacxClient.Extensions;
 using CacxClient.Helper;
+using CacxClient.Resources;
 using CacxClient.Services.RateLimiter;
 using CacxClient.Windows;
 using CacxShared.Abstractions;
@@ -67,9 +68,8 @@ public class LoginViewModel : INotifyPropertyChanged
         IDeviceIDProvider deviceIDProvider, 
         Logger logger)
     {
-        string resourceBasePath = "CacxClient.Resources.Register.Register";
         LoginCommand = new RelayCommand(async (_) => await LoginAsync(), CanLogin);
-        SwitchToRegisterCommand = new RelayCommand(async (_) => new RegisterWindow().SwitchTo(resourceBasePath));
+        SwitchToRegisterCommand = new RelayCommand(async (_) => new RegisterWindow().SwitchTo(resourceBasePath: ResourceBasePaths.Register));
 
         LoginBtnEnabled = true;
         

@@ -46,6 +46,11 @@
 		  <AutoGen>True</AutoGen>
 		  <DependentUpon>Register.resx</DependentUpon>
 		</Compile>
+		<Compile Update="Resources\Tos\Tos.Designer.cs">
+		  <DesignTime>True</DesignTime>
+		  <AutoGen>True</AutoGen>
+		  <DependentUpon>Tos.resx</DependentUpon>
+		</Compile>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -56,6 +61,10 @@
 		<EmbeddedResource Update="Resources\Register\Register.resx">
 		  <Generator>ResXFileCodeGenerator</Generator>
 		  <LastGenOutput>Register.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Resources\Tos\Tos.resx">
+		  <Generator>ResXFileCodeGenerator</Generator>
+		  <LastGenOutput>Tos.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
 	</ItemGroup>
 
