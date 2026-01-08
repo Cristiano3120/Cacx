@@ -15,7 +15,21 @@
              Width="800" Height="450"
              MinWidth="800" MinHeight="450"
              MaxWidth="800" MaxHeight="450">
+    
+    <UserControl.InputBindings>
+        <KeyBinding Key="Escape" Command="{Binding GoBackCommand}"/>
+    </UserControl.InputBindings>
+
     <Grid>
+        <Button x:Name="GoBackBtn" Width="50" Height="50" FontSize="40"
+        HorizontalAlignment="Left" VerticalAlignment="Top" Style="{StaticResource TransparentBtn}"
+        Margin="20, 20, 0, 0" Command="{Binding GoBackCommand}">
+            <Button.LayoutTransform>
+                <ScaleTransform ScaleX="-1"/>
+            </Button.LayoutTransform>
+            ➜
+        </Button>
+
         <TextBlock x:Name="InformationTextBlock" Text="This is an error" VerticalAlignment="Top" HorizontalAlignment="Center" 
            Margin="0, 35, 0, 0" Visibility="Hidden"/>
 
@@ -28,11 +42,9 @@
         <cc:ImprovedTextBox Height="35" Width="200" Margin="0, 200, 0, 0"
             Label="{loc:Localization DisplayNameLabel}" Text="{Binding DisplayName, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <CheckBox x:Name="TosCheckBox" Width="15" Height="15" VerticalAlignment="Bottom" Margin="0, 0, 175, 80"
+        <CheckBox x:Name="TosCheckBox" Width="21" Height="21" VerticalAlignment="Bottom" Margin="0, 0, 175, 80"
                   IsChecked="{Binding TOSAccepted, Mode=OneWayToSource}">
-            <CheckBox.LayoutTransform>
-                <ScaleTransform ScaleX="1.3" ScaleY="1.3" />
-            </CheckBox.LayoutTransform>
+            
         </CheckBox>
 
         <TextBlock Margin="330,0,0,80" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="14">

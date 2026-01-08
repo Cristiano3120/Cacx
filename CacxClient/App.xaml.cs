@@ -2,6 +2,7 @@
 using Cacx.LanguageManager.Core;
 using CacxClient.Abstractions;
 using CacxClient.Abstractions.Auth;
+using CacxClient.Extensions;
 using CacxClient.MVVM;
 using CacxClient.Services;
 using CacxClient.Windows;
@@ -79,7 +80,7 @@ public partial class App : Application
         _ = AppHost.Services.GetRequiredService<ILocalizationService>(); //Init LocalizationService
     }
 
-    //TODO: TosCheckBox Border fixen
+    //TODO:MEMORY LEAK DEALLOCATE EVENTS MAYBE IDISPOSABLE FÜR MVVM
     //TODO: HoverAnimations Extensions auslagern in UIElement Extensions maybe?? Maybe in mehr methoden unterteilen...
     //... z.B nur Border nur Foreground etc.
     //TODO: Register vorgang durchlaufen und schauen ob alles funktioniert/implementiert ist
@@ -107,6 +108,14 @@ public partial class App : Application
         MainWindow mainWindow = provider.GetRequiredService<MainWindow>();
         mainWindow.Content = new LoginWindow(provider.GetRequiredService<LoginViewModel>());
         mainWindow.Show();
+
+        for (int i = 0; i < 10000; i++)
+        {
+            RegisterWindow registerWindow = new RegisterWindow();
+            new TOSWindow((RegisterViewModel)registerWindow.DataContext).SwitchTo(null);
+            registerWindow.SwitchTo(null);
+            Console.WriteLine(i);
+        }
     }
 
     private void SetupExceptionHandling(IPathProvider pathProvider)

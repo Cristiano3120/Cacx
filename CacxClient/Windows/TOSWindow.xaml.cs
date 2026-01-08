@@ -9,10 +9,10 @@ namespace CacxClient.Windows;
 /// </summary>
 public partial class TOSWindow : UserControl
 {
-    public TOSWindow()
+    public TOSWindow(RegisterViewModel registerViewModel)
     {
         InitializeComponent();
-        DataContext = new TosViewModel();
+        DataContext = new TosViewModel(registerViewModel);
         GoBackBtn.EnableHoverAnimation();
     }
 }

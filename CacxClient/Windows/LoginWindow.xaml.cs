@@ -1,6 +1,7 @@
 ﻿using CacxClient.Extensions;
 using CacxClient.MVVM;
 using CacxClient.Resources;
+using Microsoft.Extensions.DependencyInjection;
 using System.Windows.Controls;
 
 namespace CacxClient.Windows;
@@ -20,6 +21,8 @@ public partial class LoginWindow : UserControl
 
         loginViewModel.OnInvalidData += DisplayInformation;
     }
+
+    public LoginWindow() : this(App.AppHost.Services.GetRequiredService<LoginViewModel>()) { }
 
     public void DisplayInformation(string msg)
         => InformationTextBlock.TriggerDisplayAnimation(ColorResources.TextErrorColor, msg);  

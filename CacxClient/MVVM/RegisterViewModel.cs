@@ -26,6 +26,7 @@ public class RegisterViewModel : INotifyPropertyChanged
     public ICommand RegisterCommand { get; }
     public ICommand GeneratePasswordCommand { get; }
     public ICommand OpenTOSCommand { get; }
+    public ICommand GoBackCommand { get; }
 
     private readonly ILocalizationService _localizationService;
     private readonly IDeviceIDProvider _deviceIDProvider;
@@ -112,7 +113,8 @@ public class RegisterViewModel : INotifyPropertyChanged
         IAuthService authService)
     {
         RegisterCommand = new RelayCommand(async (_) => await RegisterAsync(), CanRegister);
-        OpenTOSCommand = new RelayCommand((_) => new TOSWindow().SwitchTo(resourceBasePath: ResourceBasePaths.TOS));
+        OpenTOSCommand = new RelayCommand((_) => new TOSWindow(this).SwitchTo(resourceBasePath: ResourceBasePaths.TOS));
+        GoBackCommand = new RelayCommand(_ => new LoginWindow().SwitchTo(resourceBasePath: ResourceBasePaths.Login));
         GeneratePasswordCommand = new RelayCommand(async (_) =>
         {
             Password = new PasswordGenerator().GeneratePassword(20);

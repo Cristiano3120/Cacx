@@ -8,21 +8,21 @@
 
                         <!-- Box -->
                         <Border x:Name="Border"
-                            Width="16" Height="16"
+                            Width="{TemplateBinding Width}" Height="{TemplateBinding Height}"
                             CornerRadius="4"
                             BorderBrush="{DynamicResource PrimaryBorderBrush}"
-                            BorderThickness="1"
+                            BorderThickness="2"
                             Background="{DynamicResource InputBackgroundColorBrush}">
 
-                            <!-- Checkmark -->
-                            <Path x:Name="CheckMark"
-                              Visibility="Collapsed"
-                              Stroke="{DynamicResource PrimaryTextBrush}"
-                              StrokeThickness="2"
-                              Data="M 1 7 L 5 11 L 13 3"/>
+                            <Viewbox Stretch="Uniform">
+                                <Path x:Name="CheckMark"
+                                    Visibility="Collapsed"
+                                    Stroke="{DynamicResource PrimaryTextBrush}"
+                                    StrokeThickness="2"
+                                    Data="M 1 7 L 5 11 L 13 3"/>
+                            </Viewbox>
                         </Border>
 
-                        <!-- Text -->
                         <ContentPresenter Margin="6,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
 
