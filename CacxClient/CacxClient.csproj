@@ -13,14 +13,16 @@
 		</InterceptorsNamespaces>
 
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+		<UserSecretsId>ddbab2f7-f82c-40db-b08e-626d1613cc7a</UserSecretsId>
 	</PropertyGroup>
 
 	
 
 	<ItemGroup>
-		<PackageReference Include="Cacx.LanguageManager" Version="1.1.2" />
 		<PackageReference Include="Cristiano3120.Logger" Version="1.0.7" />
 		<PackageReference Include="DnsClient" Version="1.8.0" />
+		<PackageReference Include="LocalizationManager" Version="1.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />

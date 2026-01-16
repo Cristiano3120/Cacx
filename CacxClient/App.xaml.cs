@@ -1,8 +1,5 @@
-﻿using Cacx.LanguageManager.Abstractions;
-using Cacx.LanguageManager.Core;
-using CacxClient.Abstractions;
+﻿using CacxClient.Abstractions;
 using CacxClient.Abstractions.Auth;
-using CacxClient.Extensions;
 using CacxClient.MVVM;
 using CacxClient.Services;
 using CacxClient.Windows;
@@ -47,7 +44,6 @@ public partial class App : Application
                 })
                 .ConfigureServices((context, services) =>
                 {
-                    _ = services.AddSingleton<ILocalizationService, LocalizationService>(_ => new(basePath: "CacxClient.Resources.Login.Login"));
                     _ = services.AddSingleton<IDeviceIDProvider, DeviceIDProvider>();
                     _ = services.AddSingleton<ICursorService, CursorService>();
                     _ = services.AddSingleton<ITokenProvider, TokenProvider>();
@@ -76,17 +72,7 @@ public partial class App : Application
                     _ = services.AddTransient<RegisterViewModel>();
                     _ = services.AddTransient<LoginViewModel>();
                 }).Build();
-
-        _ = AppHost.Services.GetRequiredService<ILocalizationService>(); //Init LocalizationService
     }
-
-    //TODO:MEMORY LEAK DEALLOCATE EVENTS MAYBE IDISPOSABLE FÜR MVVM
-    //TODO: HoverAnimations Extensions auslagern in UIElement Extensions maybe?? Maybe in mehr methoden unterteilen...
-    //... z.B nur Border nur Foreground etc.
-    //TODO: Register vorgang durchlaufen und schauen ob alles funktioniert/implementiert ist
-    //TODO: Implement OAUTH Login via google/apple (Login) bei GitHub Trello aufschreiben
-    //TODO: Remember me funktion (Login) bei GitHub Trello aufschreiben
-    //TODO: Checken ob emojis überall deaktiviert sind (Außer theoretisch bei display name...)
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -96,6 +82,15 @@ public partial class App : Application
         InitMainWindow(serviceProvider);
     }
 
+    //TODO: Schreib ResourceManager neu...
+    //TODO:MEMORY LEAK DEALLOCATE EVENTS MAYBE IDISPOSABLE FÜR MVVM | LocalizationService memory leak
+    //TODO: HoverAnimations Extensions auslagern in UIElement Extensions maybe?? Maybe in mehr methoden unterteilen...
+    //... z.B nur Border nur Foreground etc.
+    //TODO: Register vorgang durchlaufen und schauen ob alles funktioniert/implementiert ist
+    //TODO: Implement OAUTH Login via google/apple (Login) bei GitHub Trello aufschreiben
+    //TODO: Remember me funktion (Login) bei GitHub Trello aufschreiben
+    //TODO: Checken ob emojis überall deaktiviert sind (Außer theoretisch bei display name...)
+
     protected override async void OnExit(ExitEventArgs e)
     {
         await AppHost.StopAsync();
@@ -103,19 +98,35 @@ public partial class App : Application
         base.OnExit(e);
     }
 
-    private static void InitMainWindow(IServiceProvider provider)
+    private static async Task InitMainWindow(IServiceProvider provider)
     {
         MainWindow mainWindow = provider.GetRequiredService<MainWindow>();
         mainWindow.Content = new LoginWindow(provider.GetRequiredService<LoginViewModel>());
         mainWindow.Show();
 
-        for (int i = 0; i < 10000; i++)
+        _ = Task.Run(async () =>
         {
-            RegisterWindow registerWindow = new RegisterWindow();
-            new TOSWindow((RegisterViewModel)registerWindow.DataContext).SwitchTo(null);
-            registerWindow.SwitchTo(null);
-            Console.WriteLine(i);
-        }
+            Application.Current.Dispatcher.Invoke(async () =>
+            {
+                //for (int i = 0; i < 5000; i++)
+                //{
+                //    RegisterWindow registerWindow = new RegisterWindow();
+                //    new TOSWindow((RegisterViewModel)registerWindow.DataContext).SwitchTo(null);
+                //    registerWindow.SwitchTo(null);
+                //    Console.WriteLine(i);
+                //}
+
+                //Console.WriteLine("Collecting");
+                //for (int i = 0; i < 5; i++)
+                //{
+                //    GC.Collect();
+                //    GC.WaitForPendingFinalizers();
+                //    GC.Collect();
+
+                //    await Task.Delay(250);
+                //}
+            });
+        });
     }
 
     private void SetupExceptionHandling(IPathProvider pathProvider)

@@ -1,4 +1,6 @@
-﻿using CacxClient.Abstractions;
+﻿using Cacx.LocalizationManager.Abstractions;
+using Cacx.LocalizationManager.Core;
+using CacxClient.Abstractions;
 using CacxClient.Abstractions.Auth;
 using CacxClient.Commands;
 using CacxClient.Extensions;
@@ -26,6 +28,7 @@ public class LoginViewModel : INotifyPropertyChanged
     private readonly Logger _logger;
     private bool _isRequestRunning;
 
+    public ILocalizationProvider Loc { get; }
     public ICommand LoginCommand { get; }
     public ICommand SwitchToRegisterCommand { get; }
 
@@ -68,6 +71,7 @@ public class LoginViewModel : INotifyPropertyChanged
         IDeviceIDProvider deviceIDProvider, 
         Logger logger)
     {
+        Loc = new LocalizationProvider(resourceName: ResourceBasePaths.Login, culture: null);
         LoginCommand = new RelayCommand(async (_) => await LoginAsync(), CanLogin);
         SwitchToRegisterCommand = new RelayCommand(async (_) => new RegisterWindow().SwitchTo(resourceBasePath: ResourceBasePaths.Register));
 

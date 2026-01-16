@@ -1,7 +1,6 @@
 ﻿using System.Windows.Media.Animation;
 using System.Windows.Controls;
 using System.Windows;
-using Cacx.LanguageManager.Core;
 
 namespace CacxClient.Extensions;
 
@@ -43,7 +42,6 @@ internal static class UserControlExtensions
                     object? mvvm = windowToSwitchTo.DataContext; //Don´t save MVVM reference implement a service locator pattern instead
                     windowToSwitchTo.DataContext = null; 
 
-                    LocalizationProvider.Service.UpdateContext(resourceBasePath);
                     windowToSwitchTo.DataContext = mvvm;
                 }
 

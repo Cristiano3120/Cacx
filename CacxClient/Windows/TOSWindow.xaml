@@ -4,15 +4,19 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CacxClient.Windows"
+             xmlns:designLoc="clr-namespace:Cacx.LocalizationManager.Core;assembly=Cacx.LocalizationManager"
              xmlns:mvvm="clr-namespace:CacxClient.MVVM"
-             xmlns:loc="clr-namespace:Cacx.LanguageManager.Wpf;assembly=Cacx.LanguageManager.Wpf"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800"
-             d:DataContext="{d:DesignData Type=mvvm:TosViewModel}">
+             d:DesignHeight="500" d:DesignWidth="800">
+    
     <UserControl.InputBindings>
         <KeyBinding Key="Escape" Command="{Binding GoBackCommand}"/>
     </UserControl.InputBindings>
-    
+
+    <d:Window.DataContext>
+        <designLoc:DesignTimeWindowContext/>
+    </d:Window.DataContext>
+
     <Grid>
         <Button x:Name="GoBackBtn" Width="50" Height="50" FontSize="40"
                 HorizontalAlignment="Left" VerticalAlignment="Top" Style="{StaticResource TransparentBtn}"
@@ -26,7 +30,7 @@
         <TextBlock Text="Terms of Service" FontSize="30" FontWeight="Bold" 
                    HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,30,0,0"/>
 
-        <TextBlock Text="{loc:Localization TermsOfService}"
+        <TextBlock Text="{Binding Loc[TermsOfService]}"
                    TextWrapping="Wrap" FontSize="16"
                    HorizontalAlignment="Center" VerticalAlignment="Top" Margin="50,80,50,0"/>
     </Grid>

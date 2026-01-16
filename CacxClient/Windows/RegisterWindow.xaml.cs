@@ -14,11 +14,11 @@ public partial class RegisterWindow : UserControl
     {
         InitializeComponent();
         DataContext = registerViewModel;
-
         RegisterBtn.EnableHoverAnimation();
         RandomPasswordBtn.EnableHoverAnimation();
         TosHyperlink.EnableHoverAnimation();
         TosCheckBox.EnableHoverAnimation();
+        GoBackBtn.EnableHoverAnimation();
 
         registerViewModel.OnDisplayInformation += DisplayInformation;
     }

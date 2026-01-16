@@ -13,8 +13,9 @@ using CacxClient.Abstractions.Auth;
 using CacxClient.Windows;
 using CacxClient.Extensions;
 using Microsoft.Extensions.DependencyInjection;
-using Cacx.LanguageManager.Abstractions;
 using CacxClient.Resources;
+using Cacx.LocalizationManager.Abstractions;
+using Cacx.LocalizationManager.Core;
 
 namespace CacxClient.MVVM;
 
@@ -23,12 +24,12 @@ public class RegisterViewModel : INotifyPropertyChanged
     public event PropertyChangedEventHandler? PropertyChanged;
     public event Action<string, Color>? OnDisplayInformation;
     public event Action<bool>? OnRequestRunningStateChanged;
-    public ICommand RegisterCommand { get; }
+    public ILocalizationProvider Loc { get; }
     public ICommand GeneratePasswordCommand { get; }
+    public ICommand RegisterCommand { get; }
     public ICommand OpenTOSCommand { get; }
     public ICommand GoBackCommand { get; }
 
-    private readonly ILocalizationService _localizationService;
     private readonly IDeviceIDProvider _deviceIDProvider;
     private readonly IAuthService _authService;
     private readonly IRateLimiter _rateLimiter;
@@ -104,14 +105,12 @@ public class RegisterViewModel : INotifyPropertyChanged
         }
     }
 
-    public string TOSPrefix => _localizationService.GetString(key: "TOSPrefix");
-
     public RegisterViewModel(
-        ILocalizationService localizationService,
         IDeviceIDProvider deviceIDProvider, 
         ICursorService cursorService, 
         IAuthService authService)
     {
+        Loc = new LocalizationProvider(resourceName: ResourceBasePaths.Register, culture: null);
         RegisterCommand = new RelayCommand(async (_) => await RegisterAsync(), CanRegister);
         OpenTOSCommand = new RelayCommand((_) => new TOSWindow(this).SwitchTo(resourceBasePath: ResourceBasePaths.TOS));
         GoBackCommand = new RelayCommand(_ => new LoginWindow().SwitchTo(resourceBasePath: ResourceBasePaths.Login));
@@ -142,7 +141,6 @@ public class RegisterViewModel : INotifyPropertyChanged
             }
         };
 
-        _localizationService = localizationService;
         _deviceIDProvider = deviceIDProvider;
         _rateLimiter = RateLimiters.Register;
         _authService = authService;
