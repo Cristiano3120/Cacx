@@ -1,4 +1,5 @@
-﻿using CacxClient.Services;
+﻿using CacxClient.Resources;
+using CacxClient.Services;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -28,18 +29,17 @@ internal static class CheckBoxExtensions
             border.BorderBrush = checkBox.BorderBrush.Clone();
             checkMark.Stroke = checkMark.Stroke.Clone();
 
-            Color? hoverColor = ThemeManager.GetColor(key: "HoverColor");
             Duration duration = new(TimeSpan.FromMilliseconds(400));
 
             ColorAnimation checkMarkAnimation = new()
             {
-                To = hoverColor,
+                To = ColorResources.HoverColor,
                 Duration = duration
             };
 
             ColorAnimation bBAnimation = new()
             {
-                To = hoverColor,
+                To = ColorResources.HoverColor,
                 Duration = duration
             };
 
@@ -54,13 +54,13 @@ internal static class CheckBoxExtensions
             Duration duration = new(TimeSpan.FromMilliseconds(250));
             ColorAnimation checkMarkAnimation = new()
             {
-                To = ThemeManager.GetColor(key: "TextPrimaryColor"),
+                To = ColorResources.TextPrimaryColor,
                 Duration = duration
             };
 
             ColorAnimation bBAnimation = new()
             {
-                To = ThemeManager.GetColor(key: "BorderPrimaryColor"),
+                To = ColorResources.BorderPrimaryColor,
                 Duration = duration
             };
 

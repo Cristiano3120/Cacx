@@ -112,14 +112,14 @@ public class RegisterViewModel : INotifyPropertyChanged
     {
         Loc = new LocalizationProvider(resourceName: ResourceBasePaths.Register, culture: null);
         RegisterCommand = new RelayCommand(async (_) => await RegisterAsync(), CanRegister);
-        OpenTOSCommand = new RelayCommand((_) => new TOSWindow(this).SwitchTo(resourceBasePath: ResourceBasePaths.TOS));
-        GoBackCommand = new RelayCommand(_ => new LoginWindow().SwitchTo(resourceBasePath: ResourceBasePaths.Login));
+        OpenTOSCommand = new RelayCommand((_) => new TOSWindow(this).SwitchTo());
+        GoBackCommand = new RelayCommand(_ => new LoginWindow().SwitchTo());
         GeneratePasswordCommand = new RelayCommand(async (_) =>
         {
             Password = new PasswordGenerator().GeneratePassword(20);
             Clipboard.SetText(Password);
 
-            Color? color = ThemeManager.GetColor(key: "TextPrimaryColor");
+            Color? color = ColorResources.TextPrimaryColor;
             color ??= Colors.LightGray;
 
             OnDisplayInformation?.Invoke("Copied to clipboard", color.Value);
@@ -154,20 +154,17 @@ public class RegisterViewModel : INotifyPropertyChanged
 
     private async Task RegisterAsync()
     {
-        const string ErrorColorKey = "TextErrorColor";
-        Color errorColor = Colors.Red;
-
         if (!TOSAccepted)
         {
             const string ErrorMsg = "You must accept the Terms of Service to register";
-            OnDisplayInformation?.Invoke(ErrorMsg, ThemeManager.GetColor(key: ErrorColorKey, errorColor));
+            OnDisplayInformation?.Invoke(ErrorMsg, ColorResources.TextErrorColor);
             return;
         }
 
         if (!_rateLimiter.TryConsume())
         {
             const string ErrorMsg = "Don´t spam :( You gotta wait a bit!";
-            OnDisplayInformation?.Invoke(ErrorMsg, ThemeManager.GetColor(key: ErrorColorKey, errorColor));
+            OnDisplayInformation?.Invoke(ErrorMsg, ColorResources.TextErrorColor);
             return;
         }
 
@@ -185,23 +182,20 @@ public class RegisterViewModel : INotifyPropertyChanged
 
         if (!result.IsSuccess)
         {
-            OnDisplayInformation?.Invoke(result.ErrorMessage!, ThemeManager.GetColor(key: ErrorColorKey, Colors.Red));
+            OnDisplayInformation?.Invoke(result.ErrorMessage!, ColorResources.TextErrorColor);
             return;
         }
 
         VerificationViewModel viewModel = App.AppHost.Services.GetRequiredService<VerificationViewModel>();
-        new VerificationWindow(verificationViewModel: viewModel, token: result.Token!)
-            .SwitchTo(resourceBasePath: ResourceBasePaths.Verification);
+        new VerificationWindow(verificationViewModel: viewModel, token: result.Token!).SwitchTo();
     }
 
     private async Task<bool> ValidateDataAsync()
     {
-        Color errorColor = ThemeManager.GetColor(key: "TextErrorColor", Colors.Red);
-
         if (string.IsNullOrEmpty(Email) || !await NetworkHelper.IsEmailValidAsync(Email))
         {
             const string ErrorMsg = "The entered email is invalid";
-            OnDisplayInformation?.Invoke(ErrorMsg, errorColor);
+            OnDisplayInformation?.Invoke(ErrorMsg, ColorResources.TextErrorColor);
 
             return false;
         }
@@ -210,21 +204,21 @@ public class RegisterViewModel : INotifyPropertyChanged
         if (string.IsNullOrEmpty(Email) || Password.Length < MinPasswordLength)
         {
             const string ErrorMsg = "Password must be at least 8 characters long";
-            OnDisplayInformation?.Invoke(ErrorMsg, errorColor);
+            OnDisplayInformation?.Invoke(ErrorMsg, ColorResources.TextErrorColor);
             return false;
         }
 
         if (string.IsNullOrEmpty(Username) || Username.Any(x => !char.IsLetterOrDigit(x) && x != '_' && x != '-'))
         {
             const string ErrorMsg = "Username can only contain letters, digits, underscores and hyphens";
-            OnDisplayInformation?.Invoke(ErrorMsg, errorColor);
+            OnDisplayInformation?.Invoke(ErrorMsg, ColorResources.TextErrorColor);
             return false;
         }
 
         if (string.IsNullOrEmpty(DisplayName))
         {
             const string ErrorMsg = "Display name cannot be empty";
-            OnDisplayInformation?.Invoke(ErrorMsg, errorColor);
+            OnDisplayInformation?.Invoke(ErrorMsg, ColorResources.TextErrorColor);
             return false;
         }
 

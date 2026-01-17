@@ -1,4 +1,5 @@
-﻿using CacxClient.Services;
+﻿using CacxClient.Resources;
+using CacxClient.Services;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,17 +23,16 @@ public static class TextBoxExtensions
 
         textBox.GotFocus += (_, __) =>
         {
-            Color? colorToAnimTo = ThemeManager.GetColor(key: "HoverColor");
             ColorAnimation fgAnim = new()
             {
-                To = colorToAnimTo,
+                To = ColorResources.HoverColor,
                 Duration = TimeSpan.FromSeconds(0.3)
             };
             textBox.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, fgAnim);
 
             ColorAnimation borderAnim = new()
             {
-                To = colorToAnimTo,
+                To = ColorResources.HoverColor,
                 Duration = TimeSpan.FromSeconds(0.5)
             };
             border.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, borderAnim);
@@ -42,14 +42,14 @@ public static class TextBoxExtensions
         {
             ColorAnimation fgAnim = new()
             {
-                To = ThemeManager.GetColor("TextPrimaryColor"),
+                To = ColorResources.TextPrimaryColor,
                 Duration = TimeSpan.FromSeconds(0.2)
             };
             textBox.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, fgAnim);
 
             ColorAnimation borderAnim = new()
             {
-                To = ThemeManager.GetColor("BorderPrimaryColor"),
+                To = ColorResources.BorderPrimaryColor,
                 Duration = TimeSpan.FromSeconds(0.2)
             };
             border.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, borderAnim);

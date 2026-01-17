@@ -16,6 +16,6 @@ public sealed class TosViewModel
     public TosViewModel(RegisterViewModel registerViewModel)
     {
         Loc = new LocalizationProvider(resourceName: ResourceBasePaths.TOS, culture: null);
-        GoBackCommand = new RelayCommand(_ => new RegisterWindow(registerViewModel).SwitchTo(resourceBasePath: ResourceBasePaths.Register));
+        GoBackCommand = new RelayCommand(_ => new RegisterWindow(registerViewModel).SwitchTo());
     }
 }

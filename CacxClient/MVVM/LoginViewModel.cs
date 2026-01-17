@@ -73,7 +73,7 @@ public class LoginViewModel : INotifyPropertyChanged
     {
         Loc = new LocalizationProvider(resourceName: ResourceBasePaths.Login, culture: null);
         LoginCommand = new RelayCommand(async (_) => await LoginAsync(), CanLogin);
-        SwitchToRegisterCommand = new RelayCommand(async (_) => new RegisterWindow().SwitchTo(resourceBasePath: ResourceBasePaths.Register));
+        SwitchToRegisterCommand = new RelayCommand(async (_) => new RegisterWindow().SwitchTo());
 
         LoginBtnEnabled = true;
         

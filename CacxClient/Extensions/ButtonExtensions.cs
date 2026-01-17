@@ -1,4 +1,5 @@
-﻿using CacxClient.Services;
+﻿using CacxClient.Resources;
+using CacxClient.Services;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -22,18 +23,17 @@ internal static class ButtonExtensions
             border.BorderBrush = button.BorderBrush.Clone();
             button.Foreground = button.Foreground.Clone();
             
-            Color? hoverColor = ThemeManager.GetColor(key: "HoverColor");
             Duration duration = new(TimeSpan.FromMilliseconds(400));
 
             ColorAnimation fgAnimation = new()
             {
-                To = hoverColor,
+                To = ColorResources.HoverColor,
                 Duration = duration
             };
 
             ColorAnimation bBAnimation = new()
             {
-                To = hoverColor,
+                To = ColorResources.HoverColor,
                 Duration = duration
             };
 
@@ -48,13 +48,13 @@ internal static class ButtonExtensions
             Duration duration = new(TimeSpan.FromMilliseconds(250));
             ColorAnimation fgAnimation = new()
             {
-                To = ThemeManager.GetColor(key: "TextPrimaryColor"),
+                To = ColorResources.TextPrimaryColor,
                 Duration = duration
             };
 
             ColorAnimation bBAnimation = new()
             {
-                To = ThemeManager.GetColor(key: "BorderPrimaryColor"),
+                To = ColorResources.BorderPrimaryColor,
                 Duration = duration
             };
 
