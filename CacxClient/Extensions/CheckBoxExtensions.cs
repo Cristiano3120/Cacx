@@ -13,7 +13,7 @@ internal static class CheckBoxExtensions
     public static void EnableHoverAnimation(this CheckBox checkBox)
     {
         _ = checkBox.ApplyTemplate();
-
+        
         if (checkBox.Template.FindName("Border", checkBox) is not Border border)
         {
             return;
@@ -26,46 +26,14 @@ internal static class CheckBoxExtensions
 
         checkBox.MouseEnter += (_, __) =>
         {
-            border.BorderBrush = checkBox.BorderBrush.Clone();
-            checkMark.Stroke = checkMark.Stroke.Clone();
-
-            Duration duration = new(TimeSpan.FromMilliseconds(400));
-
-            ColorAnimation checkMarkAnimation = new()
-            {
-                To = ColorResources.HoverColor,
-                Duration = duration
-            };
-
-            ColorAnimation bBAnimation = new()
-            {
-                To = ColorResources.HoverColor,
-                Duration = duration
-            };
-
-            border.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, bBAnimation);
-            checkMark.Stroke.BeginAnimation(SolidColorBrush.ColorProperty, checkMarkAnimation);
+            border.PlayHoverAnimation();
+            checkMark.Stroke = BrushExtensions.PlayHoverAnimation(checkMark.Stroke);
         };
 
         checkBox.MouseLeave += (_, __) =>
         {
-            border.BorderBrush = checkBox.BorderBrush.Clone();
-
-            Duration duration = new(TimeSpan.FromMilliseconds(250));
-            ColorAnimation checkMarkAnimation = new()
-            {
-                To = ColorResources.TextPrimaryColor,
-                Duration = duration
-            };
-
-            ColorAnimation bBAnimation = new()
-            {
-                To = ColorResources.BorderPrimaryColor,
-                Duration = duration
-            };
-
-            border.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, bBAnimation);
-            checkMark.Stroke.BeginAnimation(SolidColorBrush.ColorProperty, checkMarkAnimation);
+            border.PlayUnhoverAnimation();
+            checkMark.Stroke = BrushExtensions.PlayUnhoverAnimation(checkMark.Stroke);
         };
     }
 }

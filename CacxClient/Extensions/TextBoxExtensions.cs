@@ -1,10 +1,6 @@
-﻿using CacxClient.Resources;
-using CacxClient.Services;
-using System.Text;
+﻿using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
 
 namespace CacxClient.Extensions;
 
@@ -18,41 +14,16 @@ public static class TextBoxExtensions
             return;
         }
 
-        textBox.Foreground = textBox.Foreground.Clone();
-        border.BorderBrush = border.BorderBrush.Clone();
-
         textBox.GotFocus += (_, __) =>
         {
-            ColorAnimation fgAnim = new()
-            {
-                To = ColorResources.HoverColor,
-                Duration = TimeSpan.FromSeconds(0.3)
-            };
-            textBox.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, fgAnim);
-
-            ColorAnimation borderAnim = new()
-            {
-                To = ColorResources.HoverColor,
-                Duration = TimeSpan.FromSeconds(0.5)
-            };
-            border.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, borderAnim);
+            textBox.Foreground = BrushExtensions.PlayHoverAnimation(textBox.Foreground);
+            border.PlayHoverAnimation();
         };
 
         textBox.LostFocus += (_, __) =>
         {
-            ColorAnimation fgAnim = new()
-            {
-                To = ColorResources.TextPrimaryColor,
-                Duration = TimeSpan.FromSeconds(0.2)
-            };
-            textBox.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, fgAnim);
-
-            ColorAnimation borderAnim = new()
-            {
-                To = ColorResources.BorderPrimaryColor,
-                Duration = TimeSpan.FromSeconds(0.2)
-            };
-            border.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, borderAnim);
+            textBox.Foreground = BrushExtensions.PlayUnhoverAnimation(textBox.Foreground);
+            border.PlayUnhoverAnimation();
         };
     }
 

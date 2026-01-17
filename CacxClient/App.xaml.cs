@@ -1,6 +1,5 @@
 ﻿using CacxClient.Abstractions;
 using CacxClient.Abstractions.Auth;
-using CacxClient.Extensions;
 using CacxClient.MVVM;
 using CacxClient.Services;
 using CacxClient.Windows;
@@ -78,15 +77,18 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
-
+        
         IServiceProvider serviceProvider = AppHost.Services;
         InitMainWindow(serviceProvider);
     }
 
-    //TODO: TextBoxExtensions IsEmoji Methode auslagern in Hilfsklasse/Service vllt?? Fix EmojiHandling generell
-    //TODO: Checken ob emojis überall deaktiviert sind (Außer theoretisch bei display name...)
+    //TODO: GUck CHATGPT mach maybe ne DependencyObject extension die nach foreground guckzt und dann Hover animated...
+    //... PlayForegroundHoverAnimation etc.
+    //TODO: MAch fadeout anims z.B in BrushExtensions.UnHover länger
     //TODO: HoverAnimations Extensions auslagern in UIElement Extensions maybe?? Maybe in mehr methoden unterteilen...
     //... z.B nur Border nur Foreground etc.
+    //TODO: TextBoxExtensions IsEmoji Methode auslagern in Hilfsklasse/Service vllt?? Fix EmojiHandling generell
+    //TODO: Checken ob emojis überall deaktiviert sind (Außer theoretisch bei display name...)
     //TODO: Register vorgang durchlaufen und schauen ob alles funktioniert/implementiert ist
     //TODO: Implement OAUTH Login via google/apple (Login) bei GitHub Trello aufschreiben
     //TODO: Remember me funktion (Login) bei GitHub Trello aufschreiben
