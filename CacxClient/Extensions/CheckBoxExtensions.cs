@@ -1,9 +1,4 @@
-﻿using CacxClient.Resources;
-using CacxClient.Services;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
+﻿using System.Windows.Controls;
 using System.Windows.Shapes;
 
 namespace CacxClient.Extensions;
@@ -27,13 +22,13 @@ internal static class CheckBoxExtensions
         checkBox.MouseEnter += (_, __) =>
         {
             border.PlayHoverAnimation();
-            checkMark.Stroke = BrushExtensions.PlayHoverAnimation(checkMark.Stroke);
+            checkMark.Stroke = checkMark.Stroke.PlayHoverAnimation();
         };
 
         checkBox.MouseLeave += (_, __) =>
         {
             border.PlayUnhoverAnimation();
-            checkMark.Stroke = BrushExtensions.PlayUnhoverAnimation(checkMark.Stroke);
+            checkMark.Stroke = checkMark.Stroke.PlayUnhoverAnimation();
         };
     }
 }

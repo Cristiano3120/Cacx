@@ -9,7 +9,8 @@ internal static class BorderExtensions
 {
     public static void PlayHoverAnimation(this Border border)
     {
-        border.BorderBrush = border.BorderBrush.Clone();
+        if (border.BorderBrush is null)
+            return;
 
         ColorAnimation borderAnim = new()
         {
@@ -21,12 +22,13 @@ internal static class BorderExtensions
 
     public static void PlayUnhoverAnimation(this Border border)
     {
-        border.BorderBrush = border.BorderBrush.Clone();
+        if (border.BorderBrush is null)
+            return;
 
         ColorAnimation borderAnim = new()
         {
             To = ColorResources.BorderPrimaryColor,
-            Duration = TimeSpan.FromSeconds(0.2)
+            Duration = TimeSpan.FromSeconds(0.3)
         };
         border.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, borderAnim);
     }

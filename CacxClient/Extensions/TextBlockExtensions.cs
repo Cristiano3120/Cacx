@@ -1,5 +1,4 @@
 ﻿using CacxClient.Resources;
-using CacxClient.Services;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -179,6 +178,5 @@ internal static class TextBlockExtensions
                 textBlock.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, fgAnim);
             };
         };
-
     }
 }

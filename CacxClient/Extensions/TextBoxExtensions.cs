@@ -14,22 +14,23 @@ public static class TextBoxExtensions
             return;
         }
 
-        textBox.GotFocus += (_, __) =>
+        border.BorderBrush = border.BorderBrush.Clone(); // Mach ne attached Property und clone dann in der extension maybe unload.
+        textBox.GotFocus += (_, _) =>
         {
-            textBox.Foreground = BrushExtensions.PlayHoverAnimation(textBox.Foreground);
+            textBox.Foreground = textBox.Foreground.PlayHoverAnimation();
             border.PlayHoverAnimation();
         };
 
-        textBox.LostFocus += (_, __) =>
+        textBox.LostFocus += (_, _) =>
         {
-            textBox.Foreground = BrushExtensions.PlayUnhoverAnimation(textBox.Foreground);
+            textBox.Foreground = textBox.Foreground.PlayUnhoverAnimation();
             border.PlayUnhoverAnimation();
         };
     }
 
     public static void DisableEmojiInput(this TextBox textBox)
     {
-        textBox.PreviewTextInput += (sender, args) =>
+        textBox.PreviewTextInput += (_, args) =>
         {
             foreach (char c in args.Text)
             {
@@ -41,12 +42,11 @@ public static class TextBoxExtensions
             }
         };
 
-        DataObject.AddPastingHandler(textBox, static (sender, args) =>
+        DataObject.AddPastingHandler(textBox, static (_, args) =>
         {
             if (args.DataObject.GetDataPresent(DataFormats.UnicodeText))
             {
                 string text = (string)args.DataObject.GetData(DataFormats.UnicodeText);
-
                 text.EnumerateRunes().Where(r => IsEmoji(r)).ToList().ForEach(_ => args.CancelCommand());
             }
         });

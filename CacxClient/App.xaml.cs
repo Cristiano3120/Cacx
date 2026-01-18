@@ -82,8 +82,7 @@ public partial class App : Application
         InitMainWindow(serviceProvider);
     }
 
-    //TODO: GUck CHATGPT mach maybe ne DependencyObject extension die nach foreground guckzt und dann Hover animated...
-    //... PlayForegroundHoverAnimation etc.
+    //TODO: Pack Bounce Anim aus xaml raus. Mach via c#
     //TODO: MAch fadeout anims z.B in BrushExtensions.UnHover länger
     //TODO: HoverAnimations Extensions auslagern in UIElement Extensions maybe?? Maybe in mehr methoden unterteilen...
     //... z.B nur Border nur Foreground etc.

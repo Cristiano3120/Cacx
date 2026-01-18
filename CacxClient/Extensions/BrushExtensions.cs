@@ -6,7 +6,7 @@ namespace CacxClient.Extensions;
 
 internal static class BrushExtensions
 {
-    public static Brush PlayHoverAnimation(Brush brush)
+    public static Brush PlayHoverAnimation(this Brush brush)
     {
         if (brush is not SolidColorBrush originalBrush)
             return brush;
@@ -15,7 +15,7 @@ internal static class BrushExtensions
         ColorAnimation fgAnim = new()
         {
             To = ColorResources.HoverColor,
-            Duration = TimeSpan.FromSeconds(0.3)
+            Duration = TimeSpan.FromSeconds(0.5)
         };
 
         brushtoAnimate.BeginAnimation(SolidColorBrush.ColorProperty, fgAnim);
@@ -23,7 +23,7 @@ internal static class BrushExtensions
         return brushtoAnimate;
     }
 
-    public static Brush PlayUnhoverAnimation(Brush brush)
+    public static Brush PlayUnhoverAnimation(this Brush brush)
     {
         if (brush is not SolidColorBrush originalBrush)
             return brush;
@@ -32,7 +32,7 @@ internal static class BrushExtensions
         ColorAnimation fgAnim = new()
         {
             To = ColorResources.TextPrimaryColor,
-            Duration = TimeSpan.FromSeconds(0.2)
+            Duration = TimeSpan.FromSeconds(0.3)
         };
 
         brushtoAnimate.BeginAnimation(SolidColorBrush.ColorProperty, fgAnim);

@@ -1,9 +1,4 @@
-﻿using CacxClient.Resources;
-using CacxClient.Services;
-using System.Windows;
-using System.Windows.Documents;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
+﻿using System.Windows.Documents;
 
 namespace CacxClient.Extensions;
 
@@ -11,28 +6,7 @@ internal static class HyperlinkExtensions
 {
     public static void EnableHoverAnimation(this Hyperlink hyperlink)
     {
-        Duration duration = new(TimeSpan.FromMilliseconds(300));
-
-        hyperlink.MouseEnter += (sender, args) =>
-        {
-            ColorAnimation colorAnimation = new()
-            {
-                To = ColorResources.HoverColor,
-                Duration = duration
-            };
-
-            hyperlink.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
-        };
-
-        hyperlink.MouseLeave += (sender, args) =>
-        {
-            ColorAnimation colorAnimation = new()
-            {
-                To = ColorResources.TextPrimaryColor,
-                Duration = duration
-            };
-            
-            hyperlink.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
-        };
+        hyperlink.MouseEnter += (_, _) => hyperlink.Foreground = hyperlink.Foreground.PlayHoverAnimation();
+        hyperlink.MouseLeave += (_, _) => hyperlink.Foreground = hyperlink.Foreground.PlayUnhoverAnimation();
     }
 }

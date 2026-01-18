@@ -6,11 +6,7 @@
              xmlns:local="clr-namespace:CacxClient.CustomUserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-
-    <UserControl.Resources>
-        <Duration x:Key="DurationValue">0:0:0.2</Duration>
-    </UserControl.Resources>
-
+    
     <Grid>
         <TextBox x:Name="InnerTextBox" 
              Width="{Binding Width, RelativeSource={RelativeSource AncestorType=UserControl}}"
