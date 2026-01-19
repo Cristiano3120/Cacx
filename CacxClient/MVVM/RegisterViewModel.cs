@@ -176,6 +176,8 @@ public class RegisterViewModel : INotifyPropertyChanged
         {
             Email = Email,
             Username = Username,
+            Password = Password,
+            DisplayName = DisplayName,
             DeviceId = _deviceIDProvider.GetDeviceID().ToString(),
         });
         OnRequestRunningStateChanged?.Invoke(false);

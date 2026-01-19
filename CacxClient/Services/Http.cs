@@ -66,15 +66,15 @@ public sealed class Http : IHttp
                 request.Headers.Authorization =
                     new AuthenticationHeaderValue("Bearer", token);
             }
-
+            
             HttpResponseMessage response = await _httpClient.SendAsync(request);
             string responseContent = await response.Content.ReadAsStringAsync();
-
+            
             _logger.LogHttpPayload<T>(LoggerParams.NoNewLine, PayloadType.Received, requestType, () => responseContent);
             
             return response.IsSuccessStatusCode
                 ? JsonSerializer.Deserialize<ApiResponse<T>>(responseContent, _jsonSerializerOptions)!
-                : ApiResponse<T>.Error(response.StatusCode, responseContent);
+                : ApiResponse<T>.Error(response.StatusCode, responseContent, retryAfter: response.Headers?.RetryAfter?.Date);
         }
         catch (Exception ex)
         {
@@ -107,7 +107,7 @@ public sealed class Http : IHttp
             
             return response.IsSuccessStatusCode
                 ? JsonSerializer.Deserialize<ApiResponse<TOutput>>(responseContent, _jsonSerializerOptions)!
-                : ApiResponse<TOutput>.Error(response.StatusCode, responseContent);
+                : ApiResponse<TOutput>.Error(response.StatusCode, responseContent, response.Headers?.RetryAfter?.Date);
         }
         catch (Exception ex)
         {

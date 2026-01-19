@@ -8,7 +8,7 @@ public sealed class ApiResponse<T>
     public bool IsSuccess { get; init; }
     public T? Data { get; init; }
     public ApiError? ApiError { get; init; }
-    public TimeSpan? RetryAfter { get; init; }
+    public DateTimeOffset? RetryAfter { get; init; }
 
     public static ApiResponse<T> Ok(T data, bool isSuccess)
         => new() { IsSuccess = isSuccess, Data = data };
@@ -26,7 +26,7 @@ public sealed class ApiResponse<T>
         };
     }
 
-    public static ApiResponse<T> Error(HttpStatusCode statusCode, string message, TimeSpan retryAfter)
+    public static ApiResponse<T> Error(HttpStatusCode statusCode, string message, DateTimeOffset? retryAfter)
     {
         return new()
         {

@@ -14,7 +14,7 @@ public static class TextBoxExtensions
             return;
         }
 
-        border.BorderBrush = border.BorderBrush.Clone(); // Mach ne attached Property und clone dann in der extension maybe unload.
+        border.BorderBrush = border.BorderBrush.Clone(); 
         textBox.GotFocus += (_, _) =>
         {
             textBox.Foreground = textBox.Foreground.PlayHoverAnimation();

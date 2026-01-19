@@ -18,6 +18,9 @@ public partial class LoginWindow : UserControl
 
         LoginBtn.EnableHoverAnimation();
         CreateAccHyperlink.EnableHoverAnimation();
+        EmailTextBox.InnerTextBox.DisableEmojiInput();
+        PasswordTextBox.InnerTextBox.DisableEmojiInput();
+
 
         loginViewModel.OnInvalidData += DisplayInformation;
     }

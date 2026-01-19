@@ -82,10 +82,6 @@ public partial class App : Application
         InitMainWindow(serviceProvider);
     }
 
-    //TODO: Pack Bounce Anim aus xaml raus. Mach via c#
-    //TODO: MAch fadeout anims z.B in BrushExtensions.UnHover länger
-    //TODO: HoverAnimations Extensions auslagern in UIElement Extensions maybe?? Maybe in mehr methoden unterteilen...
-    //... z.B nur Border nur Foreground etc.
     //TODO: TextBoxExtensions IsEmoji Methode auslagern in Hilfsklasse/Service vllt?? Fix EmojiHandling generell
     //TODO: Checken ob emojis überall deaktiviert sind (Außer theoretisch bei display name...)
     //TODO: Register vorgang durchlaufen und schauen ob alles funktioniert/implementiert ist

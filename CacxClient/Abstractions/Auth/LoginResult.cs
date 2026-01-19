@@ -2,5 +2,6 @@
 
 public sealed record LoginResult
 {
-    
+    public bool IsSuccess => ErrorMessage is not null;
+    public string? ErrorMessage { get; init; }
 }

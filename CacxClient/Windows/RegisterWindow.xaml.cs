@@ -20,6 +20,11 @@ public partial class RegisterWindow : UserControl
         TosCheckBox.EnableHoverAnimation();
         GoBackBtn.EnableHoverAnimation();
 
+        EmailTextBox.InnerTextBox.DisableEmojiInput();
+        PasswordTextBox.InnerTextBox.DisableEmojiInput();
+        UsernameTextBox.InnerTextBox.DisableEmojiInput();
+        DisplayNameTextBox.InnerTextBox.DisableEmojiInput();
+
         registerViewModel.OnDisplayInformation += DisplayInformation;
     }
 
