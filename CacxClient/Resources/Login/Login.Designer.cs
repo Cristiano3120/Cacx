@@ -88,6 +88,15 @@ namespace CacxClient.Resources.Login {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Wohhhh chill. Wait a few.
+        /// </summary>
+        internal static string OnCooldownMessage {
+            get {
+                return ResourceManager.GetString("OnCooldownMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Password.
         /// </summary>
         internal static string PasswordLabel {

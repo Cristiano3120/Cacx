@@ -126,6 +126,9 @@
   <data name="LoginBtn" xml:space="preserve">
     <value>Anmelden</value>
   </data>
+  <data name="OnCooldownMessage" xml:space="preserve">
+    <value>Nicht so hastig. Warte ein wenig</value>
+  </data>
   <data name="PasswordLabel" xml:space="preserve">
     <value>Passwort</value>
   </data>

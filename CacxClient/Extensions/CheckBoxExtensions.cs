@@ -19,6 +19,7 @@ internal static class CheckBoxExtensions
             return;
         }
 
+        border.BorderBrush = border.BorderBrush.Clone();
         checkBox.MouseEnter += (_, __) =>
         {
             border.PlayHoverAnimation();

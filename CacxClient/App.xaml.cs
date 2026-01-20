@@ -1,7 +1,11 @@
-﻿using CacxClient.Abstractions;
+﻿using Cacx.LocalizationManager.Abstractions;
+using Cacx.LocalizationManager.Core;
+using CacxClient.Abstractions;
 using CacxClient.Abstractions.Auth;
 using CacxClient.MVVM;
+using CacxClient.Resources;
 using CacxClient.Services;
+using CacxClient.Services.RateLimiter;
 using CacxClient.Windows;
 using CacxShared.Abstractions;
 using CacxShared.Services;
@@ -44,6 +48,11 @@ public partial class App : Application
                 })
                 .ConfigureServices((context, services) =>
                 {
+                    _ = services.AddSingleton<ILocalizationProvider, LocalizationProvider>((_) =>
+                    {
+                        return new LocalizationProvider(resourceName: ResourceBasePaths.Login, null); 
+                    });
+                    _ = services.AddSingleton<IRequestRateLimiter, RequestRateLimiter>();
                     _ = services.AddSingleton<IDeviceIDProvider, DeviceIDProvider>();
                     _ = services.AddSingleton<ICursorService, CursorService>();
                     _ = services.AddSingleton<ITokenProvider, TokenProvider>();
@@ -82,8 +91,8 @@ public partial class App : Application
         InitMainWindow(serviceProvider);
     }
 
+    //TODO: Mehr Logging. Verification MVVM nicht aus DI
     //TODO: TextBoxExtensions IsEmoji Methode auslagern in Hilfsklasse/Service vllt?? Fix EmojiHandling generell
-    //TODO: Checken ob emojis überall deaktiviert sind (Außer theoretisch bei display name...)
     //TODO: Register vorgang durchlaufen und schauen ob alles funktioniert/implementiert ist
     //TODO: Implement OAUTH Login via google/apple (Login) bei GitHub Trello aufschreiben
     //TODO: Remember me funktion (Login) bei GitHub Trello aufschreiben

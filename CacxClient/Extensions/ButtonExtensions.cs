@@ -13,6 +13,7 @@ internal static class ButtonExtensions
             return;
         }
 
+        border.BorderBrush = border.BorderBrush?.Clone();
         button.MouseEnter += (_, __) =>
         {
             border.PlayHoverAnimation();

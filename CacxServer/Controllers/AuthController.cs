@@ -1,7 +1,6 @@
 ﻿using CacxServer.Abstractions;
 using CacxServer.Abstractions.Auth;
 using CacxServer.Abstractions.Auth.Register;
-using CacxServer.Data.Redis.Abstractions;
 using CacxServer.RateLimiter.AuthRateLimiter.Abstractions;
 using CacxShared;
 using CacxShared.Abstractions;

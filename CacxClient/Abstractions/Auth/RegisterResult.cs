@@ -2,7 +2,7 @@
 
 public sealed record RegisterResult
 {
-    public bool IsSuccess => ErrorMessage is not null;
+    public bool IsSuccess => string.IsNullOrEmpty(ErrorMessage);
     public string? Token { get; init; }
     public string? ErrorMessage { get; init; }
 }

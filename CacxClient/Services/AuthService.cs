@@ -1,21 +1,24 @@
-﻿using CacxClient.Abstractions;
+﻿using Cacx.LocalizationManager.Abstractions;
+using CacxClient.Abstractions;
 using CacxClient.Abstractions.Auth;
+using CacxClient.Resources;
 using CacxShared;
 using CacxShared.Abstractions;
 using Cristiano3120.Logging;
 
 namespace CacxClient.Services;
 
-public class AuthService(IRequestRateLimiter requestRateLimiter, IHttp http, Logger logger) : IAuthService
+public sealed class AuthService(ILocalizationProvider localizationProvider, IRequestRateLimiter requestRateLimiter, IHttp http, Logger logger) : IAuthService
 {
     public async Task<LoginResult> LoginAsync(LoginRequest loginRequest)
     {
         logger.LogInformation(LoggerParams.None, () => "Trying to login");
         if (requestRateLimiter.CheckIfRequestTypeIsRateLimited(RequestType.Login))
         {
+            localizationProvider.UpdateContext(ResourceBasePaths.Login);
             return new LoginResult() 
             {
-                ErrorMessage = "Wohhhh chill. Wait a few" //TODO: Via localizationManager
+                ErrorMessage = localizationProvider.GetString(key: "OnCooldownMessage") 
             };
         }    
 
@@ -35,11 +38,12 @@ public class AuthService(IRequestRateLimiter requestRateLimiter, IHttp http, Log
     public async Task<RegisterResult> RegisterAsync(RegisterRequest registerRequest)
     {
         logger.LogInformation(LoggerParams.None, () => "Trying to register");
-        if (requestRateLimiter.CheckIfRequestTypeIsRateLimited(RequestType.Login))
+        if (requestRateLimiter.CheckIfRequestTypeIsRateLimited(RequestType.Register))
         {
+            localizationProvider.UpdateContext(ResourceBasePaths.Register);
             return new RegisterResult()
             {
-                ErrorMessage = "Wohhhh chill. Wait a few" //TODO: Via localizationManager
+                ErrorMessage = localizationProvider.GetString(key: "OnCooldownMessage")
             };
         }
 
