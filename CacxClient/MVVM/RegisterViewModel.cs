@@ -30,6 +30,7 @@ public class RegisterViewModel : INotifyPropertyChanged
     public ICommand OpenTOSCommand { get; }
     public ICommand GoBackCommand { get; }
 
+    private readonly INavigationService _navigationService;
     private readonly IDeviceIDProvider _deviceIDProvider;
     private readonly IAuthService _authService;
     private readonly IRateLimiter _rateLimiter;
@@ -106,6 +107,7 @@ public class RegisterViewModel : INotifyPropertyChanged
     }
 
     public RegisterViewModel(
+        INavigationService navigationService,
         IDeviceIDProvider deviceIDProvider, 
         ICursorService cursorService, 
         IAuthService authService)
@@ -113,7 +115,7 @@ public class RegisterViewModel : INotifyPropertyChanged
         Loc = new LocalizationProvider(resourceName: ResourceBasePaths.Register, culture: null);
         RegisterCommand = new RelayCommand(async (_) => await RegisterAsync(), CanRegister);
         OpenTOSCommand = new RelayCommand((_) => new TOSWindow(this).SwitchTo());
-        GoBackCommand = new RelayCommand(_ => new LoginWindow().SwitchTo());
+        GoBackCommand = new RelayCommand(_ => navigationService.NavigateToLogin());
         GeneratePasswordCommand = new RelayCommand(async (_) =>
         {
             Password = new PasswordGenerator().GeneratePassword(20);
@@ -141,6 +143,7 @@ public class RegisterViewModel : INotifyPropertyChanged
             }
         };
 
+        _navigationService = navigationService;
         _deviceIDProvider = deviceIDProvider;
         _rateLimiter = RateLimiters.Register;
         _authService = authService;
@@ -188,8 +191,7 @@ public class RegisterViewModel : INotifyPropertyChanged
             return;
         }
 
-        VerificationViewModel viewModel = App.AppHost.Services.GetRequiredService<VerificationViewModel>();
-        new VerificationWindow(verificationViewModel: viewModel, token: result.Token!).SwitchTo();
+        _navigationService.NavigateToVerification(token: result.Token);
     }
 
     private async Task<bool> ValidateDataAsync()

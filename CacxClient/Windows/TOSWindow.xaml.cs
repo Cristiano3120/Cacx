@@ -1,5 +1,4 @@
 ﻿using CacxClient.Extensions;
-using CacxClient.MVVM;
 using System.Windows.Controls;
 
 namespace CacxClient.Windows;
@@ -9,10 +8,9 @@ namespace CacxClient.Windows;
 /// </summary>
 public partial class TOSWindow : UserControl
 {
-    public TOSWindow(RegisterViewModel registerViewModel)
+    public TOSWindow()
     {
         InitializeComponent();
-        DataContext = new TosViewModel(registerViewModel);
         GoBackBtn.EnableHoverAnimation();
     }
 }

@@ -1,6 +1,4 @@
-﻿using CacxClient.MVVM;
-using System;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 
 namespace CacxClient.Windows;
 /// <summary>
@@ -8,7 +6,7 @@ namespace CacxClient.Windows;
 /// </summary>
 public partial class VerificationWindow : UserControl
 {
-    public VerificationWindow(VerificationViewModel verificationViewModel, string token)
+    public VerificationWindow()
     {
         InitializeComponent();
     }

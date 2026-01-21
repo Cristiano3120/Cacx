@@ -53,6 +53,7 @@ public partial class App : Application
                         return new LocalizationProvider(resourceName: ResourceBasePaths.Login, null); 
                     });
                     _ = services.AddSingleton<IRequestRateLimiter, RequestRateLimiter>();
+                    _ = services.AddSingleton<INavigationService, NavigationService>();
                     _ = services.AddSingleton<IDeviceIDProvider, DeviceIDProvider>();
                     _ = services.AddSingleton<ICursorService, CursorService>();
                     _ = services.AddSingleton<ITokenProvider, TokenProvider>();
@@ -78,8 +79,10 @@ public partial class App : Application
                         return new Logger(loggerSettings);
                     });
 
-                    _ = services.AddTransient<RegisterViewModel>();
+                    _ = services.AddTransient<TosViewModel>();
                     _ = services.AddTransient<LoginViewModel>();
+                    _ = services.AddTransient<RegisterViewModel>();
+                    _ = services.AddTransient<VerificationViewModel>();
                 }).Build();
     }
 
@@ -91,7 +94,7 @@ public partial class App : Application
         InitMainWindow(serviceProvider);
     }
 
-    //TODO: Mehr Logging. Verification MVVM nicht aus DI
+    //TODO: Mehr Logging. Verification MVVM nicht aus DI | TEST OB KEY IN REDIS ANGELEGT WIRD
     //TODO: TextBoxExtensions IsEmoji Methode auslagern in Hilfsklasse/Service vllt?? Fix EmojiHandling generell
     //TODO: Register vorgang durchlaufen und schauen ob alles funktioniert/implementiert ist
     //TODO: Implement OAUTH Login via google/apple (Login) bei GitHub Trello aufschreiben

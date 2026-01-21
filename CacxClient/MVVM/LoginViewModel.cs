@@ -66,6 +66,7 @@ public class LoginViewModel : INotifyPropertyChanged
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
     public LoginViewModel(
+        INavigationService navigationService,
         IAuthService authService, 
         ICursorService cursorService, 
         IDeviceIDProvider deviceIDProvider, 
@@ -73,7 +74,7 @@ public class LoginViewModel : INotifyPropertyChanged
     {
         Loc = new LocalizationProvider(resourceName: ResourceBasePaths.Login, culture: null);
         LoginCommand = new RelayCommand(async (_) => await LoginAsync(), CanLogin);
-        SwitchToRegisterCommand = new RelayCommand(async (_) => new RegisterWindow().SwitchTo());
+        SwitchToRegisterCommand = new RelayCommand(async (_) => navigationService.NavigateToRegister(registerState: null));
 
         LoginBtnEnabled = true;
         

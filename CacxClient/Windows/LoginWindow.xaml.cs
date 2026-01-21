@@ -11,21 +11,17 @@ namespace CacxClient.Windows;
 /// </summary>
 public partial class LoginWindow : UserControl
 {
-    public LoginWindow(LoginViewModel loginViewModel)
+    public LoginWindow()
     {
         InitializeComponent();
-        DataContext = loginViewModel;
 
         LoginBtn.EnableHoverAnimation();
         CreateAccHyperlink.EnableHoverAnimation();
         EmailTextBox.InnerTextBox.DisableEmojiInput();
         PasswordTextBox.InnerTextBox.DisableEmojiInput();
 
-
-        loginViewModel.OnInvalidData += DisplayInformation;
+        ((LoginViewModel)DataContext).OnInvalidData += DisplayInformation;
     }
-
-    public LoginWindow() : this(App.AppHost.Services.GetRequiredService<LoginViewModel>()) { }
 
     public void DisplayInformation(string msg)
         => InformationTextBlock.TriggerDisplayAnimation(ColorResources.TextErrorColor, msg);  

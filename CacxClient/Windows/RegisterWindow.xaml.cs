@@ -10,10 +10,10 @@ namespace CacxClient.Windows;
 /// </summary>
 public partial class RegisterWindow : UserControl
 {
-    public RegisterWindow(RegisterViewModel registerViewModel)
+    public RegisterWindow()
     {
         InitializeComponent();
-        DataContext = registerViewModel;
+
         RegisterBtn.EnableHoverAnimation();
         RandomPasswordBtn.EnableHoverAnimation();
         TosHyperlink.EnableHoverAnimation();
@@ -25,10 +25,8 @@ public partial class RegisterWindow : UserControl
         UsernameTextBox.InnerTextBox.DisableEmojiInput();
         DisplayNameTextBox.InnerTextBox.DisableEmojiInput();
 
-        registerViewModel.OnDisplayInformation += DisplayInformation;
+        ((RegisterViewModel)DataContext).OnDisplayInformation += DisplayInformation;
     }
-
-    public RegisterWindow() : this(App.AppHost.Services.GetRequiredService<RegisterViewModel>()) { }
 
     public void DisplayInformation(string msg, Color color)
         => InformationTextBlock.TriggerDisplayAnimation(color, msg);
