@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 using System.Net;
+using System.Text;
+using System.Text.Json;
 using LogLevel = Cristiano3120.Logging.LogLevel;
 
 namespace CacxServer;
@@ -30,6 +32,11 @@ public static class Program
 
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
         PathProvider pathProvider = new();
+
+        _ = builder.Services.AddSingleton(_ => new JsonSerializerOptions()
+        {
+            WriteIndented = true,
+        });
 
         _ = builder.Services.AddKeyedSingleton<IHashingService, Sha256HashingService>(HashingAlgorithm.Sha256);
         _ = builder.Services.AddKeyedSingleton<IHashingService, BCryptHashingService>(HashingAlgorithm.BCrypt);
@@ -93,29 +100,65 @@ public static class Program
         _ = app.MapControllers();
         _ = app.Use(async (context, next) =>
         {
-            await next();
-            
-            if (context.Response.StatusCode < 400)
+            JsonSerializerOptions options = context.RequestServices.GetRequiredService<JsonSerializerOptions>();
+            Logger logger = context.RequestServices.GetRequiredService<Logger>();
+
+            context.Request.EnableBuffering();
+
+            string requestBody = string.Empty;
+
+            if (context.Request.ContentLength > 0 &&
+                context.Request.Body.CanRead)
             {
-                return;
+                using StreamReader reader = new(
+                    context.Request.Body, 
+                    Encoding.UTF8,
+                    detectEncodingFromByteOrderMarks: false,
+                    leaveOpen: true);
+
+                requestBody = await reader.ReadToEndAsync();
+                context.Request.Body.Position = 0;
             }
 
-            ApiError apiError = (HttpStatusCode)context.Response.StatusCode switch
+            logger.LogInformation(LoggerParams.None, () => $"REQUEST: {requestBody}");
+
+            Stream originalBody = context.Response.Body;
+            await using MemoryStream responseBody = new();
+            context.Response.Body = responseBody;
+
+            try
             {
-                HttpStatusCode.NotFound => new ApiError()
+                await next();
+            }
+            finally
+            {
+                responseBody.Position = 0;
+                string responseText = await new StreamReader(responseBody).ReadToEndAsync();
+                using JsonDocument doc = JsonDocument.Parse(responseText);
+
+                logger.LogInformation(LoggerParams.None, () => $"RESPONSE HEADERS: {JsonSerializer.Serialize(context.Response.Headers, options)}");
+
+                logger.LogInformation(LoggerParams.None, () => $"RESPONSE BODY: {JsonSerializer.Serialize(doc, options)}");
+
+                responseBody.Position = 0;
+                await responseBody.CopyToAsync(originalBody);
+                context.Response.Body = originalBody;
+            }
+        });
+
+        _ = app.UseStatusCodePages(async context =>
+        {
+            HttpResponse response = context.HttpContext.Response;
+
+            if (response.StatusCode == StatusCodes.Status404NotFound)
+            {
+                response.ContentType = "application/json";
+                await response.WriteAsJsonAsync(new ApiError
                 {
-                    StatusCode = (HttpStatusCode)context.Response.StatusCode,
+                    StatusCode = HttpStatusCode.NotFound,
                     Message = "Invalid path!"
-                },
-
-                _ => new ApiError()
-                {
-                    StatusCode = HttpStatusCode.InternalServerError,
-                    Message = "The Server encountered some unknown error. Try again!"
-                }
-            };
-
-            await context.Response.WriteAsJsonAsync(apiError);
+                });
+            }
         });
 
         app.Run(url: app.Configuration.GetValue<string>(key: "WebAdress"));

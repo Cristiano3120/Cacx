@@ -1,7 +1,6 @@
 ﻿using CacxClient.Extensions;
 using CacxClient.MVVM;
 using CacxClient.Resources;
-using Microsoft.Extensions.DependencyInjection;
 using System.Windows.Controls;
 
 namespace CacxClient.Windows;
@@ -11,16 +10,17 @@ namespace CacxClient.Windows;
 /// </summary>
 public partial class LoginWindow : UserControl
 {
-    public LoginWindow()
+    public LoginWindow(LoginViewModel loginViewModel)
     {
         InitializeComponent();
+        DataContext = loginViewModel;
 
         LoginBtn.EnableHoverAnimation();
         CreateAccHyperlink.EnableHoverAnimation();
         EmailTextBox.InnerTextBox.DisableEmojiInput();
         PasswordTextBox.InnerTextBox.DisableEmojiInput();
 
-        ((LoginViewModel)DataContext).OnInvalidData += DisplayInformation;
+        loginViewModel.OnInvalidData += DisplayInformation;
     }
 
     public void DisplayInformation(string msg)

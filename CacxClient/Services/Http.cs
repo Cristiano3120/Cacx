@@ -66,15 +66,14 @@ public sealed class Http : IHttp
                 request.Headers.Authorization =
                     new AuthenticationHeaderValue("Bearer", token);
             }
-            
+
             HttpResponseMessage response = await _httpClient.SendAsync(request);
             string responseContent = await response.Content.ReadAsStringAsync();
-            
+
             _logger.LogHttpPayload<T>(LoggerParams.NoNewLine, PayloadType.Received, requestType, () => responseContent);
-            
-            return response.IsSuccessStatusCode
-                ? JsonSerializer.Deserialize<ApiResponse<T>>(responseContent, _jsonSerializerOptions)!
-                : ApiResponse<T>.Error(response.StatusCode, responseContent, retryAfter: response.Headers?.RetryAfter?.Date);
+
+            ApiResponse<T> body = JsonSerializer.Deserialize<ApiResponse<T>>(responseContent, _jsonSerializerOptions)!;
+            return ApiResponse<T>.FromHttp(body, headers: response.Headers);
         }
         catch (Exception ex)
         {
@@ -105,9 +104,8 @@ public sealed class Http : IHttp
             string responseContent = await response.Content.ReadAsStringAsync();
             _logger.LogHttpPayload<TOutput>(LoggerParams.NoNewLine, PayloadType.Received, requestType, () => responseContent);
             
-            return response.IsSuccessStatusCode
-                ? JsonSerializer.Deserialize<ApiResponse<TOutput>>(responseContent, _jsonSerializerOptions)!
-                : ApiResponse<TOutput>.Error(response.StatusCode, responseContent, response.Headers?.RetryAfter?.Date);
+            ApiResponse<TOutput> body = JsonSerializer.Deserialize<ApiResponse<TOutput>>(responseContent, _jsonSerializerOptions)!;
+            return ApiResponse<TOutput>.FromHttp(body, headers: response.Headers);
         }
         catch (Exception ex)
         {

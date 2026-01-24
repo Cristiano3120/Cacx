@@ -1,6 +1,5 @@
 ﻿using CacxClient.Extensions;
 using CacxClient.MVVM;
-using Microsoft.Extensions.DependencyInjection;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -10,9 +9,10 @@ namespace CacxClient.Windows;
 /// </summary>
 public partial class RegisterWindow : UserControl
 {
-    public RegisterWindow()
+    public RegisterWindow(RegisterViewModel registerViewModel)
     {
         InitializeComponent();
+        DataContext = registerViewModel;
 
         RegisterBtn.EnableHoverAnimation();
         RandomPasswordBtn.EnableHoverAnimation();
@@ -25,7 +25,7 @@ public partial class RegisterWindow : UserControl
         UsernameTextBox.InnerTextBox.DisableEmojiInput();
         DisplayNameTextBox.InnerTextBox.DisableEmojiInput();
 
-        ((RegisterViewModel)DataContext).OnDisplayInformation += DisplayInformation;
+        registerViewModel.OnDisplayInformation += DisplayInformation;
     }
 
     public void DisplayInformation(string msg, Color color)

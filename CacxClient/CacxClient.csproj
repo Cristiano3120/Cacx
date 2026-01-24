@@ -38,6 +38,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Compile Update="Resources\GeneralAuth\GeneralAuth.Designer.cs">
+		  <DesignTime>True</DesignTime>
+		  <AutoGen>True</AutoGen>
+		  <DependentUpon>GeneralAuth.resx</DependentUpon>
+		</Compile>
 		<Compile Update="Resources\Login\Login.Designer.cs">
 			<DesignTime>True</DesignTime>
 			<AutoGen>True</AutoGen>
@@ -56,6 +61,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<EmbeddedResource Update="Resources\GeneralAuth\GeneralAuth.resx">
+		  <Generator>ResXFileCodeGenerator</Generator>
+		  <LastGenOutput>GeneralAuth.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
 		<EmbeddedResource Update="Resources\Login\Login.resx">
 			<Generator>ResXFileCodeGenerator</Generator>
 			<LastGenOutput>Login.Designer.cs</LastGenOutput>

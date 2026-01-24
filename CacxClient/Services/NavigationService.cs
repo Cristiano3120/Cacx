@@ -24,10 +24,7 @@ public sealed class NavigationService(IServiceProvider serviceProvider) : INavig
     public void NavigateToLogin()
     {
         LoginViewModel loginViewModel = serviceProvider.GetRequiredService<LoginViewModel>();
-        LoginWindow loginWindow = new()
-        {
-            DataContext = loginViewModel,
-        };
+        LoginWindow loginWindow = new(loginViewModel);
 
         loginWindow.SwitchTo();
     }
@@ -35,10 +32,7 @@ public sealed class NavigationService(IServiceProvider serviceProvider) : INavig
     public void NavigateToRegister(RegisterViewModel? registerState)
     {
         registerState ??= serviceProvider.GetRequiredService<RegisterViewModel>();
-        RegisterWindow registerWindow = new()
-        {
-            DataContext = registerState,
-        };
+        RegisterWindow registerWindow = new(registerState);
 
         registerWindow.SwitchTo();
     }
@@ -48,11 +42,7 @@ public sealed class NavigationService(IServiceProvider serviceProvider) : INavig
         TosViewModel tosViewModel = serviceProvider.GetRequiredService<TosViewModel>();
         tosViewModel.Activate(registerState);
 
-        TOSWindow tosWindow = new()
-        { 
-            DataContext = tosViewModel
-        };
-
+        TOSWindow tosWindow = new(tosViewModel);
         tosWindow.SwitchTo();
     }
 }

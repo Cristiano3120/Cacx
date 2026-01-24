@@ -9,6 +9,9 @@ public sealed class NotificationService : INotificationService
 {
     public async Task SendEmailAsync(IEnumerable<string> targetEmails, string subject, string body)
     {
+        Console.WriteLine($"CODE[REMOVE THIS CW IN NOTIFICATIONSERVICE AFTER TESTING]: {body}");
+        return;
+
         const string EmailAttribute = "EMAIL";
         const string AppPasswordAttribute = "EMAIL_APP_PASSWORD";
 
@@ -25,7 +28,7 @@ public sealed class NotificationService : INotificationService
             {
                 mail.To.Add(new MailAddress(email));
             }
-            catch {/*/ Skip an email if it´s in the wrong format y/*/ }
+            catch {/*/ Skip an email if it´s in the wrong format/*/ }
         }
 
         using SmtpClient smtp = new(host: "smtp.gmail.com", port: 587)

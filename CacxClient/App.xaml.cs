@@ -6,7 +6,6 @@ using CacxClient.MVVM;
 using CacxClient.Resources;
 using CacxClient.Services;
 using CacxClient.Services.RateLimiter;
-using CacxClient.Windows;
 using CacxShared.Abstractions;
 using CacxShared.Services;
 using Cristiano3120.Logging;
@@ -48,10 +47,8 @@ public partial class App : Application
                 })
                 .ConfigureServices((context, services) =>
                 {
-                    _ = services.AddSingleton<ILocalizationProvider, LocalizationProvider>((_) =>
-                    {
-                        return new LocalizationProvider(resourceName: ResourceBasePaths.Login, null); 
-                    });
+                    _ = services.AddSingleton<ILocalizationProvider, LocalizationProvider>((_) 
+                        => new LocalizationProvider(resourceName: ResourceBasePaths.Login, null));
                     _ = services.AddSingleton<IRequestRateLimiter, RequestRateLimiter>();
                     _ = services.AddSingleton<INavigationService, NavigationService>();
                     _ = services.AddSingleton<IDeviceIDProvider, DeviceIDProvider>();
@@ -94,9 +91,8 @@ public partial class App : Application
         InitMainWindow(serviceProvider);
     }
 
-    //TODO: Mehr Logging. Verification MVVM nicht aus DI | TEST OB KEY IN REDIS ANGELEGT WIRD
+    //TODO: Mehr Logging. Pack PostgreSQL in den docker container
     //TODO: TextBoxExtensions IsEmoji Methode auslagern in Hilfsklasse/Service vllt?? Fix EmojiHandling generell
-    //TODO: Register vorgang durchlaufen und schauen ob alles funktioniert/implementiert ist
     //TODO: Implement OAUTH Login via google/apple (Login) bei GitHub Trello aufschreiben
     //TODO: Remember me funktion (Login) bei GitHub Trello aufschreiben
 
@@ -109,12 +105,15 @@ public partial class App : Application
 
     private static void InitMainWindow(IServiceProvider provider)
     {
-        MainWindow mainWindow = provider.GetRequiredService<MainWindow>();
-        mainWindow.Content = new LoginWindow(provider.GetRequiredService<LoginViewModel>());
-        mainWindow.Show();
+        Current.MainWindow = provider.GetRequiredService<MainWindow>();
+        
+        INavigationService navigationService = provider.GetRequiredService<INavigationService>();
+        navigationService.NavigateToLogin();
+
+        Current.MainWindow.Show();
     }
 
-    private void SetupExceptionHandling(IPathProvider pathProvider)
+    private void SetupExceptionHandling(PathProvider pathProvider)
     {
         const string FileName = "UnhandledExceptions.log";
         string logFilePath = pathProvider.GetPath(FileName);

@@ -114,11 +114,11 @@ public class RegisterViewModel : INotifyPropertyChanged
     {
         Loc = new LocalizationProvider(resourceName: ResourceBasePaths.Register, culture: null);
         RegisterCommand = new RelayCommand(async (_) => await RegisterAsync(), CanRegister);
-        OpenTOSCommand = new RelayCommand((_) => new TOSWindow(this).SwitchTo());
+        OpenTOSCommand = new RelayCommand((_) => navigationService.NavigateToTOS(registerState: this));
         GoBackCommand = new RelayCommand(_ => navigationService.NavigateToLogin());
         GeneratePasswordCommand = new RelayCommand(async (_) =>
         {
-            Password = new PasswordGenerator().GeneratePassword(20);
+            Password = new PasswordGenerator().GeneratePassword(passwordLength: 20);
             Clipboard.SetText(Password);
 
             Color? color = ColorResources.TextPrimaryColor;
@@ -148,10 +148,10 @@ public class RegisterViewModel : INotifyPropertyChanged
         _rateLimiter = RateLimiters.Register;
         _authService = authService;
 
-        Email = string.Empty;
-        Username = string.Empty;
-        DisplayName = string.Empty;
-        Password = string.Empty;
+        Email = "Cristianocx7@gmail.com";
+        Username = "Cristiano";
+        DisplayName = "Cristiano";
+        Password = "Cristiano";
         RegisterBtnEnabled = true;
     }
 

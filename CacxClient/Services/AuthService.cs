@@ -15,7 +15,7 @@ public sealed class AuthService(ILocalizationProvider localizationProvider, IReq
         logger.LogInformation(LoggerParams.None, () => "Trying to login");
         if (requestRateLimiter.CheckIfRequestTypeIsRateLimited(RequestType.Login))
         {
-            localizationProvider.UpdateContext(ResourceBasePaths.Login);
+            localizationProvider.UpdateContext(ResourceBasePaths.GeneralAuth);
             return new LoginResult() 
             {
                 ErrorMessage = localizationProvider.GetString(key: "OnCooldownMessage") 
@@ -40,7 +40,7 @@ public sealed class AuthService(ILocalizationProvider localizationProvider, IReq
         logger.LogInformation(LoggerParams.None, () => "Trying to register");
         if (requestRateLimiter.CheckIfRequestTypeIsRateLimited(RequestType.Register))
         {
-            localizationProvider.UpdateContext(ResourceBasePaths.Register);
+            localizationProvider.UpdateContext(ResourceBasePaths.GeneralAuth);
             return new RegisterResult()
             {
                 ErrorMessage = localizationProvider.GetString(key: "OnCooldownMessage")
@@ -51,6 +51,11 @@ public sealed class AuthService(ILocalizationProvider localizationProvider, IReq
             data: registerRequest,
             endpoint: Endpoints.AuthEndpoints.RegisterEndpoint,
             callerInfos: CallerInfos.Create());
+
+        if (apiResponse.RetryAfter is TimeSpan retryAfter)
+        {
+            requestRateLimiter.AddRateLimit(RequestType.Register, limitedTill: DateTimeOffset.UtcNow + retryAfter);
+        }
 
         return new RegisterResult()
         {

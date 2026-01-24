@@ -7,6 +7,7 @@ using CacxShared.Abstractions;
 using Cristiano3120.Logging;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Net.Http.Headers;
 
 namespace CacxServer.Controllers;
 
@@ -33,7 +34,7 @@ public class AuthController(IAuthService authService, IAuthRateLimiter authRateL
         AuthRateLimitResult rateLimitResult = await authRateLimiter.CheckRegisterAsync(clientSecurityContext);
         if (rateLimitResult.IsLimited)
         {
-            Response.Headers.RetryAfter = rateLimitResult.RetryAfter.TotalSeconds.ToString();
+            Response.Headers.RetryAfter = new RetryConditionHeaderValue(rateLimitResult.RetryAfter).ToString();
             return StatusCode((int)HttpStatusCode.TooManyRequests, value: new ApiResponse<string>()
             {
                 IsSuccess = false,

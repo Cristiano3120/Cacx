@@ -1,14 +1,16 @@
 ﻿using CacxShared.Abstractions;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace CacxClient.Services;
 
-public sealed class ApiResponse<T>
+public sealed record ApiResponse<T>
 {
     public bool IsSuccess { get; init; }
     public T? Data { get; init; }
     public ApiError? ApiError { get; init; }
-    public DateTimeOffset? RetryAfter { get; init; }
+    public TimeSpan? RetryAfter { get; init; }
 
     public static ApiResponse<T> Ok(T data, bool isSuccess)
         => new() { IsSuccess = isSuccess, Data = data };
@@ -20,23 +22,20 @@ public sealed class ApiResponse<T>
             IsSuccess = false,
             ApiError = new ApiError
             {
-                StatusCode  = statusCode,
+                StatusCode = statusCode,
                 Message = message
             }
         };
     }
 
-    public static ApiResponse<T> Error(HttpStatusCode statusCode, string message, DateTimeOffset? retryAfter)
+    public static ApiResponse<T> FromHttp(ApiResponse<T> body, HttpResponseHeaders headers)
     {
-        return new()
+        return new ApiResponse<T>
         {
-            IsSuccess = false,
-            RetryAfter = retryAfter,
-            ApiError = new ApiError
-            {
-                StatusCode = statusCode,
-                Message = message
-            }
+            IsSuccess = body.IsSuccess,
+            Data = body.Data,
+            ApiError = body.ApiError,
+            RetryAfter = headers.RetryAfter?.Delta
         };
     }
 }
