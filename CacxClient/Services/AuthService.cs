@@ -8,7 +8,13 @@ using Cristiano3120.Logging;
 
 namespace CacxClient.Services;
 
-public sealed class AuthService(ILocalizationProvider localizationProvider, IRequestRateLimiter requestRateLimiter, IHttp http, Logger logger) : IAuthService
+public sealed class AuthService(
+    ILocalizationProvider localizationProvider, 
+    IRequestRateLimiter requestRateLimiter, 
+    IDeviceIDProvider deviceIDProvider,
+    ITokenProvider tokenProvider,
+    IHttp http, 
+    Logger logger) : IAuthService
 {
     public async Task<LoginResult> LoginAsync(LoginRequest loginRequest)
     {
@@ -57,10 +63,34 @@ public sealed class AuthService(ILocalizationProvider localizationProvider, IReq
             requestRateLimiter.AddRateLimit(RequestType.Register, limitedTill: DateTimeOffset.UtcNow + retryAfter);
         }
 
+        tokenProvider.SetToken(apiResponse.Data);
         return new RegisterResult()
         {
             Token = apiResponse.Data,
             ErrorMessage = apiResponse?.ApiError?.Message,
         };
+    }
+
+    public async Task VerifyAsync(int code)
+    {
+
+    }
+
+    public async Task RequestVerificationEmailAsync()
+    {
+        logger.LogInformation(LoggerParams.None, () => "Requesting another verification email");
+        if (requestRateLimiter.CheckIfRequestTypeIsRateLimited(RequestType.Register))
+        {
+            localizationProvider.UpdateContext(ResourceBasePaths.GeneralAuth);
+            //return new RegisterResult()
+            //{
+            //    ErrorMessage = localizationProvider.GetString(key: "OnCooldownMessage")
+            //};
+        }
+
+        ApiResponse<string> apiResponse = await http.PostAsync<object, string>(
+            data: deviceIDProvider.GetDeviceID(),
+            endpoint: Endpoints.AuthEndpoints.RequestVerificationEmailEndpoint,
+            callerInfos: CallerInfos.Create());
     }
 }

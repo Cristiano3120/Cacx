@@ -5,11 +5,11 @@ using CacxServer.Data.PostgreSQL.Abstractions;
 using CacxServer.Data.Redis.Abstractions;
 using CacxServer.Data.Redis.Entities;
 using CacxServer.Security.Hashing.Abstractions;
-using CacxShared.Abstractions;
 using Cristiano3120.Logging;
 using Npgsql;
 using StackExchange.Redis;
 using System.Net.Mail;
+using RegisterRequest = CacxShared.Abstractions.RegisterRequest;
 
 namespace CacxServer.Services;
 
@@ -41,7 +41,9 @@ public class AuthService(
                 Username = registerRequest.Username,
                 VerificationCode = hashingService.Hash(verificationCode.ToString())
             };
-            bool redisEntrySuccessful = await authRedisService.TryAddPendingVerificationAsync(token,
+
+            string hashedToken = FormatToken(token);
+            bool redisEntrySuccessful = await authRedisService.TryAddPendingVerificationAsync(hashedToken,
                 pendingAuthentication, expiry);
 
             if (!redisEntrySuccessful)
@@ -49,9 +51,7 @@ public class AuthService(
                 return RegisterResult.Fail(RegisterError.PendingReservationExists);
             }
 
-            string subject = "[CACX]: Verification";
-            string body = $"Hello {registerRequest.Username} 👋 \n Here is your verification code: {verificationCode}. Make sure to be quick it will expire soon!";
-            await notificationService.SendEmailAsync(targetEmails: [registerRequest.Email], subject, body);
+            await SendVerificationEmailAsync(registerRequest.Email, verificationCode);
 
             return RegisterResult.Success(token);
         }
@@ -76,4 +76,26 @@ public class AuthService(
             return RegisterResult.Fail(RegisterError.Unknown);
         }
     }
+
+    public async Task<bool> ResendVerificationEmailAsync(string authToken)
+    {
+        int verificationCode = verificationTokenService.GenerateVerificationCode();
+        string? email = await authRedisService.ReplaceVerificationCodeAndGetEmailAsync(FormatToken(authToken), verificationCode);
+
+        if (email is null)
+            return false;
+
+        await SendVerificationEmailAsync(email, verificationCode);
+        return true;
+    }
+
+    private async Task SendVerificationEmailAsync(string email, int verificationCode)
+    {
+        string subject = "[CACX]: Verification";
+        string body = $"Hello {email} 👋 \nHere is your verification code: {verificationCode}. Make sure to be quick it will expire soon!";
+        await notificationService.SendEmailAsync(targetEmails: [email], subject, body);
+    }
+
+    private string FormatToken(string token)
+        => Convert.ToHexStringLower(hashingService.Hash(token));
 }

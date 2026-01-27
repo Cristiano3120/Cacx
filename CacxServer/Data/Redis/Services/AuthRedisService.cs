@@ -1,7 +1,6 @@
 ﻿using CacxServer.Data.Redis.Abstractions;
 using CacxServer.Data.Redis.Entities;
 using StackExchange.Redis;
-using System.Text.Json;
 
 namespace CacxServer.Data.Redis.Services;
 
@@ -9,17 +8,35 @@ public class AuthRedisService(IConnectionMultiplexer connectionMultiplexer) : IA
 {
     private readonly IDatabase _database = connectionMultiplexer.GetDatabase();
 
-    public async Task<bool> TryAddPendingVerificationAsync(string token, 
-        PendingAuthentication pendingAuthentication, TimeSpan expiry)
+    public async Task<bool> TryAddPendingVerificationAsync(
+        string tokenHash, 
+        PendingAuthentication pendingAuthentication, 
+        TimeSpan expiry)
     {
-        string json = JsonSerializer.Serialize(pendingAuthentication);
+        HashEntry[] hashEntries =
+        [
+            new(nameof(PendingAuthentication.Email), pendingAuthentication.Email),
+            new(nameof(PendingAuthentication.Username), pendingAuthentication.Username),
+            new(nameof(PendingAuthentication.VerificationCode), pendingAuthentication.VerificationCode),
+            new(nameof(PendingAuthentication.Attempts), pendingAuthentication.Attempts)
+        ];
 
-        return await _database.StringSetAsync(
-            key: new RedisKey(token), 
-            value: new RedisValue(json),
-            expiry,
-            when: When.NotExists
-        );
+        await _database.HashSetAsync(tokenHash, hashEntries, (CommandFlags)When.NotExists);
+        _ = await _database.KeyExpireAsync(tokenHash, expiry);
+
+        return true;
+    }
+
+    public async Task<string?> ReplaceVerificationCodeAndGetEmailAsync(string tokenHash, int newVerificationCode)
+    {
+        RedisValue emailValue = await _database.HashGetAsync(tokenHash, nameof(PendingAuthentication.Email));
+
+        if (!emailValue.HasValue)
+            return null; // Token expired...
+
+        _ = await _database.HashSetAsync(tokenHash, nameof(PendingAuthentication.VerificationCode), newVerificationCode);
+
+        return emailValue;
     }
 
     public async Task CheckVerificationCodeAsync(int code)

@@ -55,4 +55,13 @@ public static class RateLimitRuleBuilder
             Ttl: TimeSpan.FromMinutes(5)
         );
     }
+
+    public static IEnumerable<RateLimitRule> BuildResendVerificationEmailRules(string deviceHash)
+    {
+        yield return new RateLimitRule(
+            Key: VerificationKeys.DeviceID(deviceHash),
+            Limit: 1,
+            Ttl: TimeSpan.FromMinutes(1)
+            );
+    }
 }

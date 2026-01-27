@@ -8,15 +8,10 @@ namespace CacxClient.Services;
 
 public sealed class NavigationService(IServiceProvider serviceProvider) : INavigationService
 {
-    public void NavigateToVerification(string token)
+    public void NavigateToVerification()
     {
         VerificationViewModel verificationViewModel = serviceProvider.GetRequiredService<VerificationViewModel>();
-        verificationViewModel.Activate(token);
-
-        VerificationWindow verificationWindow = new()
-        {
-            DataContext = verificationViewModel,
-        };
+        VerificationWindow verificationWindow = new(verificationViewModel);
 
         verificationWindow.SwitchTo();
     }

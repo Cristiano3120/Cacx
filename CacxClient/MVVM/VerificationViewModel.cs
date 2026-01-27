@@ -1,18 +1,23 @@
 ﻿using Cacx.LocalizationManager.Abstractions;
 using Cacx.LocalizationManager.Core;
+using CacxClient.Abstractions.Auth;
+using CacxClient.Commands;
 using CacxClient.Resources;
+using System.Windows.Input;
 
 namespace CacxClient.MVVM;
 
 public sealed class VerificationViewModel
 {
     public ILocalizationProvider Loc { get; }
-    private string _token = default!;
+    public ICommand RequestEmail { get; }
+    public ICommand Verify { get; }
 
-    public VerificationViewModel()
+    public VerificationViewModel(IAuthService authService)
     {
         Loc = new LocalizationProvider(resourceName: ResourceBasePaths.Verification, culture: null);
+        RequestEmail = new RelayCommand(execute: async (_) => await authService.RequestVerificationEmailAsync());
     }
 
-    public void Activate(string token) => _token = token;
+    public VerificationViewModel() { }
 }

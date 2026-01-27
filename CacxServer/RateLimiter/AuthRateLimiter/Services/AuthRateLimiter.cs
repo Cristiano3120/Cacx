@@ -14,31 +14,52 @@ public sealed class AuthRateLimiter(
 
     public async Task<AuthRateLimitResult> CheckRegisterAsync(ClientSecurityContext securityContext)
     {
-        string ipHash = Convert.ToHexString(hashingService.Hash(securityContext.ClientIP?.ToString() ?? ""));
-        string deviceHash = Convert.ToHexString(hashingService.Hash(securityContext.DeviceID));
-
-        if (string.IsNullOrEmpty(ipHash))
+        if (CheckIfSecurityDataValid(securityContext))
         {
-            logger.LogWarning(LoggerParams.None, () => "IP hidden?? Decline request");
+            logger.LogWarning(LoggerParams.None, () => "IP or DeviceID hidden?? Decline request");
             return new AuthRateLimitResult(IsLimited: true, RetryAfter: TimeSpan.Zero);
         }
 
+        (string ipHash, string deviceHash) = HashAndFormatCSC(securityContext);
         IEnumerable<RateLimitRule> rateLimitRules = RateLimitRuleBuilder.BuildRegisterRules(ipHash, deviceHash);
+        
         return await authRedisRateLimiter.CheckRulesAsync(rateLimitRules);
     }
 
     public async Task<AuthRateLimitResult> CheckLoginAsync(ClientSecurityContext securityContext, string username)
     {
-        string ipHash = Convert.ToHexString(hashingService.Hash(securityContext.ClientIP?.ToString() ?? ""));
-        string deviceHash = Convert.ToHexString(hashingService.Hash(securityContext.DeviceID));
-
-        if (string.IsNullOrEmpty(ipHash))
+        if (CheckIfSecurityDataValid(securityContext))
         {
-            logger.LogWarning(LoggerParams.None, () => "IP hidden?? Decline request");
+            logger.LogWarning(LoggerParams.None, () => "IP or DeviceID hidden?? Decline request");
             return new AuthRateLimitResult(IsLimited: true, RetryAfter: TimeSpan.Zero);
         }
-       
+
+        (string ipHash, string deviceHash) = HashAndFormatCSC(securityContext);
         IEnumerable<RateLimitRule> rateLimitRules = RateLimitRuleBuilder.BuildLoginRules(ipHash, deviceHash, username);
+        
         return await authRedisRateLimiter.CheckRulesAsync(rateLimitRules);
     }
+
+    public async Task<AuthRateLimitResult> CheckResendVerificationEmailAsync(ClientSecurityContext securityContext)
+    { 
+        if (CheckIfSecurityDataValid(securityContext))
+        {
+            logger.LogWarning(LoggerParams.None, () => "IP or DeviceID hidden?? Decline request");
+            return new AuthRateLimitResult(IsLimited: true, RetryAfter: TimeSpan.Zero);
+        }
+
+        (_, string deviceHash) = HashAndFormatCSC(securityContext);
+        IEnumerable<RateLimitRule> rateLimitRules = RateLimitRuleBuilder.BuildResendVerificationEmailRules(deviceHash);
+
+        return await authRedisRateLimiter.CheckRulesAsync(rateLimitRules);
+    }
+
+    private static bool CheckIfSecurityDataValid(ClientSecurityContext securityContext)
+        => string.IsNullOrEmpty(securityContext.ClientIP?.ToString()) || string.IsNullOrEmpty(securityContext.DeviceID);
+
+    private (string ipHash, string deviceHash) HashAndFormatCSC(ClientSecurityContext securityContext)
+        =>  (
+                ipHash: Convert.ToHexString(hashingService.Hash(securityContext.ClientIP?.ToString() ?? "")),
+                deviceHash: Convert.ToHexString(hashingService.Hash(securityContext.DeviceID))
+            );
 }

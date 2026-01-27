@@ -5,5 +5,5 @@ public sealed record PendingAuthentication
     public required string Email { get; init; } 
     public required string Username { get; init; } 
     public required byte[] VerificationCode { get; init; }
-    public byte Attempts { get; set; }
+    public int Attempts { get; set; }
 }

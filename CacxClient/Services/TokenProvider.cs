@@ -7,17 +7,18 @@ internal sealed class TokenProvider : ITokenProvider
     private string? _token;
 
     public string? GetToken()
+    => _token;
+    
+    public void SetToken(string? token)
     {
-        return _token;
-    }
+        if (token == null)
+        {
+            return;               
+        }
 
-    public void SetToken(string token)
-    {
         _token = token;
     }
 
     public void ClearToken()
-    {
-        _token = null;
-    }
+        => _token = null;
 }

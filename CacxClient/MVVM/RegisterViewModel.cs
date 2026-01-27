@@ -191,7 +191,7 @@ public class RegisterViewModel : INotifyPropertyChanged
             return;
         }
 
-        _navigationService.NavigateToVerification(token: result.Token);
+        _navigationService.NavigateToVerification();
     }
 
     private async Task<bool> ValidateDataAsync()

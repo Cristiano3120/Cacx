@@ -5,7 +5,10 @@ using CacxServer.RateLimiter.AuthRateLimiter.Abstractions;
 using CacxShared;
 using CacxShared.Abstractions;
 using Cristiano3120.Logging;
+using Microsoft.AspNetCore.Authentication.BearerToken;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 using System.Net;
 using System.Net.Http.Headers;
 
@@ -88,6 +91,66 @@ public class AuthController(IAuthService authService, IAuthRateLimiter authRateL
                 IsSuccess = true,
                 Data = result.Token
             });
+    }
+
+    [HttpPost(Endpoints.AuthEndpoints.RequestVerificationEmail)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status429TooManyRequests)]
+    public async Task<IActionResult> ResendVerificationEmailAsync([FromBody] string deviceId)
+    {
+        logger.LogInformation(LoggerParams.None, () => "ResendVerificationEmail Endpoint called");
+
+        ClientSecurityContext clientSecurityContext = new
+        (
+            ClientIP: HttpContext.Connection.RemoteIpAddress,
+            DeviceID: deviceId
+        );
+
+        AuthRateLimitResult rateLimitResult = await authRateLimiter.CheckResendVerificationEmailAsync(clientSecurityContext);
+        if (rateLimitResult.IsLimited)
+        {
+            Response.Headers.RetryAfter = new RetryConditionHeaderValue(rateLimitResult.RetryAfter).ToString();
+            return StatusCode((int)HttpStatusCode.TooManyRequests, value: new ApiResponse<string>()
+            {
+                IsSuccess = false,
+                ApiError = new ApiError()
+                {
+                    StatusCode = HttpStatusCode.TooManyRequests,
+                    Message = "Too many requests. Try again later..."
+                }
+            });
+        }
+        
+        if (Request.Headers.Authorization == StringValues.Empty)
+        {
+            return StatusCode((int)HttpStatusCode.Unauthorized, new ApiResponse<object>()
+            {
+                IsSuccess = false,
+                ApiError = new ApiError()
+                {
+                    Message = "Session Invalid. RESTART!",
+                    StatusCode = HttpStatusCode.Unauthorized
+                }
+            });
+        }
+
+        string token = Request.Headers.Authorization.ToString().Replace("Bearer", "").Trim();
+        bool success = await authService.ResendVerificationEmailAsync(authToken: token);
+        if (!success)
+        {
+            return StatusCode((int)HttpStatusCode.Unauthorized, new ApiResponse<object>()
+            {
+                IsSuccess = false,
+                ApiError = new ApiError()
+                {
+                    Message = "Session Invalid. RESTART!",
+                    StatusCode = HttpStatusCode.Unauthorized
+                }
+            });
+        }
+
+        return Ok(ApiResponse<object>.Ok(default!, true));
     }
 
     [HttpPost(Endpoints.AuthEndpoints.Login)]

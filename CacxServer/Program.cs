@@ -14,6 +14,7 @@ using CacxShared.Abstractions;
 using CacxShared.Services;
 using Cristiano3120.Logging;
 using DotNetEnv;
+using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
@@ -50,7 +51,8 @@ public static class Program
             ConfigurationOptions conf = new()
             {
                 EndPoints = { "localhost:6379" },
-                Password = Env.GetString(key: "REDIS_PASSWORD")
+                Password = Env.GetString(key: "REDIS_PASSWORD"),
+                AbortOnConnectFail = false,
             };
 
             return ConnectionMultiplexer.Connect(conf);
@@ -93,10 +95,10 @@ public static class Program
         {
             _ = app.MapOpenApi();
         }
-
+        
         _ = app.UseForwardedHeaders();
         _ = app.UseHttpsRedirection();
-        _ = app.UseAuthorization();
+
         _ = app.MapControllers();
         _ = app.Use(async (context, next) =>
         {
@@ -134,15 +136,18 @@ public static class Program
             {
                 responseBody.Position = 0;
                 string responseText = await new StreamReader(responseBody).ReadToEndAsync();
-                using JsonDocument doc = JsonDocument.Parse(responseText);
+                if (!string.IsNullOrEmpty(responseText))
+                {
+                    using JsonDocument doc = JsonDocument.Parse(responseText);
 
-                logger.LogInformation(LoggerParams.None, () => $"RESPONSE HEADERS: {JsonSerializer.Serialize(context.Response.Headers, options)}");
+                    logger.LogInformation(LoggerParams.None, () => $"RESPONSE HEADERS: {JsonSerializer.Serialize(context.Response.Headers, options)}");
 
-                logger.LogInformation(LoggerParams.None, () => $"RESPONSE BODY: {JsonSerializer.Serialize(doc, options)}");
+                    logger.LogInformation(LoggerParams.None, () => $"RESPONSE BODY: {JsonSerializer.Serialize(doc, options)}");
 
-                responseBody.Position = 0;
-                await responseBody.CopyToAsync(originalBody);
-                context.Response.Body = originalBody;
+                    responseBody.Position = 0;
+                    await responseBody.CopyToAsync(originalBody);
+                    context.Response.Body = originalBody;
+                }
             }
         });
 

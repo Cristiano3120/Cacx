@@ -1,4 +1,6 @@
-﻿using System.Windows.Controls;
+﻿using CacxClient.Extensions;
+using CacxClient.MVVM;
+using System.Windows.Controls;
 
 namespace CacxClient.Windows;
 /// <summary>
@@ -6,8 +8,11 @@ namespace CacxClient.Windows;
 /// </summary>
 public partial class VerificationWindow : UserControl
 {
-    public VerificationWindow()
+    public VerificationWindow(VerificationViewModel verificationViewModel)
     {
         InitializeComponent();
+        DataContext = verificationViewModel;
+
+        RequestEmailHyperlink.EnableHoverAnimation();
     }
 }

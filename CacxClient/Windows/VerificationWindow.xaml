@@ -4,9 +4,34 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CacxClient.Windows"
+             xmlns:cc="clr-namespace:CacxClient.CustomUserControls"
+             xmlns:designLoc="clr-namespace:Cacx.LocalizationManager.Core;assembly=Cacx.LocalizationManager"
+             xmlns:mvvm="clr-namespace:CacxClient.MVVM"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+
+    <d:Window.DataContext>
+        <designLoc:DesignTimeWindowContext/>
+    </d:Window.DataContext>
+
+    <UserControl.DataContext>
+        <mvvm:VerificationViewModel/>
+    </UserControl.DataContext>
+
     <Grid>
-            
+        <TextBlock Name="InformationTextBlock" Text="{Binding Loc[Information]}" HorizontalAlignment="Center" 
+                   Margin="0, 0, 0, 200" Height="20"/>
+        <cc:ImprovedTextBox x:Name="CodeTextBox" Label="Code" Height="35" Width="170"/>
+
+        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0, 50, 0, 0">
+            <Hyperlink x:Name="RequestEmailHyperlink" Command="{Binding RequestEmail}">
+                <Run Text="{Binding Loc[ResendEmail], Mode=OneWay}"/>
+            </Hyperlink>
+        </TextBlock>
+
+        <Button Content="{Binding Loc[VerifyBtnContent]}" Margin="0, 0, 0, 50"
+                VerticalAlignment="Bottom" HorizontalAlignment="Center"
+                MinWidth="65" Height="35" Padding="5, 0"
+                Command="{Binding Verify}"/>
     </Grid>
 </UserControl>

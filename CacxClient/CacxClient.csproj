@@ -58,6 +58,11 @@
 		  <AutoGen>True</AutoGen>
 		  <DependentUpon>Tos.resx</DependentUpon>
 		</Compile>
+		<Compile Update="Resources\Verification\Verification.Designer.cs">
+		  <DesignTime>True</DesignTime>
+		  <AutoGen>True</AutoGen>
+		  <DependentUpon>Verification.resx</DependentUpon>
+		</Compile>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -76,6 +81,10 @@
 		<EmbeddedResource Update="Resources\Tos\Tos.resx">
 		  <Generator>ResXFileCodeGenerator</Generator>
 		  <LastGenOutput>Tos.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Resources\Verification\Verification.resx">
+		  <Generator>ResXFileCodeGenerator</Generator>
+		  <LastGenOutput>Verification.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
 	</ItemGroup>
 

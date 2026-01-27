@@ -63,8 +63,7 @@ public sealed class Http : IHttp
             string? token = _tokenProvider.GetToken();
             if (!string.IsNullOrWhiteSpace(token))
             {
-                request.Headers.Authorization =
-                    new AuthenticationHeaderValue("Bearer", token);
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             }
 
             HttpResponseMessage response = await _httpClient.SendAsync(request);
@@ -96,8 +95,7 @@ public sealed class Http : IHttp
             string? token = _tokenProvider.GetToken();
             if (!string.IsNullOrWhiteSpace(token))
             {
-                request.Headers.Authorization =
-                    new AuthenticationHeaderValue("Bearer", token);
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             }
 
             HttpResponseMessage response = await _httpClient.SendAsync(request);

@@ -6,6 +6,6 @@ public interface INavigationService
 {
     void NavigateToTOS(RegisterViewModel registerState);
     void NavigateToRegister(RegisterViewModel? registerState);
-    void NavigateToVerification(string token);
+    void NavigateToVerification();
     void NavigateToLogin();
 }
