@@ -91,6 +91,8 @@ public partial class App : Application
         InitMainWindow(serviceProvider);
     }
 
+    //TODO: Überprüfen ob in Redis alles richtig gecleared wird
+    //TODO: Mach nen client side rate limit für request email. Server soll time schicken die gewartet werden soll
     //TODO: Mehr Logging. Pack PostgreSQL in den docker container
     //TODO: TextBoxExtensions IsEmoji Methode auslagern in Hilfsklasse/Service vllt?? Fix EmojiHandling generell
     //TODO: Implement OAUTH Login via google/apple (Login) bei GitHub Trello aufschreiben

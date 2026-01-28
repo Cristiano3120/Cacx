@@ -3,5 +3,5 @@
 public interface IRequestRateLimiter
 {
     bool CheckIfRequestTypeIsRateLimited(RequestType requestType);
-    void AddRateLimit(RequestType requestType, DateTimeOffset limitedTill);
+    void AddRateLimit(RequestType requestType, TimeSpan limitedFor);
 }

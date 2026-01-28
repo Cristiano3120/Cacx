@@ -6,8 +6,8 @@ internal sealed class RequestRateLimiter : IRequestRateLimiter
 {
     private readonly Dictionary<RequestType, DateTimeOffset> _rateLimits = [];
 
-    public void AddRateLimit(RequestType requestType, DateTimeOffset limitedTill)
-        => _rateLimits[requestType] = limitedTill;
+    public void AddRateLimit(RequestType requestType, TimeSpan limitedFor)
+        => _rateLimits[requestType] = DateTimeOffset.UtcNow + limitedFor;
 
     public bool CheckIfRequestTypeIsRateLimited(RequestType requestType)
     {

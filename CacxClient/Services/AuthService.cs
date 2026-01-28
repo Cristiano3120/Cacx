@@ -60,7 +60,7 @@ public sealed class AuthService(
 
         if (apiResponse.RetryAfter is TimeSpan retryAfter)
         {
-            requestRateLimiter.AddRateLimit(RequestType.Register, limitedTill: DateTimeOffset.UtcNow + retryAfter);
+            requestRateLimiter.AddRateLimit(RequestType.Register, limitedFor: retryAfter);
         }
 
         tokenProvider.SetToken(apiResponse.Data);
@@ -79,7 +79,7 @@ public sealed class AuthService(
     public async Task RequestVerificationEmailAsync()
     {
         logger.LogInformation(LoggerParams.None, () => "Requesting another verification email");
-        if (requestRateLimiter.CheckIfRequestTypeIsRateLimited(RequestType.Register))
+        if (requestRateLimiter.CheckIfRequestTypeIsRateLimited(RequestType.RequestVerificationEmail))
         {
             localizationProvider.UpdateContext(ResourceBasePaths.GeneralAuth);
             //return new RegisterResult()
@@ -88,9 +88,14 @@ public sealed class AuthService(
             //};
         }
 
-        ApiResponse<string> apiResponse = await http.PostAsync<object, string>(
-            data: deviceIDProvider.GetDeviceID(),
+        ApiResponse<TimeSpan> apiResponse = await http.PostAsync<string, TimeSpan>(
+            data: deviceIDProvider.GetDeviceID().ToString(),
             endpoint: Endpoints.AuthEndpoints.RequestVerificationEmailEndpoint,
             callerInfos: CallerInfos.Create());
+
+        if (apiResponse.Data is TimeSpan cooldown && cooldown > TimeSpan.Zero)
+        {
+            requestRateLimiter.AddRateLimit(RequestType.RequestVerificationEmail, limitedFor: cooldown);
+        }
     }
 }

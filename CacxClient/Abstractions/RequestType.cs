@@ -3,5 +3,6 @@
 public enum RequestType : byte
 {
     Register,
-    Login
+    Login,
+    RequestVerificationEmail
 }
