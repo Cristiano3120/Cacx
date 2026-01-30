@@ -123,6 +123,9 @@
   <data name="ResendEmail" xml:space="preserve">
     <value>Resend Code</value>
   </data>
+  <data name="VerificationEmailSentMessage" xml:space="preserve">
+    <value>Check your emails! </value>
+  </data>
   <data name="VerifyBtnContent" xml:space="preserve">
     <value>Verify</value>
   </data>

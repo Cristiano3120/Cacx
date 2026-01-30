@@ -77,16 +77,24 @@ public class AuthService(
         }
     }
 
-    public async Task<bool> ResendVerificationEmailAsync(string authToken)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="authToken"></param>
+    /// <returns>
+    /// <see cref="TimeSpan.Zero"/> <see langword="if"/> something went wrong
+    /// <see langword="else"/> > <see cref="TimeSpan.Zero"/>
+    /// </returns>
+    public async Task<TimeSpan> ResendVerificationEmailAsync(string authToken)
     {
         int verificationCode = verificationTokenService.GenerateVerificationCode();
         string? email = await authRedisService.ReplaceVerificationCodeAndGetEmailAsync(FormatToken(authToken), verificationCode);
 
         if (email is null)
-            return false;
+            return TimeSpan.Zero;
 
         await SendVerificationEmailAsync(email, verificationCode);
-        return true;
+        return TimeSpan.FromMinutes(1);
     }
 
     private async Task SendVerificationEmailAsync(string email, int verificationCode)

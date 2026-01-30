@@ -68,5 +68,14 @@ namespace CacxClient.Resources.GeneralAuth {
                 return ResourceManager.GetString("OnCooldownMessage", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your session is expired. Restarting in a few....
+        /// </summary>
+        internal static string SessionExpired {
+            get {
+                return ResourceManager.GetString("SessionExpired", resourceCulture);
+            }
+        }
     }
 }

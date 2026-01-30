@@ -79,6 +79,15 @@ namespace CacxClient.Resources.Verification {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Check your emails! .
+        /// </summary>
+        internal static string VerificationEmailSentMessage {
+            get {
+                return ResourceManager.GetString("VerificationEmailSentMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Verify.
         /// </summary>
         internal static string VerifyBtnContent {

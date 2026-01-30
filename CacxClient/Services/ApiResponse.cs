@@ -1,12 +1,13 @@
 ﻿using CacxShared.Abstractions;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Headers;
 
 namespace CacxClient.Services;
 
 public sealed record ApiResponse<T>
 {
+    [MemberNotNullWhen(false, nameof(ApiError))]
     public bool IsSuccess { get; init; }
     public T? Data { get; init; }
     public ApiError? ApiError { get; init; }

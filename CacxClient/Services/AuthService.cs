@@ -5,15 +5,16 @@ using CacxClient.Resources;
 using CacxShared;
 using CacxShared.Abstractions;
 using Cristiano3120.Logging;
+using System.Net;
 
 namespace CacxClient.Services;
 
 public sealed class AuthService(
-    ILocalizationProvider localizationProvider, 
-    IRequestRateLimiter requestRateLimiter, 
+    ILocalizationProvider localizationProvider,
+    IRequestRateLimiter requestRateLimiter,
     IDeviceIDProvider deviceIDProvider,
     ITokenProvider tokenProvider,
-    IHttp http, 
+    IHttp http,
     Logger logger) : IAuthService
 {
     public async Task<LoginResult> LoginAsync(LoginRequest loginRequest)
@@ -22,11 +23,11 @@ public sealed class AuthService(
         if (requestRateLimiter.CheckIfRequestTypeIsRateLimited(RequestType.Login))
         {
             localizationProvider.UpdateContext(ResourceBasePaths.GeneralAuth);
-            return new LoginResult() 
+            return new LoginResult()
             {
-                ErrorMessage = localizationProvider.GetString(key: "OnCooldownMessage") 
+                ErrorMessage = localizationProvider.GetString(key: "OnCooldownMessage")
             };
-        }    
+        }
 
         ApiResponse<object> apiResponse = await http.PostAsync<int, object>(
             data: 1,
@@ -35,7 +36,7 @@ public sealed class AuthService(
 
         return new LoginResult()
         {
-            
+
         };
 
         //TODO: Display info return LoginResult
@@ -76,26 +77,38 @@ public sealed class AuthService(
 
     }
 
-    public async Task RequestVerificationEmailAsync()
+    public async Task<RequestVerificationEmailResult> RequestVerificationEmailAsync()
     {
         logger.LogInformation(LoggerParams.None, () => "Requesting another verification email");
         if (requestRateLimiter.CheckIfRequestTypeIsRateLimited(RequestType.RequestVerificationEmail))
         {
             localizationProvider.UpdateContext(ResourceBasePaths.GeneralAuth);
-            //return new RegisterResult()
-            //{
-            //    ErrorMessage = localizationProvider.GetString(key: "OnCooldownMessage")
-            //};
+            return new RequestVerificationEmailResult()
+            {
+                ErrorMessage = localizationProvider.GetString(key: "OnCooldownMessage")
+            };
         }
 
-        ApiResponse<TimeSpan> apiResponse = await http.PostAsync<string, TimeSpan>(
+        ApiResponse<bool> apiResponse = await http.PostAsync<string, bool>(
             data: deviceIDProvider.GetDeviceID().ToString(),
             endpoint: Endpoints.AuthEndpoints.RequestVerificationEmailEndpoint,
             callerInfos: CallerInfos.Create());
 
-        if (apiResponse.Data is TimeSpan cooldown && cooldown > TimeSpan.Zero)
+        if (apiResponse.IsSuccess)
         {
-            requestRateLimiter.AddRateLimit(RequestType.RequestVerificationEmail, limitedFor: cooldown);
+            return new RequestVerificationEmailResult(); 
         }
+
+        localizationProvider.UpdateContext(ResourceBasePaths.GeneralAuth);
+        return new RequestVerificationEmailResult()
+        {
+            SessionExpired = apiResponse.ApiError.StatusCode == HttpStatusCode.Unauthorized,
+            ErrorMessage = apiResponse.ApiError.StatusCode switch
+            {
+                HttpStatusCode.Unauthorized => localizationProvider.GetString(key: "SessionExpired"),
+                HttpStatusCode.TooManyRequests => localizationProvider.GetString(key: "OnCooldownMessage"),
+                _ => apiResponse.ApiError.Message,
+            }
+        };
     }
 }
