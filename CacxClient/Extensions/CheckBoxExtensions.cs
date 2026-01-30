@@ -9,12 +9,12 @@ internal static class CheckBoxExtensions
     {
         _ = checkBox.ApplyTemplate();
         
-        if (checkBox.Template.FindName("Border", checkBox) is not Border border)
+        if (checkBox.Template.FindName(name: "Border", templatedParent: checkBox) is not Border border)
         {
             return;
         }
 
-        if (checkBox.Template.FindName("CheckMark", checkBox) is not Path checkMark)
+        if (checkBox.Template.FindName(name: "CheckMark", templatedParent: checkBox) is not Path checkMark)
         {
             return;
         }

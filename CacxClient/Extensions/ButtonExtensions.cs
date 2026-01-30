@@ -8,7 +8,7 @@ internal static class ButtonExtensions
     {
         _ = button.ApplyTemplate();
 
-        if (button.Template.FindName("Border", button) is not Border border)
+        if (button.Template.FindName(name: "Border", templatedParent: button) is not Border border)
         {
             return;
         }

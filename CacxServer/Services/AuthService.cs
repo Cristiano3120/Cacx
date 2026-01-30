@@ -85,16 +85,16 @@ public class AuthService(
     /// <see cref="TimeSpan.Zero"/> <see langword="if"/> something went wrong
     /// <see langword="else"/> > <see cref="TimeSpan.Zero"/>
     /// </returns>
-    public async Task<TimeSpan> ResendVerificationEmailAsync(string authToken)
+    public async Task<bool> ResendVerificationEmailAsync(string authToken)
     {
         int verificationCode = verificationTokenService.GenerateVerificationCode();
         string? email = await authRedisService.ReplaceVerificationCodeAndGetEmailAsync(FormatToken(authToken), verificationCode);
 
         if (email is null)
-            return TimeSpan.Zero;
+            return false;
 
         await SendVerificationEmailAsync(email, verificationCode);
-        return TimeSpan.FromMinutes(1);
+        return true;
     }
 
     private async Task SendVerificationEmailAsync(string email, int verificationCode)

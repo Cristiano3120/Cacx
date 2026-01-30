@@ -97,13 +97,9 @@ internal sealed class ThemeManager(IPathProvider pathProvider, JsonSerializerOpt
             }
         }
 
-        Theme theme = new()
-        {
-            Name = themeName,
-            Colors = colorsToSave
-        };
-
+        Theme theme = new(Name: themeName, Colors: colorsToSave);
         string path = pathProvider.GetPath($"Resources/Themes/{themeName}.json");
+
         File.WriteAllText(path, contents: JsonSerializer.Serialize(theme, jsonSerializerOptions));
     }
 
