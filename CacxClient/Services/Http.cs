@@ -10,21 +10,21 @@ namespace CacxClient.Services;
 
 public sealed class Http : IHttp
 {
+    private readonly JsonSerializerOptions _jsonSerializerOptions;
     private readonly ITokenProvider _tokenProvider;
     private readonly HttpClient _httpClient;
     private readonly Logger _logger;
 
-    private readonly JsonSerializerOptions _jsonSerializerOptions = new()
-    {
-        WriteIndented = true,
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-    };
 
-    public Http(ITokenProvider tokenProvider, IConfiguration configuration, Logger logger)
+    public Http(
+        JsonSerializerOptions serializerOptions, 
+        ITokenProvider tokenProvider, 
+        IConfiguration configuration, 
+        Logger logger)
     {
-        string? uriStr = configuration.GetValue<bool>("testing")
-            ? configuration.GetValue<string>("testApiBaseUrl")
-            : configuration.GetValue<string>("apiBaseUrl");
+        string? uriStr = configuration.GetValue<bool>(key: "testing")
+            ? configuration.GetValue<string>(key: "testApiBaseUrl")
+            : configuration.GetValue<string>(key: "apiBaseUrl");
 
         if (string.IsNullOrWhiteSpace(uriStr))
         {
@@ -37,15 +37,16 @@ public sealed class Http : IHttp
             Timeout = TimeSpan.FromSeconds(5),
         };
 
+        _jsonSerializerOptions = serializerOptions;
         _tokenProvider = tokenProvider;
         _logger = logger;
     }
 
-    public async Task<ApiResponse<T>> GetAsync<T>(CallerInfos callerInfos, string endpoint)
-        => await HandleOneWayRequestAsync<T>(callerInfos, HttpRequestType.Get, endpoint);
+    public async Task<ApiResponse<T>> GetAsync<T>(string endpoint, CallerInfos callerInfos)
+        => await HandleOneWayRequestAsync<T>(requestType: HttpRequestType.Get, callerInfos, endpoint);
 
-    public async Task<ApiResponse<bool>> DeleteAsync(CallerInfos callerInfos, string endpoint)
-        => await HandleOneWayRequestAsync<bool>(callerInfos, HttpRequestType.Get, endpoint);
+    public async Task<ApiResponse<bool>> DeleteAsync(string endpoint, CallerInfos callerInfos)
+        => await HandleOneWayRequestAsync<bool>(requestType: HttpRequestType.Delete, callerInfos, endpoint);
 
     public async Task<ApiResponse<TOutput>> PostAsync<TInput, TOutput>(TInput data, string endpoint, CallerInfos callerInfos)
         => await HandleTwoWayRequestAsync<TInput, TOutput>(data, HttpRequestType.Post, endpoint, callerInfos);
@@ -53,7 +54,10 @@ public sealed class Http : IHttp
     public async Task<ApiResponse<TOutput>> PutAsync<TInput, TOutput>(TInput data, string endpoint, CallerInfos callerInfos)
         => await HandleTwoWayRequestAsync<TInput, TOutput>(data, HttpRequestType.Put, endpoint, callerInfos);
 
-    private async Task<ApiResponse<T>> HandleOneWayRequestAsync<T>(CallerInfos callerInfos, HttpRequestType requestType, string endpoint)
+    private async Task<ApiResponse<T>> HandleOneWayRequestAsync<T>(
+        HttpRequestType requestType, 
+        CallerInfos callerInfos, 
+        string endpoint)
     {
         try
         {
@@ -61,12 +65,12 @@ public sealed class Http : IHttp
             using HttpRequestMessage request = new(ToHttpMethod(requestType), endpoint);
 
             string? token = _tokenProvider.GetToken();
-            if (!string.IsNullOrWhiteSpace(token))
+            if (!string.IsNullOrEmpty(token))
             {
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             }
 
-            HttpResponseMessage response = await _httpClient.SendAsync(request);
+            using HttpResponseMessage response = await _httpClient.SendAsync(request);
             string responseContent = await response.Content.ReadAsStringAsync();
 
             _logger.LogHttpPayload<T>(LoggerParams.NoNewLine, PayloadType.Received, requestType, () => responseContent);
@@ -81,7 +85,11 @@ public sealed class Http : IHttp
         }
     }
 
-    public async Task<ApiResponse<TOutput>> HandleTwoWayRequestAsync<TInput, TOutput>(TInput data, HttpRequestType requestType, string endpoint, CallerInfos callerInfos)
+    public async Task<ApiResponse<TOutput>> HandleTwoWayRequestAsync<TInput, TOutput>(
+        TInput data, 
+        HttpRequestType requestType, 
+        string endpoint, 
+        CallerInfos callerInfos)
     {
         try
         {
@@ -90,6 +98,7 @@ public sealed class Http : IHttp
 
             string jsonData = JsonSerializer.Serialize(data, _jsonSerializerOptions);
             request.Content = new StringContent(jsonData, System.Text.Encoding.UTF8, "application/json");
+
             _logger.LogHttpPayload<TInput>(LoggerParams.NoNewLine, PayloadType.Sent, requestType, () => jsonData);
 
             string? token = _tokenProvider.GetToken();
@@ -98,8 +107,9 @@ public sealed class Http : IHttp
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             }
 
-            HttpResponseMessage response = await _httpClient.SendAsync(request);
+            using HttpResponseMessage response = await _httpClient.SendAsync(request);
             string responseContent = await response.Content.ReadAsStringAsync();
+
             _logger.LogHttpPayload<TOutput>(LoggerParams.NoNewLine, PayloadType.Received, requestType, () => responseContent);
             
             ApiResponse<TOutput> body = JsonSerializer.Deserialize<ApiResponse<TOutput>>(responseContent, _jsonSerializerOptions)!;

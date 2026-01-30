@@ -2,7 +2,6 @@
 using CacxClient.Commands;
 using CacxClient.Helper;
 using CacxClient.RandomPasswordGenerator;
-using CacxClient.Services;
 using CacxClient.Services.RateLimiter;
 using System.ComponentModel;
 using System.Windows;
@@ -10,9 +9,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using CacxShared.Abstractions;
 using CacxClient.Abstractions.Auth;
-using CacxClient.Windows;
-using CacxClient.Extensions;
-using Microsoft.Extensions.DependencyInjection;
 using CacxClient.Resources;
 using Cacx.LocalizationManager.Abstractions;
 using Cacx.LocalizationManager.Core;
@@ -124,7 +120,7 @@ public class RegisterViewModel : INotifyPropertyChanged
             Color? color = ColorResources.TextPrimaryColor;
             color ??= Colors.LightGray;
 
-            OnDisplayInformation?.Invoke("Copied to clipboard", color.Value);
+            DisplayInformation("Copied to clipboard", color.Value);
         });
 
         OnRequestRunningStateChanged += isRequestRunning =>
@@ -160,14 +156,14 @@ public class RegisterViewModel : INotifyPropertyChanged
         if (!TOSAccepted)
         {
             const string ErrorMsg = "You must accept the Terms of Service to register";
-            OnDisplayInformation?.Invoke(ErrorMsg, ColorResources.TextErrorColor);
+            DisplayInformation(ErrorMsg, ColorResources.TextErrorColor);
             return;
         }
 
         if (!_rateLimiter.TryConsume())
         {
             const string ErrorMsg = "Don´t spam :( You gotta wait a bit!";
-            OnDisplayInformation?.Invoke(ErrorMsg, ColorResources.TextErrorColor);
+            DisplayInformation(ErrorMsg, ColorResources.TextErrorColor);
             return;
         }
 
@@ -187,7 +183,7 @@ public class RegisterViewModel : INotifyPropertyChanged
 
         if (!result.IsSuccess)
         {
-            OnDisplayInformation?.Invoke(result.ErrorMessage!, ColorResources.TextErrorColor);
+            DisplayInformation(result.ErrorMessage!, ColorResources.TextErrorColor);
             return;
         }
 
@@ -199,7 +195,7 @@ public class RegisterViewModel : INotifyPropertyChanged
         if (string.IsNullOrEmpty(Email) || !await NetworkHelper.IsEmailValidAsync(Email))
         {
             const string ErrorMsg = "The entered email is invalid";
-            OnDisplayInformation?.Invoke(ErrorMsg, ColorResources.TextErrorColor);
+            DisplayInformation(ErrorMsg, ColorResources.TextErrorColor);
 
             return false;
         }
@@ -208,26 +204,29 @@ public class RegisterViewModel : INotifyPropertyChanged
         if (string.IsNullOrEmpty(Email) || Password.Length < MinPasswordLength)
         {
             const string ErrorMsg = "Password must be at least 8 characters long";
-            OnDisplayInformation?.Invoke(ErrorMsg, ColorResources.TextErrorColor);
+            DisplayInformation(ErrorMsg, ColorResources.TextErrorColor);
             return false;
         }
 
         if (string.IsNullOrEmpty(Username) || Username.Any(x => !char.IsLetterOrDigit(x) && x != '_' && x != '-'))
         {
             const string ErrorMsg = "Username can only contain letters, digits, underscores and hyphens";
-            OnDisplayInformation?.Invoke(ErrorMsg, ColorResources.TextErrorColor);
+            DisplayInformation(ErrorMsg, ColorResources.TextErrorColor);
             return false;
         }
 
         if (string.IsNullOrEmpty(DisplayName))
         {
             const string ErrorMsg = "Display name cannot be empty";
-            OnDisplayInformation?.Invoke(ErrorMsg, ColorResources.TextErrorColor);
+            DisplayInformation(ErrorMsg, ColorResources.TextErrorColor);
             return false;
         }
 
         return true;
     }
+
+    private void DisplayInformation(string message, Color color)
+        => OnDisplayInformation?.Invoke(message, color);
 
     public bool CanRegister(object? sender)
         => !_isRequestRunning;

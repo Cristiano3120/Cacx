@@ -5,8 +5,8 @@ namespace CacxClient.Abstractions;
 
 public interface IHttp
 {
-    Task<ApiResponse<T>> GetAsync<T>(CallerInfos callerInfos, string endpoint);
-    Task<ApiResponse<bool>> DeleteAsync(CallerInfos callerInfos, string endpoint);
+    Task<ApiResponse<T>> GetAsync<T>(string endpoint, CallerInfos callerInfos);
+    Task<ApiResponse<bool>> DeleteAsync(string endpoint, CallerInfos callerInfos);
     Task<ApiResponse<TOutput>> PostAsync<TInput, TOutput>(TInput data, string endpoint, CallerInfos callerInfos);
     Task<ApiResponse<TOutput>> PutAsync<TInput, TOutput>(TInput data, string endpoint, CallerInfos callerInfos);
 }

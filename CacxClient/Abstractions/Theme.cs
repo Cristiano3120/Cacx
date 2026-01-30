@@ -2,9 +2,4 @@
 
 namespace CacxClient.Abstractions;
 
-internal sealed record Theme
-{
-    public string? Name { get; init; } = default!;
-
-    public IReadOnlyDictionary<string, Color> Colors { get; init; } = new Dictionary<string, Color>();
-}
+public sealed record Theme(string Name, IReadOnlyDictionary<string, Color> Colors);
