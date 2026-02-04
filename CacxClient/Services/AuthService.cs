@@ -74,7 +74,7 @@ public sealed class AuthService(
 
     public async Task VerifyAsync(int code)
     {
-
+        
     }
 
     public async Task<RequestVerificationEmailResult> RequestVerificationEmailAsync()
@@ -97,6 +97,11 @@ public sealed class AuthService(
         if (apiResponse.IsSuccess)
         {
             return new RequestVerificationEmailResult(); 
+        }
+
+        if (apiResponse.RetryAfter is TimeSpan retryAfter)
+        {
+            requestRateLimiter.AddRateLimit(RequestType.RequestVerificationEmail, limitedFor: retryAfter);
         }
 
         localizationProvider.UpdateContext(ResourceBasePaths.GeneralAuth);
