@@ -91,6 +91,9 @@ public partial class App : Application
         InitMainWindow(serviceProvider);
     }
 
+    //TODO: Postgres in docker packen
+    //TODO: Static class für Header konstanten
+    //TODO: Gucken ob überall n try catch ist wo es sein muss
     //TODO: Überprüfen ob in Redis alles richtig gecleared wird
     //TODO: Mehr Logging. Pack PostgreSQL in den docker container
     //TODO: TextBoxExtensions IsEmoji Methode auslagern in Hilfsklasse/Service vllt?? Fix EmojiHandling generell

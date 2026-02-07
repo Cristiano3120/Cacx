@@ -43,8 +43,10 @@ public class AuthService(
             };
 
             string hashedToken = FormatToken(token);
-            bool redisEntrySuccessful = await authRedisService.TryAddPendingVerificationAsync(hashedToken,
-                pendingAuthentication, expiry);
+            bool redisEntrySuccessful = await authRedisService.TryAddPendingVerificationAsync(
+                hashedToken,
+                pendingAuthentication, 
+                expiry);
 
             if (!redisEntrySuccessful)
             {

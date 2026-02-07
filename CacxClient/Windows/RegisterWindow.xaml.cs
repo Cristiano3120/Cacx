@@ -1,4 +1,5 @@
-﻿using CacxClient.Extensions;
+﻿using CacxClient.Abstractions;
+using CacxClient.Extensions;
 using CacxClient.MVVM;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -20,10 +21,10 @@ public partial class RegisterWindow : UserControl
         TosCheckBox.EnableHoverAnimation();
         GoBackBtn.EnableHoverAnimation();
 
-        EmailTextBox.InnerTextBox.DisableEmojiInput();
-        PasswordTextBox.InnerTextBox.DisableEmojiInput();
-        UsernameTextBox.InnerTextBox.DisableEmojiInput();
-        DisplayNameTextBox.InnerTextBox.DisableEmojiInput();
+        EmailTextBox.InnerTextBox.DisableCertainChars(CharacterTypes.Emoji);
+        PasswordTextBox.InnerTextBox.DisableCertainChars(CharacterTypes.Emoji);
+        UsernameTextBox.InnerTextBox.DisableCertainChars(CharacterTypes.Emoji);
+        DisplayNameTextBox.InnerTextBox.DisableCertainChars(CharacterTypes.Emoji);
 
         registerViewModel.OnDisplayInformation += DisplayInformation;
     }

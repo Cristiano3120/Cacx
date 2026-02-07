@@ -4,6 +4,7 @@ using CacxClient.Abstractions;
 using CacxClient.Abstractions.Auth;
 using CacxClient.Commands;
 using CacxClient.Resources;
+using CacxClient.Services.RateLimiter;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -28,6 +29,7 @@ public sealed class VerificationViewModel
         RequestEmail = new RelayCommand(execute: async (_) => await RequestVerificationEmailAsync());
         Verify = new RelayCommand(execute: async (_) => await VerifyAsync());
 
+        _requestEmailLimiter = RateLimiters.ResendVerificationEmail;
         _navigationService = navigationService;
         _authService = authService;    
     }
@@ -73,7 +75,7 @@ public sealed class VerificationViewModel
             return;
         }
 
-        VerifyAccountResult result = await _authService.VerifyAccountAsync();
+        //VerifyAccountResult result = await _authService.VerifyAccountAsync();
     }
 
     private void DisplayInformation(string message, Color color)

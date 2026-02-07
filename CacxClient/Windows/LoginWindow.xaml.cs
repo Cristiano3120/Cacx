@@ -1,4 +1,5 @@
-﻿using CacxClient.Extensions;
+﻿using CacxClient.Abstractions;
+using CacxClient.Extensions;
 using CacxClient.MVVM;
 using CacxClient.Resources;
 using System.Windows.Controls;
@@ -17,8 +18,8 @@ public partial class LoginWindow : UserControl
 
         LoginBtn.EnableHoverAnimation();
         CreateAccHyperlink.EnableHoverAnimation();
-        EmailTextBox.InnerTextBox.DisableEmojiInput();
-        PasswordTextBox.InnerTextBox.DisableEmojiInput();
+        EmailTextBox.InnerTextBox.DisableCertainChars(CharacterTypes.Emoji);
+        PasswordTextBox.InnerTextBox.DisableCertainChars(CharacterTypes.Emoji);
 
         loginViewModel.OnInvalidData += DisplayInformation;
     }

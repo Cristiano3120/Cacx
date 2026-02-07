@@ -4,7 +4,7 @@ using StackExchange.Redis;
 
 namespace CacxServer.Data.Redis.Services;
 
-public class AuthRedisService(IConnectionMultiplexer connectionMultiplexer) : IAuthRedisService
+public sealed class AuthRedisService(IConnectionMultiplexer connectionMultiplexer) : IAuthRedisService
 {
     private readonly IDatabase _database = connectionMultiplexer.GetDatabase();
 
@@ -21,10 +21,19 @@ public class AuthRedisService(IConnectionMultiplexer connectionMultiplexer) : IA
             new(nameof(PendingAuthentication.Attempts), pendingAuthentication.Attempts)
         ];
 
-        await _database.HashSetAsync(tokenHash, hashEntries, (CommandFlags)When.NotExists);
-        _ = await _database.KeyExpireAsync(tokenHash, expiry);
+        ITransaction tran = _database.CreateTransaction();
 
-        return true;
+        _ = tran.AddCondition(Condition.KeyNotExists($"pending:email:{pendingAuthentication.Email}"));
+        _ = tran.AddCondition(Condition.KeyNotExists($"pending:username:{pendingAuthentication.Username}"));
+        
+        _ = tran.HashSetAsync(tokenHash, hashEntries);
+        _ = tran.KeyExpireAsync(tokenHash, expiry);
+
+        _ = tran.StringSetAsync($"pending:email:{pendingAuthentication.Email}", tokenHash, expiry);
+        _ = tran.StringSetAsync($"pending:username:{pendingAuthentication.Username}", tokenHash, expiry);
+
+        //False if any of the conditions fail, otherwise true
+        return await tran.ExecuteAsync();
     }
 
     public async Task<string?> ReplaceVerificationCodeAndGetEmailAsync(string tokenHash, int newVerificationCode)

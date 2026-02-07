@@ -126,7 +126,6 @@ public class LoginViewModel : INotifyPropertyChanged
         {
             Email = Email, 
             Password = Password ,
-            DeviceId = _deviceIDProvider.GetDeviceID().ToString(),
         });
         //TODO: Handle loginResult (success/failure)
 

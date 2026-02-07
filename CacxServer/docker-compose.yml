@@ -35,7 +35,21 @@ services:
     volumes:
       - redis_data:/data
 
+  postgreSQL:
+    image: postgres:latest
+    container_name: postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: Cacx
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Cristiano2007!
+    volumes:
+      - postgreSQL_data:/var/lib/postgresql/data
+
 volumes:
   minio_data:
   nginx_cache:
   redis_data:
+  postgreSQL_data:

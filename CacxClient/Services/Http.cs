@@ -1,4 +1,5 @@
 ﻿using CacxClient.Abstractions;
+using CacxShared.Abstractions;
 using Cristiano3120.Logging;
 using Microsoft.Extensions.Configuration;
 using System.Net;
@@ -11,6 +12,7 @@ namespace CacxClient.Services;
 public sealed class Http : IHttp
 {
     private readonly JsonSerializerOptions _jsonSerializerOptions;
+    private readonly IDeviceIDProvider _deviceIDProvider;
     private readonly ITokenProvider _tokenProvider;
     private readonly HttpClient _httpClient;
     private readonly Logger _logger;
@@ -18,6 +20,7 @@ public sealed class Http : IHttp
 
     public Http(
         JsonSerializerOptions serializerOptions, 
+        IDeviceIDProvider deviceIDProvider,
         ITokenProvider tokenProvider, 
         IConfiguration configuration, 
         Logger logger)
@@ -38,6 +41,7 @@ public sealed class Http : IHttp
         };
 
         _jsonSerializerOptions = serializerOptions;
+        _deviceIDProvider = deviceIDProvider;
         _tokenProvider = tokenProvider;
         _logger = logger;
     }
@@ -64,11 +68,7 @@ public sealed class Http : IHttp
             _logger.LogInformation(LoggerParams.None, () => $"[{requestType}]: {endpoint}");
             using HttpRequestMessage request = new(ToHttpMethod(requestType), endpoint);
 
-            string? token = _tokenProvider.GetToken();
-            if (!string.IsNullOrEmpty(token))
-            {
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            }
+            AddHeaders(request);
 
             using HttpResponseMessage response = await _httpClient.SendAsync(request);
             string responseContent = await response.Content.ReadAsStringAsync();
@@ -101,11 +101,7 @@ public sealed class Http : IHttp
 
             _logger.LogHttpPayload<TInput>(LoggerParams.NoNewLine, PayloadType.Sent, requestType, () => jsonData);
 
-            string? token = _tokenProvider.GetToken();
-            if (!string.IsNullOrWhiteSpace(token))
-            {
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            }
+            AddHeaders(request);
 
             using HttpResponseMessage response = await _httpClient.SendAsync(request);
             string responseContent = await response.Content.ReadAsStringAsync();
@@ -132,5 +128,17 @@ public sealed class Http : IHttp
             HttpRequestType.Put => HttpMethod.Put,
             _ => throw new NotSupportedException($"HTTP method '{type}' is not supported.")
         };
+    }
+
+    private void AddHeaders(HttpRequestMessage request)
+    {
+        string? token = _tokenProvider.GetToken();
+        if (!string.IsNullOrWhiteSpace(token))
+        {
+            request.Headers.Add(AuthHeaderNames.AuthTokenHeader, token);
+        }
+
+        Guid deviceId = _deviceIDProvider.GetDeviceID();
+        request.Headers.Add(AuthHeaderNames.DeviceIdHeader, deviceId.ToString());
     }
 }

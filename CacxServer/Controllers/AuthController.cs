@@ -5,8 +5,7 @@ using CacxServer.RateLimiter.AuthRateLimiter.Abstractions;
 using CacxShared;
 using CacxShared.Abstractions;
 using Cristiano3120.Logging;
-using Microsoft.AspNetCore.Authentication.BearerToken;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using System.Net;
@@ -24,15 +23,13 @@ public class AuthController(IAuthService authService, IAuthRateLimiter authRateL
     [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status429TooManyRequests)]
     [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status503ServiceUnavailable)]
     [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequest registerRequest)
+    public async Task<IActionResult> RegisterAsync(
+        [FromHeader(Name = AuthHeaderNames.DeviceIdHeader)] string deviceID, 
+        [FromBody] RegisterRequest registerRequest)
     {
         logger.LogInformation(LoggerParams.None, () => "Register endpoint called");
 
-        ClientSecurityContext clientSecurityContext = new
-        (
-            ClientIP: HttpContext.Connection.RemoteIpAddress,
-            DeviceID: registerRequest.DeviceId
-        );
+        ClientSecurityContext clientSecurityContext = GetClientSecurityContext(deviceID);
 
         AuthRateLimitResult rateLimitResult = await authRateLimiter.CheckRegisterAsync(clientSecurityContext);
         if (rateLimitResult.IsLimited)
@@ -97,17 +94,15 @@ public class AuthController(IAuthService authService, IAuthRateLimiter authRateL
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status429TooManyRequests)]
-    public async Task<IActionResult> ResendVerificationEmailAsync([FromBody] string deviceId)
+    public async Task<IActionResult> ResendVerificationEmailAsync(
+        [FromHeader(Name = AuthHeaderNames.AuthTokenHeader)] string authToken,
+        [FromHeader(Name = AuthHeaderNames.DeviceIdHeader)] string deviceID)
     {
         logger.LogInformation(LoggerParams.None, () => "ResendVerificationEmail Endpoint called");
 
-        ClientSecurityContext clientSecurityContext = new
-        (
-            ClientIP: HttpContext.Connection.RemoteIpAddress,
-            DeviceID: deviceId
-        );
-
+        ClientSecurityContext clientSecurityContext = GetClientSecurityContext(deviceID);
         AuthRateLimitResult rateLimitResult = await authRateLimiter.CheckResendVerificationEmailAsync(clientSecurityContext);
+        
         if (rateLimitResult.IsLimited)
         {
             Response.Headers.RetryAfter = new RetryConditionHeaderValue(rateLimitResult.RetryAfter).ToString();
@@ -121,34 +116,38 @@ public class AuthController(IAuthService authService, IAuthRateLimiter authRateL
                 }
             });
         }
-        
-        if (Request.Headers.Authorization == StringValues.Empty)
+
+        ObjectResult invalidSessionResult = StatusCode((int)HttpStatusCode.Unauthorized, new ApiResponse<object>()
         {
-            return StatusCode((int)HttpStatusCode.Unauthorized, new ApiResponse<object>()
+            IsSuccess = false,
+            ApiError = new ApiError()
             {
-                IsSuccess = false,
-                ApiError = new ApiError()
-                {
-                    Message = "Session Invalid. RESTART!",
-                    StatusCode = HttpStatusCode.Unauthorized
-                }
-            });
+                Message = "Session Invalid. RESTART!",
+                StatusCode = HttpStatusCode.Unauthorized
+            }
+        });
+
+        if (string.IsNullOrWhiteSpace(authToken))
+        {
+            return invalidSessionResult;
         }
 
-        string token = Request.Headers.Authorization.ToString().Replace("Bearer", "").Trim();
-        bool success = await authService.ResendVerificationEmailAsync(authToken: token);
+        bool success = await authService.ResendVerificationEmailAsync(authToken);
         if (!success)
         {
-            return StatusCode((int)HttpStatusCode.Unauthorized, new ApiResponse<object>()
-            {
-                IsSuccess = false,
-                ApiError = new ApiError()
-                {
-                    Message = "Session Invalid. RESTART!",
-                    StatusCode = HttpStatusCode.Unauthorized
-                }
-            });
+            return invalidSessionResult;
         }
+
+        return Ok(ApiResponse<object>.Ok(default!, true));
+    }
+
+    public async Task<IActionResult> VerifyEmailAsync(
+        [FromHeader(Name = "Device-ID")] string deviceID, 
+        [FromBody] int code)
+    {
+        logger.LogInformation(LoggerParams.None, () => "VerifyEmail Endpoint called");
+
+        ClientSecurityContext clientSecurityContext = GetClientSecurityContext(deviceID);
 
         return Ok(ApiResponse<object>.Ok(default!, true));
     }
@@ -156,15 +155,13 @@ public class AuthController(IAuthService authService, IAuthRateLimiter authRateL
     [HttpPost(Endpoints.AuthEndpoints.Login)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status429TooManyRequests)]
-    public async Task<IActionResult> LoginAsync([FromBody] LoginRequest loginRequest)
+    public async Task<IActionResult> LoginAsync(
+        [FromHeader(Name = "Device-ID")] string deviceID,
+        [FromBody] LoginRequest loginRequest)
     {
         logger.LogInformation(LoggerParams.None, () => "Login endpoint called");
 
-        ClientSecurityContext clientSecurityContext = new
-        (
-            ClientIP: HttpContext.Connection.RemoteIpAddress,
-            DeviceID: loginRequest.DeviceId
-        );
+        ClientSecurityContext clientSecurityContext = GetClientSecurityContext(deviceID);
 
         AuthRateLimitResult rateLimitResult = await authRateLimiter.CheckRegisterAsync(clientSecurityContext);
         if (rateLimitResult.IsLimited)
@@ -183,4 +180,7 @@ public class AuthController(IAuthService authService, IAuthRateLimiter authRateL
 
         return Ok(new ApiResponse<object>() { IsSuccess = true, Data = null });
     }
+
+    private ClientSecurityContext GetClientSecurityContext(string deviceID)
+        => new(ClientIP: HttpContext.Connection.RemoteIpAddress, DeviceID: deviceID);
 }

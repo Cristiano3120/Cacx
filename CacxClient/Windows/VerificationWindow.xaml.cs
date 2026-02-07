@@ -1,4 +1,5 @@
-﻿using CacxClient.Extensions;
+﻿using CacxClient.Abstractions;
+using CacxClient.Extensions;
 using CacxClient.MVVM;
 using System.Windows.Controls;
 
@@ -15,6 +16,6 @@ public partial class VerificationWindow : UserControl
         DataContext = verificationViewModel;
 
         RequestEmailHyperlink.EnableHoverAnimation();
-        CodeTextBox.InnerTextBox.DisableEmojiInput();
+        CodeTextBox.InnerTextBox.DisableCertainChars(CharacterTypes.Emoji | CharacterTypes.Text);
     }
 }
