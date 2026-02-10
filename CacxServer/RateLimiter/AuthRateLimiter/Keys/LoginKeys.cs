@@ -8,7 +8,7 @@ public static class LoginKeys
     public static string Ip(string ipHash)
         => $"rl:login:ip:{ipHash}";
 
-    public static string DeviceId(string deviceIdHash)
+    public static string DeviceID(string deviceIdHash)
         => $"rl:login:dev:{deviceIdHash}";
 
     public static string IpUsername(string ipHash, string usernameHash)

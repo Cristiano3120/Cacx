@@ -54,6 +54,20 @@ public sealed class AuthRateLimiter(
         return await authRedisRateLimiter.CheckRulesAsync(rateLimitRules);
     }
 
+    public async Task<AuthRateLimitResult> CheckVerifiyCodeAsync(ClientSecurityContext securityContext)
+    {
+        if (CheckIfSecurityDataValid(securityContext))
+        {
+            logger.LogWarning(LoggerParams.None, () => "IP or DeviceID hidden?? Decline request");
+            return new AuthRateLimitResult(IsLimited: true, RetryAfter: TimeSpan.Zero);
+        }
+
+        (string ipHash, string deviceHash) = HashAndFormatCSC(securityContext);
+        IEnumerable<RateLimitRule> rateLimitRules = RateLimitRuleBuilder.BuildVerifyCodeRules(ipHash, deviceHash);
+
+        return await authRedisRateLimiter.CheckRulesAsync(rateLimitRules);
+    }
+
     private static bool CheckIfSecurityDataValid(ClientSecurityContext securityContext)
         => string.IsNullOrEmpty(securityContext.ClientIP?.ToString()) || string.IsNullOrEmpty(securityContext.DeviceID);
 

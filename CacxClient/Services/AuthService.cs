@@ -89,8 +89,7 @@ public sealed class AuthService(
             };
         }
 
-        ApiResponse<bool> apiResponse = await http.PostAsync<string, bool>(
-            data: deviceIDProvider.GetDeviceID().ToString(),
+        ApiResponse<bool> apiResponse = await http.GetAsync<bool>(
             endpoint: Endpoints.AuthEndpoints.RequestVerificationEmailEndpoint,
             callerInfos: CallerInfos.Create());
 

@@ -35,8 +35,8 @@ services:
     volumes:
       - redis_data:/data
 
-  postgreSQL:
-    image: postgres:latest
+  postgresql:
+    image: postgres:16
     container_name: postgres
     restart: unless-stopped
     ports:

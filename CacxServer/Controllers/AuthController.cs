@@ -1,13 +1,12 @@
 ﻿using CacxServer.Abstractions;
 using CacxServer.Abstractions.Auth;
 using CacxServer.Abstractions.Auth.Register;
+using CacxServer.Abstractions.Auth.Verification;
 using CacxServer.RateLimiter.AuthRateLimiter.Abstractions;
 using CacxShared;
 using CacxShared.Abstractions;
 using Cristiano3120.Logging;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
 using System.Net;
 using System.Net.Http.Headers;
 
@@ -90,8 +89,8 @@ public class AuthController(IAuthService authService, IAuthRateLimiter authRateL
             });
     }
 
-    [HttpPost(Endpoints.AuthEndpoints.RequestVerificationEmail)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [HttpGet(Endpoints.AuthEndpoints.RequestVerificationEmail)]
+    [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status429TooManyRequests)]
     public async Task<IActionResult> ResendVerificationEmailAsync(
@@ -138,18 +137,60 @@ public class AuthController(IAuthService authService, IAuthRateLimiter authRateL
             return invalidSessionResult;
         }
 
-        return Ok(ApiResponse<object>.Ok(default!, true));
+        return Ok(ApiResponse<bool>.Ok(data: success));
     }
 
+    [ProducesResponseType(typeof(ApiResponse<VerificationResult>), StatusCodes.Status200OK)]
     public async Task<IActionResult> VerifyEmailAsync(
-        [FromHeader(Name = "Device-ID")] string deviceID, 
+        [FromHeader(Name = AuthHeaderNames.AuthTokenHeader)] string authToken,
+        [FromHeader(Name = AuthHeaderNames.DeviceIdHeader)] string deviceID, 
         [FromBody] int code)
     {
         logger.LogInformation(LoggerParams.None, () => "VerifyEmail Endpoint called");
 
         ClientSecurityContext clientSecurityContext = GetClientSecurityContext(deviceID);
+        AuthRateLimitResult rateLimitResult = await authRateLimiter.CheckResendVerificationEmailAsync(clientSecurityContext);
 
-        return Ok(ApiResponse<object>.Ok(default!, true));
+        if (rateLimitResult.IsLimited)
+        {
+            Response.Headers.RetryAfter = new RetryConditionHeaderValue(rateLimitResult.RetryAfter).ToString();
+            return StatusCode((int)HttpStatusCode.TooManyRequests, value: new ApiResponse<string>()
+            {
+                IsSuccess = false,
+                ApiError = new ApiError()
+                {
+                    StatusCode = HttpStatusCode.TooManyRequests,
+                    Message = "Too many requests. Try again later..."
+                }
+            });
+        }
+
+        VerificationResult verificationResult = await authService.VerifyAsync(authToken, code);
+        return verificationResult.VerificationError switch
+        {
+            VerificationError.None => Ok(ApiResponse<bool>.Ok(data: default!)),
+            
+            VerificationError.RedisUnavailable => StatusCode((int)HttpStatusCode.ServiceUnavailable, new ApiResponse<object>()
+            {
+                IsSuccess = false,
+                ApiError = new ApiError()
+                {
+                    StatusCode = HttpStatusCode.ServiceUnavailable,
+                    Message = "Service temporarily unavailable. Try again later"
+                }
+            }),
+            
+            // Covers UnknownError and any future errors that might be added without updating this switch
+            _ => StatusCode((int)HttpStatusCode.InternalServerError, new ApiResponse<object>()
+            {
+                IsSuccess = false,
+                ApiError = new ApiError()
+                {
+                    StatusCode = HttpStatusCode.InternalServerError,
+                    Message = "Unknown error"
+                }
+            }),
+        };
     }
 
     [HttpPost(Endpoints.AuthEndpoints.Login)]

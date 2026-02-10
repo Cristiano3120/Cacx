@@ -13,12 +13,12 @@ public static class RateLimitRuleBuilder
             Ttl: TimeSpan.FromMinutes(30));
 
         yield return new RateLimitRule(
-            Key: RegisterKeys.Device(deviceHash),
+            Key: RegisterKeys.DeviceID(deviceHash),
             Limit: 3,
             Ttl: TimeSpan.FromMinutes(30));
 
         yield return new RateLimitRule(
-            Key: RegisterKeys.IpDevice(ipHash, deviceHash),
+            Key: RegisterKeys.IpDeviceID(ipHash, deviceHash),
             Limit: 2,
             Ttl: TimeSpan.FromMinutes(30));
     }
@@ -38,7 +38,7 @@ public static class RateLimitRuleBuilder
         );
 
         yield return new RateLimitRule(
-            Key: LoginKeys.DeviceId(deviceHash),
+            Key: LoginKeys.DeviceID(deviceHash),
             Limit: 10,
             Ttl: TimeSpan.FromMinutes(10)
         );
@@ -59,9 +59,24 @@ public static class RateLimitRuleBuilder
     public static IEnumerable<RateLimitRule> BuildResendVerificationEmailRules(string deviceHash)
     {
         yield return new RateLimitRule(
-            Key: VerificationKeys.DeviceID(deviceHash),
+            Key: RequestEmailKeys.DeviceID(deviceHash),
             Limit: 1,
             Ttl: TimeSpan.FromMinutes(1)
             );
+    }
+
+    public static IEnumerable<RateLimitRule> BuildVerifyCodeRules(string ipHash, string deviceHash)
+    {
+        yield return new RateLimitRule(
+            Key: VerificationKeys.DeviceID(deviceHash),
+            Limit: 5,
+            Ttl: TimeSpan.FromMinutes(5)
+        );
+
+        yield return new RateLimitRule(
+            Key: VerificationKeys.Ip(ipHash),
+            Limit: 25,
+            Ttl: TimeSpan.FromMinutes(5)
+        );
     }
 }

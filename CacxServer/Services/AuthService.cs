@@ -1,11 +1,13 @@
 ﻿using CacxServer.Abstractions;
 using CacxServer.Abstractions.Auth;
 using CacxServer.Abstractions.Auth.Register;
+using CacxServer.Abstractions.Auth.Verification;
 using CacxServer.Data.PostgreSQL.Abstractions;
 using CacxServer.Data.Redis.Abstractions;
 using CacxServer.Data.Redis.Entities;
 using CacxServer.Security.Hashing.Abstractions;
 using Cristiano3120.Logging;
+using Microsoft.AspNetCore.Identity;
 using Npgsql;
 using StackExchange.Redis;
 using System.Net.Mail;
@@ -69,7 +71,7 @@ public class AuthService(
         }
         catch (SmtpException)
         {
-            logger.LogError(LoggerParams.None, () => "Notification not available", callerInfos);
+            logger.LogError(LoggerParams.None, () => "Notification service not available", callerInfos);
             return RegisterResult.Fail(RegisterError.NotificationFailed);
         }
         catch (Exception ex)
@@ -79,9 +81,25 @@ public class AuthService(
         }
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
+    public async Task<VerificationResult> VerifyAsync(string authToken, int code)
+    {
+        CallerInfos callerInfos = CallerInfos.Create();
+        try
+        {
+            return await authRedisService.CheckVerificationCodeAsync(formattedToken: authToken, code);
+        }
+        catch (RedisException)
+        {
+            logger.LogError(LoggerParams.None, () => "Redis not available", callerInfos);
+            return VerificationResult.Fail(VerificationError.RedisUnavailable);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(LoggerParams.None, ex, callerInfos);
+            return VerificationResult.Fail(VerificationError.UnknownError);
+        }
+    }
+
     /// <param name="authToken"></param>
     /// <returns>
     /// <see cref="TimeSpan.Zero"/> <see langword="if"/> something went wrong

@@ -91,12 +91,9 @@ public partial class App : Application
         InitMainWindow(serviceProvider);
     }
 
-    //TODO: Postgres in docker packen
-    //TODO: Static class für Header konstanten
+    //TODO: Docker repo "readMe" adden
     //TODO: Gucken ob überall n try catch ist wo es sein muss
-    //TODO: Überprüfen ob in Redis alles richtig gecleared wird
-    //TODO: Mehr Logging. Pack PostgreSQL in den docker container
-    //TODO: TextBoxExtensions IsEmoji Methode auslagern in Hilfsklasse/Service vllt?? Fix EmojiHandling generell
+    //TODO: Mehr Logging.
     //TODO: Implement OAUTH Login via google/apple (Login) bei GitHub Trello aufschreiben
     //TODO: Remember me funktion (Login) bei GitHub Trello aufschreiben
     //TODO: Fehlermeldungen vom servre sind immer auf englisch. Lokalisieren?
