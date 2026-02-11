@@ -92,7 +92,7 @@ public partial class App : Application
     }
 
     //TODO: Docker repo "readMe" adden
-    //TODO: Gucken ob überall n try catch ist wo es sein muss
+    //TODO: Gucken ob überall n try catch ist wo es sein muss -> In AuthService fehlt try-catch
     //TODO: Mehr Logging.
     //TODO: Implement OAUTH Login via google/apple (Login) bei GitHub Trello aufschreiben
     //TODO: Remember me funktion (Login) bei GitHub Trello aufschreiben

@@ -77,6 +77,7 @@ public class AuthService(
         catch (Exception ex)
         {
             logger.LogError(LoggerParams.None, ex, callerInfos);
+            Environment.Exit(1);
             return RegisterResult.Fail(RegisterError.Unknown);
         }
     }
@@ -96,6 +97,7 @@ public class AuthService(
         catch (Exception ex)
         {
             logger.LogError(LoggerParams.None, ex, callerInfos);
+            Environment.Exit(1);
             return VerificationResult.Fail(VerificationError.UnknownError);
         }
     }

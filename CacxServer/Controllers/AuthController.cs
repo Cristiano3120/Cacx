@@ -140,6 +140,7 @@ public class AuthController(IAuthService authService, IAuthRateLimiter authRateL
         return Ok(ApiResponse<bool>.Ok(data: success));
     }
 
+    [HttpPost(Endpoints.AuthEndpoints.VerifyEmail)]
     [ProducesResponseType(typeof(ApiResponse<VerificationResult>), StatusCodes.Status200OK)]
     public async Task<IActionResult> VerifyEmailAsync(
         [FromHeader(Name = AuthHeaderNames.AuthTokenHeader)] string authToken,
