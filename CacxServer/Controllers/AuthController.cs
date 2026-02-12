@@ -166,32 +166,51 @@ public class AuthController(IAuthService authService, IAuthRateLimiter authRateL
             });
         }
 
+        //If correct create tokens
         VerificationResult verificationResult = await authService.VerifyAsync(authToken, code);
-        return verificationResult.VerificationError switch
+        IActionResult internalServerError = StatusCode((int)HttpStatusCode.InternalServerError, new ApiResponse<VerificationResult>()
         {
-            VerificationError.None => Ok(ApiResponse<bool>.Ok(data: default!)),
-            
-            VerificationError.RedisUnavailable => StatusCode((int)HttpStatusCode.ServiceUnavailable, new ApiResponse<object>()
+            IsSuccess = false,
+            Data = verificationResult,
+            ApiError = new ApiError()
             {
-                IsSuccess = false,
-                ApiError = new ApiError()
+                StatusCode = HttpStatusCode.InternalServerError,
+                Message = "Unknown error"
+            }
+        });
+
+        switch (verificationResult.VerificationError)
+        {
+            case VerificationError.None when verificationResult.IsSuccess:
+                // Success case, send jwt
+                break;
+            case VerificationError.None:
+                //Code wrong 2 cases:
+                //1. User entered wrong code, can retry
+                //2. Code expired, new code sent, user can retry with new code // Return a bool indicating the resent
+                return Ok(new ApiResponse<VerificationResult>()
                 {
-                    StatusCode = HttpStatusCode.ServiceUnavailable,
-                    Message = "Service temporarily unavailable. Try again later"
-                }
-            }),
-            
-            // Covers UnknownError and any future errors that might be added without updating this switch
-            _ => StatusCode((int)HttpStatusCode.InternalServerError, new ApiResponse<object>()
-            {
-                IsSuccess = false,
-                ApiError = new ApiError()
+                    IsSuccess = true,
+                    Data = verificationResult,
+                });
+            case VerificationError.RedisUnavailable:
+                // Redis down, user can retry
+                return StatusCode((int)HttpStatusCode.ServiceUnavailable, new ApiResponse<VerificationResult>()
                 {
-                    StatusCode = HttpStatusCode.InternalServerError,
-                    Message = "Unknown error"
-                }
-            }),
-        };
+                    IsSuccess = false,
+                    Data = verificationResult,
+                    ApiError = new ApiError()
+                    {
+                        StatusCode = HttpStatusCode.ServiceUnavailable,
+                        Message = "Service temporarily unavailable. Try again later"
+                    }
+                });
+            case VerificationError.UnknownError:
+                // Unknown error, user can retry but server might be down
+                return internalServerError;
+             default:
+                return internalServerError;
+        }
     }
 
     [HttpPost(Endpoints.AuthEndpoints.Login)]

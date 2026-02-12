@@ -10,10 +10,12 @@ public static class Endpoints
         public const string Register = "register";
         public const string Login = "login";
         public const string RequestVerificationEmail = "requestVerificationEmail";
+        public const string VerifyEmail = "verifyEmail";
 
         public static string BaseAuthEndpoint => $"{Base}/{BaseAuth}";
         public static string RegisterEndpoint => $"{BaseAuthEndpoint}/{Register}";
         public static string LoginEndpoint => $"{BaseAuthEndpoint}/{Login}";
         public static string RequestVerificationEmailEndpoint => $"{BaseAuthEndpoint}/{RequestVerificationEmail}";
+        public static string VerifyEmailEndpoint => $"{BaseAuthEndpoint}/{VerifyEmail}";
     }
 }

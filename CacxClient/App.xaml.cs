@@ -91,6 +91,7 @@ public partial class App : Application
         InitMainWindow(serviceProvider);
     }
 
+    //TODO: rebinde F12 zu Go to implementation. Mach F11 zu GO TO Definition
     //TODO: Docker repo "readMe" adden
     //TODO: Gucken ob überall n try catch ist wo es sein muss -> In AuthService fehlt try-catch
     //TODO: Mehr Logging.
