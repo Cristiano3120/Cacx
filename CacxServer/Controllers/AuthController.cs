@@ -183,11 +183,12 @@ public class AuthController(IAuthService authService, IAuthRateLimiter authRateL
         {
             case VerificationError.None when verificationResult.IsSuccess:
                 // Success case, send jwt
+                
                 break;
-            case VerificationError.None:
-                //Code wrong 2 cases:
-                //1. User entered wrong code, can retry
-                //2. Code expired, new code sent, user can retry with new code // Return a bool indicating the resent
+            case VerificationError.None or VerificationError.TooManyAttempts:
+                //2 cases:
+                //1.User entered wrong code, can retry
+                //2. User entered wrong code, but has reached max attempts, can retry after with a new code
                 return Ok(new ApiResponse<VerificationResult>()
                 {
                     IsSuccess = true,

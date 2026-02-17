@@ -7,7 +7,6 @@ using CacxServer.Data.Redis.Abstractions;
 using CacxServer.Data.Redis.Entities;
 using CacxServer.Security.Hashing.Abstractions;
 using Cristiano3120.Logging;
-using Microsoft.AspNetCore.Identity;
 using Npgsql;
 using StackExchange.Redis;
 using System.Net.Mail;
@@ -82,12 +81,19 @@ public class AuthService(
         }
     }
 
-    public async Task<VerificationResult> VerifyAsync(string authToken, int code)
+    public async Task<VerificationResult> VerifyAsync(string authToken, string deviceID, int code)
     {
         CallerInfos callerInfos = CallerInfos.Create();
         try
         {
-            return await authRedisService.CheckVerificationCodeAsync(formattedToken: authToken, code);
+            VerificationResult verificationResult = await authRedisService.CheckVerificationCodeAsync(formattedToken: authToken, code);
+            if (verificationResult.IsSuccess)
+            {   //TODO: Implement snowflakes look twitter and dc
+                long userID = 0;//TODO: GENERATE ID AND CREATE USER IN DB DO THAT ON ANOTHER THREAD
+                JwtTokens jwtTokens = JwtTokenGenerator.GenerateJwtTokens(userID, deviceID); //TODO: GUcken was du responden musst
+
+                authRepository.AddUser(); //TODO: Implement method
+            }
         }
         catch (RedisException)
         {

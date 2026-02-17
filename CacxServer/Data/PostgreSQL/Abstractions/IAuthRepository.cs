@@ -3,4 +3,5 @@
 public interface IAuthRepository
 {
     Task<bool> CheckIfUniqueDataExistsAsync(string email, string username);
+    Task<bool> AddUser();
 }

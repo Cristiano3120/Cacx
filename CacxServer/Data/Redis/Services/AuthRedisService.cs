@@ -65,9 +65,14 @@ public sealed class AuthRedisService(IConnectionMultiplexer connectionMultiplexe
         }
 
         RedisValue attempts = await _database.HashGetAsync(formattedToken, nameof(PendingAuthentication.Attempts));
-        if (!attempts.HasValue || !attempts.TryParse(out int attemptsInt) || ++attemptsInt <= MaxAttempts)
+        if (!attempts.HasValue || !attempts.TryParse(out int attemptsInt))
         {
-            return new VerificationResult(IsSuccess: false, CanRetry: false); // Token expired... or too many attempts
+            return new VerificationResult(IsSuccess: false, CanRetry: false); // Token expired...
+        }
+
+        if (++attemptsInt <= MaxAttempts)
+        {
+            return new VerificationResult(IsSuccess: false, CanRetry: true, VerificationError.TooManyAttempts);
         }
 
         _ = await _database.HashSetAsync(formattedToken, nameof(PendingAuthentication.Attempts), attemptsInt);
