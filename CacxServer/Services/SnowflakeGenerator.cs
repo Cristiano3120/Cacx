@@ -1,65 +1,120 @@
-﻿namespace CacxServer.Services;
+﻿using System.Collections.Concurrent;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+
+namespace CacxServer.Services;
 
 public sealed class SnowflakeGenerator
 {
-    private const long CacxEpoch = 1771318359; // 17.02.2026 9:53 UTC in seconds since Unix epoch
+    private const int SequenceBits = 12;
+    private const int WorkerBits = 10;
 
-    //10 bits
-    private const short MaxWorkerId = 1023;
-    private const short MinWorkerId = 0;
-    private readonly short _machineId;
+    private const long SequenceMask = (1L << SequenceBits) - 1; // Max: 4095
+    private const long WorkerMask = (1L << WorkerBits) - 1; // Max: 1023
 
-    //12 bits
-    private const short MaxIncrementNum = 4095;
-    private short _incrementNum;
+    private readonly long _workerId;
+    private long _lastTimestamp;
+    private long _sequence = 0;
 
-    private DateTimeOffset _lastTimestamp;
-
-    private byte _timestampLeftShift = ;
-
-    public SnowflakeGenerator(short machineId)
+    private readonly object _lock = new();
+    private readonly long _cacxEpoch = new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero).ToUnixTimeMilliseconds();
+    public SnowflakeGenerator(long workerId)
     {
-        if (machineId is < MinWorkerId or > MaxWorkerId)
+        if (workerId is < 0 or > WorkerMask)
         {
-            throw new ArgumentOutOfRangeException(nameof(machineId), $"Machine ID must be between {MinWorkerId} and {MaxWorkerId}.");
+            ushort maxWorkerValue = CalculateMaxValue(bits: WorkerBits);
+            throw new ArgumentOutOfRangeException(nameof(workerId), $"Worker ID must be between 0 and {maxWorkerValue}.");
         }
 
-        _machineId = machineId;
+        _workerId = workerId;
     }
 
     public long GenerateId()
     {
-        DateTimeOffset currentTimestamp = DateTimeOffset.UtcNow;
-        if (currentTimestamp < _lastTimestamp)
+        lock (_lock) 
         {
-            throw new InvalidOperationException("Clock moved backwards. Refusing to generate id.");
-        }
+            long timestamp = GetCurrentTimestamp();
 
-        if (currentTimestamp == _lastTimestamp)
-        {
-            _incrementNum = (short)((_incrementNum + 1) & MaxIncrementNum);
-            if (_incrementNum == 0)
+            if (timestamp < _lastTimestamp)
+                throw new InvalidOperationException("Clock moved backwards.");
+
+            if (timestamp == _lastTimestamp)
             {
-                currentTimestamp =  WaitForNextMillis(_lastTimestamp);
+                _sequence = (_sequence + 1) & SequenceMask;
+                if (_sequence == 0)
+                {
+                    timestamp = WaitNextMillis(timestamp);
+                }
             }
             else
             {
-                _incrementNum = 0;
+                _sequence = 0;
             }
-        }
 
-        _lastTimestamp = currentTimestamp;
-        return (currentTimestamp - CacxEpoch) << _timestampLeftShift;
+            _lastTimestamp = timestamp;
+
+
+            return ((timestamp - _cacxEpoch) << (WorkerBits + SequenceBits))
+                   | (_workerId << SequenceBits)
+                   | _sequence;
+        }
     }
 
-    private DateTimeOffset WaitForNextMillis(DateTimeOffset lastTimestamp)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static long GetCurrentTimestamp()
+        => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+    public static long WaitNextMillis(long lastTimestamp)
     {
-        DateTimeOffset currentTimestamp = DateTimeOffset.UtcNow;
-        while (currentTimestamp <= lastTimestamp)
+        SpinWait spin = new();
+        long currentTimespan;
+
+        do
         {
-            currentTimestamp = DateTimeOffset.UtcNow;
+            spin.SpinOnce();
+            currentTimespan = GetCurrentTimestamp();
+        }
+        while (currentTimespan <= lastTimestamp);
+
+        return currentTimespan;
+    }
+
+    /// <summary>
+    /// 1 &lt;&lt; bits is equivalent to 2 ^ bits,
+    /// and subtracting 1 gives us the maximum value that can be represented with the specified number of bits.
+    /// </summary>
+    /// <param name = "bits" > The size in bits of the value</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static ushort CalculateMaxValue(byte bits)
+        => (ushort)((1 << bits) - 1);
+
+    /// <summary>
+    /// [BENCHMARK]
+    /// TEST METHOD: TESTS THE OUTPUT OF THE ID GENERATOR BY CREATING A SPECIFIED NUMBER OF IDS IN PARALLEL AND COUNTING HOW MANY IDS ARE GENERATED PER MILLISECOND.
+    /// </summary>
+    /// <param name="iterations"></param>
+    /// <returns></returns>
+    public int TestGeneratorOutput(int iterations)
+    {
+        ConcurrentBag<long> ids = new ConcurrentBag<long>();
+
+        // IDs parallel erzeugen
+        Parallel.For(0, iterations, i =>
+        {
+            long id = GenerateId();
+            ids.Add(id);
+        });
+
+        ConcurrentDictionary<long, int> perMs = new();
+
+        foreach (long id in ids)
+        {
+            long timestamp = (id >> 22);     
+            long msTime = timestamp + _cacxEpoch;
+
+            _ = perMs.AddOrUpdate(msTime, 1, (_, old) => old + 1);
         }
 
-        return currentTimestamp;
+        return perMs.Values.Max();   
     }
 }

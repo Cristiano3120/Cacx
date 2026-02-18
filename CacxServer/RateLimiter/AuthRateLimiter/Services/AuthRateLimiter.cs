@@ -54,7 +54,7 @@ public sealed class AuthRateLimiter(
         return await authRedisRateLimiter.CheckRulesAsync(rateLimitRules);
     }
 
-    public async Task<AuthRateLimitResult> CheckVerifiyCodeAsync(ClientSecurityContext securityContext)
+    public async Task<AuthRateLimitResult> CheckVerifyCodeAsync(ClientSecurityContext securityContext)
     {
         if (CheckIfSecurityDataValid(securityContext))
         {

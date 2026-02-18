@@ -167,7 +167,7 @@ public class AuthController(IAuthService authService, IAuthRateLimiter authRateL
         }
 
         //If correct create tokens
-        VerificationResult verificationResult = await authService.VerifyAsync(authToken, code);
+        VerificationResult verificationResult = await authService.VerifyAsync(authToken, deviceID, code);
         IActionResult internalServerError = StatusCode((int)HttpStatusCode.InternalServerError, new ApiResponse<VerificationResult>()
         {
             IsSuccess = false,
@@ -212,6 +212,8 @@ public class AuthController(IAuthService authService, IAuthRateLimiter authRateL
              default:
                 return internalServerError;
         }
+
+        return default;
     }
 
     [HttpPost(Endpoints.AuthEndpoints.Login)]

@@ -93,6 +93,7 @@ public class AuthService(
                 JwtTokens jwtTokens = JwtTokenGenerator.GenerateJwtTokens(userID, deviceID); //TODO: GUcken was du responden musst
 
                 authRepository.AddUser(); //TODO: Implement method
+                return default!;
             }
         }
         catch (RedisException)
@@ -106,6 +107,8 @@ public class AuthService(
             Environment.Exit(1);
             return VerificationResult.Fail(VerificationError.UnknownError);
         }
+
+        return default!;
     }
 
     /// <param name="authToken"></param>

@@ -14,10 +14,11 @@ using CacxShared.Abstractions;
 using CacxShared.Services;
 using Cristiano3120.Logging;
 using DotNetEnv;
-using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
+using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Net;
 using System.Text;
 using System.Text.Json;
@@ -27,8 +28,12 @@ namespace CacxServer;
 
 public static class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
+        SnowflakeGenerator snowflakeGenerator = new SnowflakeGenerator(1);
+        int maxIdsPerMs = snowflakeGenerator.TestGeneratorOutput(iterations: 10000);
+        Console.WriteLine($"Max amount of ids generated in a ms: {maxIdsPerMs}");
+
         _ = Env.Load();
 
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -95,7 +100,7 @@ public static class Program
         {
             _ = app.MapOpenApi();
         }
-        
+
         _ = app.UseForwardedHeaders();
         _ = app.UseHttpsRedirection();
 
@@ -113,7 +118,7 @@ public static class Program
                 context.Request.Body.CanRead)
             {
                 using StreamReader reader = new(
-                    context.Request.Body, 
+                    context.Request.Body,
                     Encoding.UTF8,
                     detectEncodingFromByteOrderMarks: false,
                     leaveOpen: true);
@@ -166,7 +171,6 @@ public static class Program
             }
         });
 
-        app.Run(url: app.Configuration.GetValue<string>(key: "WebAdress"));
+        await app.RunAsync(url: app.Configuration.GetValue<string>(key: "WebAdress"));
     }
 }
-
