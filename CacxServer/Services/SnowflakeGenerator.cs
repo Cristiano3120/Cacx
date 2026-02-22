@@ -1,6 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
 
 namespace CacxServer.Services;
 
@@ -16,14 +14,13 @@ public sealed class SnowflakeGenerator
     private long _lastTimestamp;
     private long _sequence = 0;
 
-    private readonly object _lock = new();
     private readonly long _cacxEpoch = new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero).ToUnixTimeMilliseconds();
+    private readonly object _lock = new();
     public SnowflakeGenerator(long workerId)
     {
         if (workerId is < 0 or > WorkerMask)
         {
-            ushort maxWorkerValue = CalculateMaxValue(bits: WorkerBits);
-            throw new ArgumentOutOfRangeException(nameof(workerId), $"Worker ID must be between 0 and {maxWorkerValue}.");
+            throw new ArgumentOutOfRangeException(nameof(workerId), $"Worker ID must be between 0 and {WorkerMask}.");
         }
 
         _workerId = workerId;
@@ -60,7 +57,6 @@ public sealed class SnowflakeGenerator
         }
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static long GetCurrentTimestamp()
         => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
@@ -80,15 +76,6 @@ public sealed class SnowflakeGenerator
     }
 
     /// <summary>
-    /// 1 &lt;&lt; bits is equivalent to 2 ^ bits,
-    /// and subtracting 1 gives us the maximum value that can be represented with the specified number of bits.
-    /// </summary>
-    /// <param name = "bits" > The size in bits of the value</param>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static ushort CalculateMaxValue(byte bits)
-        => (ushort)((1 << bits) - 1);
-
-    /// <summary>
     /// [BENCHMARK]
     /// TEST METHOD: TESTS THE OUTPUT OF THE ID GENERATOR BY CREATING A SPECIFIED NUMBER OF IDS IN PARALLEL AND COUNTING HOW MANY IDS ARE GENERATED PER MILLISECOND.
     /// </summary>
@@ -96,15 +83,15 @@ public sealed class SnowflakeGenerator
     /// <returns></returns>
     public int TestGeneratorOutput(int iterations)
     {
-        ConcurrentBag<long> ids = new ConcurrentBag<long>();
+        ConcurrentBag<long> ids = [];
 
-        // IDs parallel erzeugen
-        Parallel.For(0, iterations, i =>
+        //Create Ids in parallel
+        _ = Parallel.For(0, iterations, i =>
         {
             long id = GenerateId();
             ids.Add(id);
         });
-
+       
         ConcurrentDictionary<long, int> perMs = new();
 
         foreach (long id in ids)

@@ -30,8 +30,8 @@ public static class Program
 {
     public static async Task Main(string[] args)
     {
-        SnowflakeGenerator snowflakeGenerator = new SnowflakeGenerator(1);
-        int maxIdsPerMs = snowflakeGenerator.TestGeneratorOutput(iterations: 10000);
+        SnowflakeGenerator snowflakeGenerator = new(workerId: 1);
+        int maxIdsPerMs = snowflakeGenerator.TestGeneratorOutput(iterations: 100_000);
         Console.WriteLine($"Max amount of ids generated in a ms: {maxIdsPerMs}");
 
         _ = Env.Load();
