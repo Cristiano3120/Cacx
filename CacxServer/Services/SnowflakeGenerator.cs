@@ -1,8 +1,9 @@
-﻿using System.Collections.Concurrent;
+﻿using CacxServer.Abstractions;
+using System.Collections.Concurrent;
 
 namespace CacxServer.Services;
 
-public sealed class SnowflakeGenerator
+public sealed class SnowflakeGenerator : ISnowflakeGenerator
 {
     private const int SequenceBits = 12;
     private const int WorkerBits = 10;
@@ -60,7 +61,7 @@ public sealed class SnowflakeGenerator
     private static long GetCurrentTimestamp()
         => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
-    public static long WaitNextMillis(long lastTimestamp)
+    private static long WaitNextMillis(long lastTimestamp)
     {
         SpinWait spin = new();
         long currentTimespan;

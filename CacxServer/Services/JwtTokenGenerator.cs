@@ -83,6 +83,14 @@ public static class JwtTokenGenerator
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
+    /// <summary>
+    /// Generates a pair of JSON Web Tokens (JWT) for the specified user and device.
+    /// </summary>
+    /// <remarks>The generated tokens are intended for authentication and authorization scenarios. Each token
+    /// is uniquely tied to the provided user and device identifiers.</remarks>
+    /// <param name="userID">The unique identifier of the user for whom the tokens are generated.</param>
+    /// <param name="deviceID">The unique identifier of the device associated with the tokens. Cannot be null or empty.</param>
+    /// <returns>A JwtTokens object containing both the access token and refresh token for the specified user and device.</returns>
     public static JwtTokens GenerateJwtTokens(long userID, string deviceID)
-        => new(refreshToken: GenerateRefreshToken(userID, deviceID), accessToken: GenerateAccessToken(userID, deviceID));   
+        => new(RefreshToken: GenerateRefreshToken(userID, deviceID), AccessToken: GenerateAccessToken(userID, deviceID));   
 }

@@ -6,18 +6,22 @@ using CacxServer.Data.PostgreSQL.Abstractions;
 using CacxServer.Data.Redis.Abstractions;
 using CacxServer.Data.Redis.Entities;
 using CacxServer.Security.Hashing.Abstractions;
+using CacxShared.Abstractions;
 using Cristiano3120.Logging;
 using Npgsql;
 using StackExchange.Redis;
 using System.Net.Mail;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 using RegisterRequest = CacxShared.Abstractions.RegisterRequest;
 
 namespace CacxServer.Services;
 
 public class AuthService(
-    [FromKeyedServices(HashingAlgorithm.Sha256)] IHashingService hashingService,
+    [FromKeyedServices(HashingAlgorithm.BCrypt)] IHashingService bcryptHashingService,
+    [FromKeyedServices(HashingAlgorithm.Sha256)] IHashingService shaHashingService,
     IVerificationTokenService verificationTokenService, 
     INotificationService notificationService, 
+    ISnowflakeGenerator snowflakeGenerator,
     IAuthRedisService authRedisService,
     IAuthRepository authRepository,
     Logger logger) : IAuthService
@@ -40,7 +44,9 @@ public class AuthService(
             {
                 Email = registerRequest.Email,
                 Username = registerRequest.Username,
-                VerificationCode = hashingService.Hash(verificationCode.ToString())
+                Password = registerRequest.Password,
+                DisplayName = Convert.ToHexString(bcryptHashingService.Hash(registerRequest.Username)),
+                VerificationCode = shaHashingService.Hash(verificationCode.ToString())
             };
 
             string hashedToken = FormatToken(token);
@@ -88,9 +94,15 @@ public class AuthService(
         {
             VerificationResult verificationResult = await authRedisService.CheckVerificationCodeAsync(formattedToken: authToken, code);
             if (verificationResult.IsSuccess)
-            {   //TODO: Implement snowflakes look twitter and dc
-                long userID = 0;//TODO: GENERATE ID AND CREATE USER IN DB DO THAT ON ANOTHER THREAD
-                JwtTokens jwtTokens = JwtTokenGenerator.GenerateJwtTokens(userID, deviceID); //TODO: GUcken was du responden musst
+                //TODO: Delete n paar unnötige Interfaces
+                //TODO: Update HashingService mach mehr methods z.B eine die instant str returnt und maybe Argon statt Bcrpyt
+                //TODO: User soll displayName und password mitschicken vorher schon bei acc ersdtellung
+                //TODO: Überlege was besseres als Enviroment.Exit. Server soll was returnen was der Client versteht
+            {   //maybe user factory die nen Encrypted user erstellen kann und nen normalen und nen decrypteten usw
+                // TODO: GENERATE ID AND CREATE USER IN DB DO THAT ON ANOTHER THREAD. Maybe add JwtToken zur User class
+                //TODO: GUcken was du responden musst
+                long userID = snowflakeGenerator.GenerateId();
+                JwtTokens jwtTokens = JwtTokenGenerator.GenerateJwtTokens(userID, deviceID); 
 
                 authRepository.AddUser(); //TODO: Implement method
                 return default!;
@@ -136,5 +148,5 @@ public class AuthService(
     }
 
     private string FormatToken(string token)
-        => Convert.ToHexStringLower(hashingService.Hash(token));
+        => Convert.ToHexStringLower(shaHashingService.Hash(token));
 }

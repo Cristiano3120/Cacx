@@ -1,3 +1,3 @@
 ﻿namespace CacxServer.Abstractions;
 
-public sealed record JwtTokens(string refreshToken, string accessToken);
+public sealed record JwtTokens(string RefreshToken, string AccessToken);

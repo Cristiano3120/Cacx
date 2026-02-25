@@ -17,8 +17,6 @@ using DotNetEnv;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
-using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Net;
 using System.Text;
 using System.Text.Json;
@@ -30,10 +28,6 @@ public static class Program
 {
     public static async Task Main(string[] args)
     {
-        SnowflakeGenerator snowflakeGenerator = new(workerId: 1);
-        int maxIdsPerMs = snowflakeGenerator.TestGeneratorOutput(iterations: 100_000);
-        Console.WriteLine($"Max amount of ids generated in a ms: {maxIdsPerMs}");
-
         _ = Env.Load();
 
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -50,12 +44,13 @@ public static class Program
         _ = builder.Services.AddSingleton<IVerificationTokenService, VerificationTokenService>();
         _ = builder.Services.AddSingleton<IPathProvider, PathProvider>(_ => pathProvider);
         _ = builder.Services.AddSingleton<INotificationService, NotificationService>();
+        _ = builder.Services.AddSingleton<ISnowflakeGenerator, SnowflakeGenerator>();
 
         _ = builder.Services.AddSingleton<IConnectionMultiplexer, ConnectionMultiplexer>((_) =>
         {
             ConfigurationOptions conf = new()
             {
-                EndPoints = { "localhost:6379" },
+                EndPoints = { Env.GetString("REDIS_ENDPOINT") },
                 Password = Env.GetString(key: "REDIS_PASSWORD"),
                 AbortOnConnectFail = false,
             };
