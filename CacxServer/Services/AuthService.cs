@@ -11,7 +11,6 @@ using Cristiano3120.Logging;
 using Npgsql;
 using StackExchange.Redis;
 using System.Net.Mail;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using RegisterRequest = CacxShared.Abstractions.RegisterRequest;
 
 namespace CacxServer.Services;
@@ -86,41 +85,45 @@ public class AuthService(
             return RegisterResult.Fail(RegisterError.Unknown);
         }
     }
-
-    public async Task<VerificationResult> VerifyAsync(string authToken, string deviceID, int code)
+    //MUSST WAS ANDERES RETURNEN
+    public async Task<(bool isSuccess, bool canRetry, bool codeExpired)> VerifyAsync(string authToken, string deviceID, int code)
     {
         CallerInfos callerInfos = CallerInfos.Create();
         try
         {
             VerificationResult verificationResult = await authRedisService.CheckVerificationCodeAsync(formattedToken: authToken, code);
-            if (verificationResult.IsSuccess)
+            if (!verificationResult.IsSuccess)
+            {
+                //TODO: EfCore benchmarken maybe warmups oder dapper
                 //TODO: Delete n paar unnötige Interfaces
                 //TODO: Update HashingService mach mehr methods z.B eine die instant str returnt und maybe Argon statt Bcrpyt
-                //TODO: User soll displayName und password mitschicken vorher schon bei acc ersdtellung
-                //TODO: Überlege was besseres als Enviroment.Exit. Server soll was returnen was der Client versteht
-            {   //maybe user factory die nen Encrypted user erstellen kann und nen normalen und nen decrypteten usw
-                // TODO: GENERATE ID AND CREATE USER IN DB DO THAT ON ANOTHER THREAD. Maybe add JwtToken zur User class
-                //TODO: GUcken was du responden musst
-                long userID = snowflakeGenerator.GenerateId();
-                JwtTokens jwtTokens = JwtTokenGenerator.GenerateJwtTokens(userID, deviceID); 
+                //maybe user factory die nen Encrypted user erstellen kann und nen normalen und nen decrypteten usw
+                //TODO: Issues in GitHub bundlen
+                //TODO: Code Cleanup. Fix AuthService methods + mehr logging und comments
+                return (isSuccess: false, canRetry: verificationResult.CanRetry, codeExpired: verificationResult.CodeExpired);
+            }
 
-                authRepository.AddUser(); //TODO: Implement method
-                return default!;
+            long id = snowflakeGenerator.NextId();
+            JwtTokens jwtTokens = JwtTokenGenerator.GenerateJwtTokens(id, deviceID);
+            bool userAdded = await authRepository.AddUserAsync(verificationResult.AuthenticatedUser, jwtTokens.RefreshToken, id);
+
+            if (userAdded)
+            {
+                return (isSuccess: true, canRetry: false, codeExpired: false);
             }
         }
-        catch (RedisException)
+        catch (RedisException) //Musst die fehler einzelnt handlen oder maybe null returnen
         {
             logger.LogError(LoggerParams.None, () => "Redis not available", callerInfos);
-            return VerificationResult.Fail(VerificationError.RedisUnavailable);
+        }
+        catch (NpgsqlException)
+        {
+            logger.LogError(LoggerParams.None, () => "PostgreSQL not available", callerInfos);
         }
         catch (Exception ex)
         {
             logger.LogError(LoggerParams.None, ex, callerInfos);
-            Environment.Exit(1);
-            return VerificationResult.Fail(VerificationError.UnknownError);
         }
-
-        return default!;
     }
 
     /// <param name="authToken"></param>
@@ -128,23 +131,27 @@ public class AuthService(
     /// <see cref="TimeSpan.Zero"/> <see langword="if"/> something went wrong
     /// <see langword="else"/> > <see cref="TimeSpan.Zero"/>
     /// </returns>
-    public async Task<bool> ResendVerificationEmailAsync(string authToken)
+    public async Task<ResendVerificationResult> ResendVerificationEmailAsync(string authToken)
     {
         int verificationCode = verificationTokenService.GenerateVerificationCode();
         string? email = await authRedisService.ReplaceVerificationCodeAndGetEmailAsync(FormatToken(authToken), verificationCode);
 
         if (email is null)
-            return false;
+            return ResendVerificationResult.SessionInvalid;
 
-        await SendVerificationEmailAsync(email, verificationCode);
-        return true;
+        if (!await SendVerificationEmailAsync(email, verificationCode))
+        {
+            return ResendVerificationResult.EmailSendFailed;
+        }
+
+        return ResendVerificationResult.Success;
     }
 
-    private async Task SendVerificationEmailAsync(string email, int verificationCode)
+    private async Task<bool> SendVerificationEmailAsync(string email, int verificationCode)
     {
         string subject = "[CACX]: Verification";
         string body = $"Hello {email} 👋 \nHere is your verification code: {verificationCode}. Make sure to be quick it will expire soon!";
-        await notificationService.SendEmailAsync(targetEmails: [email], subject, body);
+        return await notificationService.SendEmailAsync(targetEmails: [email], subject, body);
     }
 
     private string FormatToken(string token)

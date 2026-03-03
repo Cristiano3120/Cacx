@@ -2,5 +2,5 @@
 
 public interface ISnowflakeGenerator
 {
-    public long GenerateId();
+    public long NextId();
 }

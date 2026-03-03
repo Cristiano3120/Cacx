@@ -5,18 +5,17 @@ namespace CacxServer.Abstractions.Auth.Verification;
 
 public sealed record VerificationResult
 {
-    [MemberNotNullWhen(true, nameof(PendingAuthentication))]
-    public bool IsSuccess => PendingAuthentication is not null;
+    [MemberNotNullWhen(true, nameof(AuthenticatedUser))]
+    public bool IsSuccess => AuthenticatedUser is not null;
     public bool CanRetry { get; init; }
     public bool CodeExpired {  get; init; }
-    public User? PendingAuthentication { get; init; }
-    public VerificationError VerificationError { get; init; }
+    public User? AuthenticatedUser { get; init; }
 
     public VerificationResult(bool canRetry, bool codeExpired, User? user)
     {
         CanRetry = canRetry;
         CodeExpired = codeExpired;
-        PendingAuthentication = user;
+        AuthenticatedUser = user;
     }
 
     public static VerificationResult Success(User? pendingAuthentication) 

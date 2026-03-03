@@ -27,7 +27,7 @@ public sealed class SnowflakeGenerator : ISnowflakeGenerator
         _workerId = workerId;
     }
 
-    public long GenerateId()
+    public long NextId()
     {
         lock (_lock) 
         {
@@ -89,7 +89,7 @@ public sealed class SnowflakeGenerator : ISnowflakeGenerator
         //Create Ids in parallel
         _ = Parallel.For(0, iterations, i =>
         {
-            long id = GenerateId();
+            long id = NextId();
             ids.Add(id);
         });
        

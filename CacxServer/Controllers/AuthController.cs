@@ -93,6 +93,8 @@ public class AuthController(IAuthService authService, IAuthRateLimiter authRateL
     [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status429TooManyRequests)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status503ServiceUnavailable)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> ResendVerificationEmailAsync(
         [FromHeader(Name = AuthHeaderNames.AuthTokenHeader)] string authToken,
         [FromHeader(Name = AuthHeaderNames.DeviceIdHeader)] string deviceID)
@@ -101,11 +103,11 @@ public class AuthController(IAuthService authService, IAuthRateLimiter authRateL
 
         ClientSecurityContext clientSecurityContext = GetClientSecurityContext(deviceID);
         AuthRateLimitResult rateLimitResult = await authRateLimiter.CheckResendVerificationEmailAsync(clientSecurityContext);
-        
+
         if (rateLimitResult.IsLimited)
         {
             Response.Headers.RetryAfter = new RetryConditionHeaderValue(rateLimitResult.RetryAfter).ToString();
-            return StatusCode((int)HttpStatusCode.TooManyRequests, value: new ApiResponse<string>()
+            return StatusCode((int)HttpStatusCode.TooManyRequests, value: new ApiResponse<object>()
             {
                 IsSuccess = false,
                 ApiError = new ApiError()
@@ -131,13 +133,37 @@ public class AuthController(IAuthService authService, IAuthRateLimiter authRateL
             return invalidSessionResult;
         }
 
-        bool success = await authService.ResendVerificationEmailAsync(authToken);
-        if (!success)
+        ResendVerificationResult resendVerificationResult = await authService.ResendVerificationEmailAsync(authToken);
+        return resendVerificationResult switch
         {
-            return invalidSessionResult;
-        }
+            ResendVerificationResult.Success => Ok(new ApiResponse<bool>()
+            {
+                IsSuccess = true,
+                Data = true,
+            }),
 
-        return Ok(ApiResponse<bool>.Ok(data: success));
+            ResendVerificationResult.EmailSendFailed => StatusCode((int)HttpStatusCode.ServiceUnavailable, new ApiResponse<object>()
+            {
+                IsSuccess = false,
+                ApiError = new ApiError()
+                {
+                    StatusCode = HttpStatusCode.InternalServerError,
+                    Message = "Failed to send verification email. Try again later..."
+                }
+            }),
+
+            ResendVerificationResult.SessionInvalid => invalidSessionResult,
+
+            _ => StatusCode((int)HttpStatusCode.InternalServerError, new ApiResponse<object>()
+            {
+                IsSuccess = false,
+                ApiError = new ApiError()
+                {
+                    StatusCode = HttpStatusCode.InternalServerError,
+                    Message = "Unknown error. Try again"
+                }
+            }),
+        };
     }
 
     [HttpPost(Endpoints.AuthEndpoints.VerifyEmail)]
@@ -166,54 +192,26 @@ public class AuthController(IAuthService authService, IAuthRateLimiter authRateL
             });
         }
 
-        //If correct create tokens
-        VerificationResult verificationResult = await authService.VerifyAsync(authToken, deviceID, code);
-        IActionResult internalServerError = StatusCode((int)HttpStatusCode.InternalServerError, new ApiResponse<VerificationResult>()
+        VerificationResult? verificationResult = await authService.VerifyAsync(authToken, deviceID, code);
+        if (verificationResult is null)
         {
-            IsSuccess = false,
-            Data = verificationResult,
-            ApiError = new ApiError()
+            return StatusCode((int)HttpStatusCode.InternalServerError, new ApiResponse<VerificationResult>()
             {
-                StatusCode = HttpStatusCode.InternalServerError,
-                Message = "Unknown error"
-            }
-        });
-
-        switch (verificationResult.VerificationError)
-        {
-            case VerificationError.None when verificationResult.IsSuccess:
-                // Success case, send jwt
-                
-                break;
-            case VerificationError.None or VerificationError.TooManyAttempts:
-                //2 cases:
-                //1.User entered wrong code, can retry
-                //2. User entered wrong code, but has reached max attempts, can retry after with a new code
-                return Ok(new ApiResponse<VerificationResult>()
+                IsSuccess = false,
+                Data = verificationResult,
+                ApiError = new ApiError()
                 {
-                    IsSuccess = true,
-                    Data = verificationResult,
-                });
-            case VerificationError.RedisUnavailable:
-                // Redis down, user can retry
-                return StatusCode((int)HttpStatusCode.ServiceUnavailable, new ApiResponse<VerificationResult>()
-                {
-                    IsSuccess = false,
-                    Data = verificationResult,
-                    ApiError = new ApiError()
-                    {
-                        StatusCode = HttpStatusCode.ServiceUnavailable,
-                        Message = "Service temporarily unavailable. Try again later"
-                    }
-                });
-            case VerificationError.UnknownError:
-                // Unknown error, user can retry but server might be down
-                return internalServerError;
-             default:
-                return internalServerError;
+                    StatusCode = HttpStatusCode.InternalServerError,
+                    Message = "Unknown error"
+                }
+            });
         }
 
-        return default;
+        return Ok(new ApiResponse<VerificationResult>()
+        {
+            IsSuccess = true,
+            Data = verificationResult,
+        });
     }
 
     [HttpPost(Endpoints.AuthEndpoints.Login)]

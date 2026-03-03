@@ -5,5 +5,6 @@ namespace CacxServer.Data.PostgreSQL;
 
 public sealed class CacxDbContext(DbContextOptions<CacxDbContext> contextOptions) : DbContext(contextOptions)
 {
-    public DbSet<DatabaseUser> Users { get; set; }
+    public DbSet<UserJwtEntity> UsersJwts { get; set; }
+    public DbSet<UserEntity> Users { get; set; }
 }

@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CacxServer.Data.PostgreSQL.Configurations;
 
-public class DatabaseUserTypeConfiguration : IEntityTypeConfiguration<DatabaseUser>
+public class DatabaseUserTypeConfiguration : IEntityTypeConfiguration<UserEntity>
 {
-    public void Configure(EntityTypeBuilder<DatabaseUser> builder)
+    public void Configure(EntityTypeBuilder<UserEntity> builder)
     {
         _ = builder.Property(x => x.Id)
             .IsRequired();

@@ -65,12 +65,23 @@ public sealed class AuthRedisService(IConnectionMultiplexer connectionMultiplexe
 
         if (storedCode == enteredCode)
         {
+            RedisValue email = await _database.HashGetAsync(formattedToken, nameof(PendingAuthentication.Email)); 
+            RedisValue username = await _database.HashGetAsync(formattedToken, nameof(PendingAuthentication.Username));
+            RedisValue displayName = await _database.HashGetAsync(formattedToken, nameof(PendingAuthentication.DisplayName));
+            RedisValue password = await _database.HashGetAsync(formattedToken, nameof(PendingAuthentication.Password));
+
+            // Token expired... User needs to restart the registration process
+            if (email.IsNullOrEmpty || username.IsNullOrEmpty || password.IsNullOrEmpty || displayName.IsNullOrEmpty)
+            {
+                return VerificationResult.Fail(canRetry: false, codeExpired: true);
+            }
+
             User user = new()
             {
-                Email = await _database.HashGetAsync(formattedToken, nameof(PendingAuthentication.Email)),
-                Username = await _database.HashGetAsync(formattedToken, nameof(PendingAuthentication.Username)),
-                Password = await _database.HashGetAsync(formattedToken, nameof(PendingAuthentication.Password)),
-                DisplayName = await _database.HashGetAsync(formattedToken, nameof(PendingAuthentication.DisplayName)),
+                Email = email!,
+                Username = username!,
+                Password = password!,
+                DisplayName = displayName!,
             };
 
             return VerificationResult.Success(user);

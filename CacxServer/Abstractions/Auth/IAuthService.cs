@@ -6,7 +6,7 @@ namespace CacxServer.Abstractions.Auth;
 
 public interface IAuthService
 {
-    Task<VerificationResult> VerifyAsync(string authToken, string deviceID, int code);
+    Task<VerificationResult?> VerifyAsync(string authToken, string deviceID, int code);
+    Task<ResendVerificationResult> ResendVerificationEmailAsync(string authToken);
     Task<RegisterResult> RegisterAsync(RegisterRequest registerRequest);
-    Task<bool> ResendVerificationEmailAsync(string authToken);
 }
